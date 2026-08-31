@@ -128,6 +128,8 @@ fun HeimRenderer(
         )
         is CustomComponent -> HeimCustomRenderer(
             component = component,
+            stateManager = stateManager,
+            onAction = onAction,
             customRenderer = customRenderer,
             modifier = modifier
         )

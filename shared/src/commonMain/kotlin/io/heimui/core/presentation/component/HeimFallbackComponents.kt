@@ -18,11 +18,17 @@ import io.heimui.core.presentation.accessibility.heimAccessibility
 @Composable
 fun HeimCustomRenderer(
     component: CustomComponent,
+    stateManager: io.heimui.core.presentation.state.HeimStateManager,
+    onAction: (io.heimui.core.domain.model.action.HeimAction) -> Unit,
     customRenderer: (@Composable (CustomComponent) -> Unit)?,
     modifier: Modifier = Modifier
 ) {
+    val registryRenderer = io.heimui.core.presentation.registry.LocalHeimCustomComponentRegistry.current.getRenderer(component.name)
+
     if (customRenderer != null) {
         customRenderer(component)
+    } else if (registryRenderer != null) {
+        registryRenderer(component, stateManager, onAction, modifier)
     } else {
         Box(
             modifier = modifier

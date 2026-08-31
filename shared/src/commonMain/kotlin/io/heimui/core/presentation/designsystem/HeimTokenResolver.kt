@@ -13,17 +13,26 @@ import io.heimui.core.domain.model.component.TextAlign as HeimTextAlign
 
 object HeimTokenResolver {
 
-    fun resolveColor(tokenOrHex: String?, colorScheme: ColorScheme, default: Color = Color.Unspecified): Color {
+    fun resolveColor(
+        tokenOrHex: String?,
+        colorScheme: ColorScheme,
+        default: Color = Color.Unspecified,
+        brandTokens: HeimBrandTokens = HeimBrandTokens.default
+    ): Color {
         if (tokenOrHex.isNullOrBlank()) return default
 
         val clean = tokenOrHex.trim()
 
-        // 1. Hex Color parsing
+        // 1. Brand Tokens override
+        val customColor = brandTokens.getColor(clean)
+        if (customColor != null) return customColor
+
+        // 2. Hex Color parsing
         if (clean.startsWith("#")) {
             return parseHexColor(clean) ?: default
         }
 
-        // 2. Material 3 Semantic Color Tokens
+        // 3. Material 3 Semantic Color Tokens
         return when (clean.lowercase()) {
             "primary" -> colorScheme.primary
             "onprimary" -> colorScheme.onPrimary
@@ -106,8 +115,18 @@ object HeimTokenResolver {
         }
     }
 
-    fun resolveTextStyle(styleName: String?, typography: Typography): TextStyle {
-        return when (styleName?.trim()?.lowercase()) {
+    fun resolveTextStyle(
+        styleName: String?,
+        typography: Typography,
+        brandTokens: HeimBrandTokens = HeimBrandTokens.default
+    ): TextStyle {
+        if (styleName.isNullOrBlank()) return typography.bodyMedium
+        val clean = styleName.trim()
+
+        val customStyle = brandTokens.getTextStyle(clean)
+        if (customStyle != null) return customStyle
+
+        return when (clean.lowercase()) {
             "displaylarge" -> typography.displayLarge
             "displaymedium" -> typography.displayMedium
             "displaysmall" -> typography.displaySmall

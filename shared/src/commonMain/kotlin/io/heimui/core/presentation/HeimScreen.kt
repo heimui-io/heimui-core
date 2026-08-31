@@ -30,6 +30,8 @@ fun HeimScreen(
 ) {
     var screenState by remember(screenId) { mutableStateOf<HeimScreenState>(HeimScreenState.Loading) }
     var retryCount by remember { mutableIntStateOf(0) }
+    var activeBottomSheet by remember { mutableStateOf<io.heimui.core.domain.model.action.ShowBottomSheetAction?>(null) }
+    var activeDialog by remember { mutableStateOf<io.heimui.core.domain.model.action.ShowDialogAction?>(null) }
     val telemetryObserver = LocalHeimTelemetryObserver.current
 
     LaunchedEffect(screenId, retryCount) {
@@ -65,6 +67,24 @@ fun HeimScreen(
         }
     }
 
+    val handleAction: (HeimAction) -> Unit = { action ->
+        when (action) {
+            is io.heimui.core.domain.model.action.ShowBottomSheetAction -> activeBottomSheet = action
+            is io.heimui.core.domain.model.action.ShowDialogAction -> activeDialog = action
+            is io.heimui.core.domain.model.action.DismissModalAction -> {
+                activeBottomSheet = null
+                activeDialog = null
+            }
+            else -> {}
+        }
+        telemetryObserver.onEvent(
+            HeimTelemetryEvent.ActionExecuted(
+                actionType = action::class.simpleName ?: "UnknownAction"
+            )
+        )
+        onAction(action)
+    }
+
     Box(modifier = modifier.fillMaxSize()) {
         when (val state = screenState) {
             is HeimScreenState.Loading -> {
@@ -74,14 +94,7 @@ fun HeimScreen(
                 HeimScreenRenderer(
                     response = state.screen,
                     stateManager = stateManager,
-                    onAction = { action ->
-                        telemetryObserver.onEvent(
-                            HeimTelemetryEvent.ActionExecuted(
-                                actionType = action::class.simpleName ?: "UnknownAction"
-                            )
-                        )
-                        onAction(action)
-                    },
+                    onAction = handleAction,
                     customRenderer = customRenderer,
                     modifier = Modifier.fillMaxSize()
                 )
@@ -105,6 +118,33 @@ fun HeimScreen(
                     )
                 }
             }
+        }
+
+        val modalPresenter = io.heimui.core.presentation.modal.LocalHeimModalPresenter.current
+
+        // 1. Dynamic Bottom Sheet
+        activeBottomSheet?.let { sheetAction ->
+            modalPresenter.RenderBottomSheet(
+                action = sheetAction,
+                onDismiss = { activeBottomSheet = null },
+                onAction = handleAction
+            ) {
+                HeimRenderer(
+                    component = sheetAction.content,
+                    stateManager = stateManager,
+                    onAction = handleAction,
+                    customRenderer = customRenderer
+                )
+            }
+        }
+
+        // 2. Dynamic Alert Dialog
+        activeDialog?.let { dialogAction ->
+            modalPresenter.RenderDialog(
+                action = dialogAction,
+                onDismiss = { activeDialog = null },
+                onAction = handleAction
+            )
         }
     }
 }

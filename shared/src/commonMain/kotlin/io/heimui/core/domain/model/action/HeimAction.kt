@@ -27,4 +27,21 @@ data class CustomAction(
     val payload: Map<String, Any?>? = null
 ) : HeimAction
 
+data class ShowBottomSheetAction(
+    val title: String? = null,
+    val isDismissible: Boolean = true,
+    val content: io.heimui.core.domain.model.component.HeimComponent
+) : HeimAction
+
+data class ShowDialogAction(
+    val title: String,
+    val message: String,
+    val confirmText: String = "OK",
+    val confirmActions: List<HeimAction> = emptyList(),
+    val dismissText: String? = null,
+    val dismissActions: List<HeimAction> = emptyList()
+) : HeimAction
+
+data object DismissModalAction : HeimAction
+
 data object DismissAction : HeimAction

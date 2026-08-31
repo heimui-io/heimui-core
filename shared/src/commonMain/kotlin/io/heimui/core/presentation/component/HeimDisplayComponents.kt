@@ -7,13 +7,16 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.painter.BitmapPainter
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil3.compose.AsyncImage
 import io.heimui.core.domain.model.action.HeimAction
 import io.heimui.core.domain.model.component.BadgeComponent
 import io.heimui.core.domain.model.component.CardComponent
@@ -24,6 +27,7 @@ import io.heimui.core.presentation.HeimRenderer
 import io.heimui.core.presentation.accessibility.heimAccessibility
 import io.heimui.core.presentation.designsystem.HeimTokenResolver
 import io.heimui.core.presentation.state.HeimStateManager
+import io.heimui.core.presentation.util.HeimBlurHashDecoder
 
 @Composable
 fun HeimTextRenderer(
@@ -53,31 +57,19 @@ fun HeimImageRenderer(
     component: ImageComponent,
     modifier: Modifier = Modifier
 ) {
-    val shape = RoundedCornerShape(component.cornerRadius.dp)
-    var imageModifier = modifier
-        .fillMaxWidth()
-        .clip(shape)
-        .heimAccessibility(component.a11y)
+    val imageLoader = io.heimui.core.presentation.imageloader.LocalHeimImageLoader.current
+    val contentScale = HeimTokenResolver.resolveContentScale(component.contentScale)
 
-    if (component.height != null) {
-        imageModifier = imageModifier.height(component.height.dp)
-    } else if (component.aspectRatio != null && component.aspectRatio > 0) {
-        imageModifier = imageModifier.aspectRatio(component.aspectRatio)
-    } else {
-        imageModifier = imageModifier.height(180.dp)
-    }
-
-    // Placeholder surface for the image
-    Box(
-        modifier = imageModifier.background(MaterialTheme.colorScheme.surfaceVariant),
-        contentAlignment = Alignment.Center
-    ) {
-        Text(
-            text = "🖼️ Image: ${component.url.substringAfterLast('/')}",
-            style = MaterialTheme.typography.labelMedium,
-            color = MaterialTheme.colorScheme.onSurfaceVariant
-        )
-    }
+    imageLoader.RenderImage(
+        url = component.url,
+        contentDescription = component.a11y?.contentDescription,
+        blurHash = component.blurHash,
+        cornerRadius = component.cornerRadius,
+        height = component.height,
+        aspectRatio = component.aspectRatio,
+        contentScale = contentScale,
+        modifier = modifier.heimAccessibility(component.a11y)
+    )
 }
 
 @Composable

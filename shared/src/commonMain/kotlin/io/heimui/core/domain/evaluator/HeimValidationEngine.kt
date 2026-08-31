@@ -3,11 +3,35 @@ package io.heimui.core.domain.evaluator
 import io.heimui.core.domain.model.validation.ValidationRule
 import io.heimui.core.domain.model.validation.ValidationType
 
+typealias CustomFieldValidator = (value: String, ruleValue: String?) -> Boolean
+
+class HeimValidatorRegistry {
+    private val validators = mutableMapOf<String, CustomFieldValidator>()
+
+    fun register(name: String, validator: CustomFieldValidator): HeimValidatorRegistry {
+        validators[name.uppercase()] = validator
+        return this
+    }
+
+    fun isValid(name: String, value: String, ruleValue: String?): Boolean {
+        val validator = validators[name.uppercase()] ?: return true
+        return validator(value, ruleValue)
+    }
+
+    companion object {
+        val default = HeimValidatorRegistry()
+    }
+}
+
 object HeimValidationEngine {
 
-    fun validate(value: String, rules: List<ValidationRule>): String? {
+    fun validate(
+        value: String,
+        rules: List<ValidationRule>,
+        registry: HeimValidatorRegistry = HeimValidatorRegistry.default
+    ): String? {
         for (rule in rules) {
-            val error = validateRule(value, rule)
+            val error = validateRule(value, rule, registry)
             if (error != null) {
                 return error
             }
@@ -15,7 +39,11 @@ object HeimValidationEngine {
         return null
     }
 
-    private fun validateRule(value: String, rule: ValidationRule): String? {
+    private fun validateRule(
+        value: String,
+        rule: ValidationRule,
+        registry: HeimValidatorRegistry
+    ): String? {
         return when (rule.type) {
             ValidationType.REQUIRED -> {
                 if (value.trim().isEmpty()) rule.errorMessage else null
@@ -38,6 +66,10 @@ object HeimValidationEngine {
             }
             ValidationType.NUMERIC -> {
                 if (value.isNotEmpty() && value.toDoubleOrNull() == null) rule.errorMessage else null
+            }
+            ValidationType.CUSTOM -> {
+                val customName = rule.value ?: return null
+                if (!registry.isValid(customName, value, rule.value)) rule.errorMessage else null
             }
         }
     }

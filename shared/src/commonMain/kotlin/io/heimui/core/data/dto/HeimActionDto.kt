@@ -43,5 +43,28 @@ data class CustomActionDto(
 ) : HeimActionDto
 
 @Serializable
+@SerialName("show_bottom_sheet")
+data class ShowBottomSheetActionDto(
+    val title: String? = null,
+    @SerialName("is_dismissible") val isDismissible: Boolean = true,
+    val content: HeimComponentDto
+) : HeimActionDto
+
+@Serializable
+@SerialName("show_dialog")
+data class ShowDialogActionDto(
+    val title: String,
+    val message: String,
+    @SerialName("confirm_text") val confirmText: String = "OK",
+    @SerialName("confirm_actions") val confirmActions: List<HeimActionDto> = emptyList(),
+    @SerialName("dismiss_text") val dismissText: String? = null,
+    @SerialName("dismiss_actions") val dismissActions: List<HeimActionDto> = emptyList()
+) : HeimActionDto
+
+@Serializable
+@SerialName("dismiss_modal")
+data object DismissModalActionDto : HeimActionDto
+
+@Serializable
 @SerialName("dismiss")
 data object DismissActionDto : HeimActionDto

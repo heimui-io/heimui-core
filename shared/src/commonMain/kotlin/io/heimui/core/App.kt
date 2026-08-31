@@ -199,6 +199,85 @@ fun App() {
                             }
                         },
                         {
+                            "type": "image",
+                            "id": "hero_image",
+                            "url": "https://picsum.photos/600/300",
+                            "blur_hash": "LEHV6nWB2yk8pyo0adR*.7kCMdnj",
+                            "corner_radius": 12,
+                            "height": 140,
+                            "content_scale": "CROP"
+                        },
+                        {
+                            "type": "container",
+                            "id": "actions_row",
+                            "direction": "HORIZONTAL",
+                            "spacing": 8,
+                            "children": [
+                                {
+                                    "type": "button",
+                                    "id": "btn_sheet",
+                                    "title": "Open Sheet",
+                                    "variant": "OUTLINED",
+                                    "actions": [
+                                        {
+                                            "type": "show_bottom_sheet",
+                                            "title": "Quick Actions",
+                                            "content": {
+                                                "type": "container",
+                                                "id": "sheet_container",
+                                                "direction": "VERTICAL",
+                                                "spacing": 12,
+                                                "children": [
+                                                    {
+                                                        "type": "text",
+                                                        "id": "sheet_desc",
+                                                        "text": "This bottom sheet was rendered dynamically from Server-Driven UI!",
+                                                        "style": "bodyMedium"
+                                                    },
+                                                    {
+                                                        "type": "button",
+                                                        "id": "sheet_close_btn",
+                                                        "title": "Dismiss Sheet",
+                                                        "variant": "FILLED",
+                                                        "is_full_width": true,
+                                                        "actions": [
+                                                            {
+                                                                "type": "dismiss_modal"
+                                                            }
+                                                        ]
+                                                    }
+                                                ]
+                                            }
+                                        }
+                                    ]
+                                },
+                                {
+                                    "type": "button",
+                                    "id": "btn_dialog",
+                                    "title": "Show Dialog",
+                                    "variant": "OUTLINED",
+                                    "actions": [
+                                        {
+                                            "type": "show_dialog",
+                                            "title": "Delete Confirmation",
+                                            "message": "Are you sure you want to proceed with this operation?",
+                                            "confirm_text": "Confirm",
+                                            "confirm_actions": [
+                                                {
+                                                    "type": "show_snackbar",
+                                                    "message": "Action confirmed!"
+                                                },
+                                                {
+                                                    "type": "dismiss_modal"
+                                                }
+                                            ],
+                                            "dismiss_text": "Cancel"
+                                        }
+                                    ]
+                                }
+                            ]
+                        },
+                        {
                             "type": "spacer",
                             "id": "bottom_spacer",
                             "size": 8

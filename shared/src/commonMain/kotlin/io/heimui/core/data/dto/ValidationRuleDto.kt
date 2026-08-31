@@ -17,5 +17,6 @@ enum class ValidationTypeDto {
     @SerialName("MIN_LENGTH") MIN_LENGTH,
     @SerialName("MAX_LENGTH") MAX_LENGTH,
     @SerialName("EMAIL") EMAIL,
-    @SerialName("NUMERIC") NUMERIC
+    @SerialName("NUMERIC") NUMERIC,
+    @SerialName("CUSTOM") CUSTOM
 }

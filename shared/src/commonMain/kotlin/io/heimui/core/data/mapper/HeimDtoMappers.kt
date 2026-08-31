@@ -221,6 +221,20 @@ fun HeimActionDto.toDomain(): HeimAction {
         is ShowSnackbarActionDto -> ShowSnackbarAction(message = message, duration = duration)
         is OpenUrlActionDto -> OpenUrlAction(url = url)
         is CustomActionDto -> CustomAction(name = name, payload = payload?.toMapValue())
+        is ShowBottomSheetActionDto -> ShowBottomSheetAction(
+            title = title,
+            isDismissible = isDismissible,
+            content = content.toDomain()
+        )
+        is ShowDialogActionDto -> ShowDialogAction(
+            title = title,
+            message = message,
+            confirmText = confirmText,
+            confirmActions = confirmActions.map { it.toDomain() },
+            dismissText = dismissText,
+            dismissActions = dismissActions.map { it.toDomain() }
+        )
+        is DismissModalActionDto -> DismissModalAction
         is DismissActionDto -> DismissAction
     }
 }
@@ -249,6 +263,7 @@ fun ValidationRuleDto.toDomain() = ValidationRule(
         ValidationTypeDto.MAX_LENGTH -> ValidationType.MAX_LENGTH
         ValidationTypeDto.EMAIL -> ValidationType.EMAIL
         ValidationTypeDto.NUMERIC -> ValidationType.NUMERIC
+        ValidationTypeDto.CUSTOM -> ValidationType.CUSTOM
     },
     value = value,
     errorMessage = errorMessage

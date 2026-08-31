@@ -12,5 +12,6 @@ enum class ValidationType {
     MIN_LENGTH,
     MAX_LENGTH,
     EMAIL,
-    NUMERIC
+    NUMERIC,
+    CUSTOM
 }
