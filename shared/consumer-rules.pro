@@ -1,14 +1,14 @@
 # =====================================================================
-# Reglas Oficiales R8 / ProGuard / DexGuard para HeimUI Core
+# Official R8 / ProGuard / DexGuard Rules for HeimUI Core
 # =====================================================================
 
 -keepattributes *Annotation*, InnerClasses, Signature, Exceptions
 
-# 1. Proteger modelos @Serializable en la capa domain
--keep @kotlinx.serialization.Serializable class io.heimui.core.domain.model.** { *; }
+# 1. Protect @Serializable models in data.dto package
+-keep @kotlinx.serialization.Serializable class io.heimui.core.data.dto.** { *; }
 
-# 2. Preservar serializadores sintéticos generados en tiempo de compilación
--keepclassmembers class io.heimui.core.domain.model.** {
+# 2. Preserve synthetic compile-time generated serializers
+-keepclassmembers class io.heimui.core.data.dto.** {
     *** Companion;
     public static ** serializer();
     public static ** serializer(...);
@@ -17,14 +17,14 @@
     kotlinx.serialization.KSerializer serializer(...);
 }
 
-# 3. Proteger Enums y discriminadores polimórficos
--keepclassmembers enum io.heimui.core.domain.model.** {
+# 3. Protect Enums and polymorphic discriminators
+-keepclassmembers enum io.heimui.core.data.dto.** {
     public static **[] values();
     public static ** valueOf(java.lang.String);
     @kotlinx.serialization.SerialName <fields>;
 }
 
-# 4. Preservar constructores de componentes de UI
+# 4. Preserve UI component constructors
 -keepclassmembers class * extends io.heimui.core.domain.model.component.HeimComponent {
     <init>(...);
 }

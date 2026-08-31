@@ -3,7 +3,6 @@ package io.heimui.core.presentation.state
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.serialization.json.*
 
 interface HeimStateStorage {
     fun save(screenId: String, state: Map<String, String>)
@@ -37,16 +36,15 @@ class HeimStateManager(
 
     fun getValue(key: String): String = _formState.value[key] ?: ""
 
-    fun interpolatePayload(payload: JsonObject?): JsonObject? {
+    fun interpolatePayload(payload: Map<String, Any?>?): Map<String, Any?>? {
         if (payload == null) return null
-        val newMap = mutableMapOf<String, JsonElement>()
+        val newMap = mutableMapOf<String, Any?>()
 
         payload.forEach { (key, value) ->
-            if (value is JsonPrimitive && value.isString) {
-                val strVal = value.content
-                if (strVal.startsWith("{{state.") && strVal.endsWith("}}")) {
-                    val stateKey = strVal.removePrefix("{{state.").removeSuffix("}}")
-                    newMap[key] = JsonPrimitive(getValue(stateKey))
+            if (value is String) {
+                if (value.startsWith("{{state.") && value.endsWith("}}")) {
+                    val stateKey = value.removePrefix("{{state.").removeSuffix("}}")
+                    newMap[key] = getValue(stateKey)
                 } else {
                     newMap[key] = value
                 }
@@ -54,6 +52,6 @@ class HeimStateManager(
                 newMap[key] = value
             }
         }
-        return JsonObject(newMap)
+        return newMap
     }
 }

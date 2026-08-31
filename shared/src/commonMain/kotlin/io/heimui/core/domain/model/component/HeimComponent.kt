@@ -3,68 +3,56 @@ package io.heimui.core.domain.model.component
 import io.heimui.core.domain.model.accessibility.HeimAccessibility
 import io.heimui.core.domain.model.action.HeimAction
 import io.heimui.core.domain.model.validation.ValidationRule
-import kotlinx.serialization.SerialName
-import kotlinx.serialization.Serializable
-import kotlinx.serialization.json.JsonObject
 
-@Serializable
 sealed interface HeimComponent {
     val id: String
     val visibleIf: String? get() = null
     val a11y: HeimAccessibility? get() = null
 }
 
-@Serializable
 enum class Direction {
-    @SerialName("VERTICAL") VERTICAL,
-    @SerialName("HORIZONTAL") HORIZONTAL
+    VERTICAL,
+    HORIZONTAL
 }
 
-@Serializable
 enum class Alignment {
-    @SerialName("START") START,
-    @SerialName("CENTER") CENTER,
-    @SerialName("END") END,
-    @SerialName("TOP") TOP,
-    @SerialName("BOTTOM") BOTTOM
+    START,
+    CENTER,
+    END,
+    TOP,
+    BOTTOM
 }
 
-@Serializable
 enum class TextAlign {
-    @SerialName("START") START,
-    @SerialName("CENTER") CENTER,
-    @SerialName("END") END,
-    @SerialName("JUSTIFY") JUSTIFY
+    START,
+    CENTER,
+    END,
+    JUSTIFY
 }
 
-@Serializable
 enum class ContentScale {
-    @SerialName("CROP") CROP,
-    @SerialName("FIT") FIT,
-    @SerialName("FILL_BOUNDS") FILL_BOUNDS,
-    @SerialName("INSIDE") INSIDE
+    CROP,
+    FIT,
+    FILL_BOUNDS,
+    INSIDE
 }
 
-@Serializable
 enum class ButtonVariant {
-    @SerialName("FILLED") FILLED,
-    @SerialName("OUTLINED") OUTLINED,
-    @SerialName("TEXT") TEXT,
-    @SerialName("TONAL") TONAL
+    FILLED,
+    OUTLINED,
+    TEXT,
+    TONAL
 }
 
-@Serializable
 enum class InputType {
-    @SerialName("TEXT") TEXT,
-    @SerialName("NUMBER") NUMBER,
-    @SerialName("EMAIL") EMAIL,
-    @SerialName("PASSWORD") PASSWORD,
-    @SerialName("PHONE") PHONE
+    TEXT,
+    NUMBER,
+    EMAIL,
+    PASSWORD,
+    PHONE
 }
 
 // 1. Container (Flexbox Column / Row)
-@Serializable
-@SerialName("container")
 data class ContainerComponent(
     override val id: String,
     override val visibleIf: String? = null,
@@ -77,9 +65,7 @@ data class ContainerComponent(
     val children: List<HeimComponent> = emptyList()
 ) : HeimComponent
 
-// 2. Box (Superposición / Z-Index)
-@Serializable
-@SerialName("box")
+// 2. Box (Z-Index / Overlay)
 data class BoxComponent(
     override val id: String,
     override val visibleIf: String? = null,
@@ -88,9 +74,7 @@ data class BoxComponent(
     val children: List<HeimComponent> = emptyList()
 ) : HeimComponent
 
-// 3. LazyColumn (Lista Vertical Paginada)
-@Serializable
-@SerialName("lazy_column")
+// 3. LazyColumn (Paginated Vertical List)
 data class LazyColumnComponent(
     override val id: String,
     override val visibleIf: String? = null,
@@ -101,9 +85,7 @@ data class LazyColumnComponent(
     val pagination: PaginationConfig? = null
 ) : HeimComponent
 
-// 4. LazyRow (Carrusel Horizontal Paginado)
-@Serializable
-@SerialName("lazy_row")
+// 4. LazyRow (Paginated Horizontal Carousel)
 data class LazyRowComponent(
     override val id: String,
     override val visibleIf: String? = null,
@@ -114,7 +96,6 @@ data class LazyRowComponent(
     val pagination: PaginationConfig? = null
 ) : HeimComponent
 
-@Serializable
 data class PaginationConfig(
     val nextCursor: String? = null,
     val hasMore: Boolean = false,
@@ -123,8 +104,6 @@ data class PaginationConfig(
 )
 
 // 5. Text
-@Serializable
-@SerialName("text")
 data class TextComponent(
     override val id: String,
     override val visibleIf: String? = null,
@@ -137,8 +116,6 @@ data class TextComponent(
 ) : HeimComponent
 
 // 6. Image (Coil 3 Async + BlurHash)
-@Serializable
-@SerialName("image")
 data class ImageComponent(
     override val id: String,
     override val visibleIf: String? = null,
@@ -152,8 +129,6 @@ data class ImageComponent(
 ) : HeimComponent
 
 // 7. Card
-@Serializable
-@SerialName("card")
 data class CardComponent(
     override val id: String,
     override val visibleIf: String? = null,
@@ -168,8 +143,6 @@ data class CardComponent(
 ) : HeimComponent
 
 // 8. Badge / Chip
-@Serializable
-@SerialName("badge")
 data class BadgeComponent(
     override val id: String,
     override val visibleIf: String? = null,
@@ -181,8 +154,6 @@ data class BadgeComponent(
 ) : HeimComponent
 
 // 9. Button
-@Serializable
-@SerialName("button")
 data class ButtonComponent(
     override val id: String,
     override val visibleIf: String? = null,
@@ -195,9 +166,7 @@ data class ButtonComponent(
     val actions: List<HeimAction> = emptyList()
 ) : HeimComponent
 
-// 10. TextField (Data Binding + Validaciones + A11y)
-@Serializable
-@SerialName("text_field")
+// 10. TextField (Data Binding + Validations + A11y)
 data class TextFieldComponent(
     override val id: String,
     override val visibleIf: String? = null,
@@ -212,8 +181,6 @@ data class TextFieldComponent(
 ) : HeimComponent
 
 // 11. Switch
-@Serializable
-@SerialName("switch")
 data class SwitchComponent(
     override val id: String,
     override val visibleIf: String? = null,
@@ -225,8 +192,6 @@ data class SwitchComponent(
 ) : HeimComponent
 
 // 12. Icon
-@Serializable
-@SerialName("icon")
 data class IconComponent(
     override val id: String,
     override val visibleIf: String? = null,
@@ -237,8 +202,6 @@ data class IconComponent(
 ) : HeimComponent
 
 // 13. Spacer
-@Serializable
-@SerialName("spacer")
 data class SpacerComponent(
     override val id: String,
     override val visibleIf: String? = null,
@@ -248,8 +211,6 @@ data class SpacerComponent(
 ) : HeimComponent
 
 // 14. Divider
-@Serializable
-@SerialName("divider")
 data class DividerComponent(
     override val id: String,
     override val visibleIf: String? = null,
@@ -258,19 +219,15 @@ data class DividerComponent(
     val color: String = "outlineVariant"
 ) : HeimComponent
 
-// 15. Custom & Unknown (Escape Hatch y Fallback)
-@Serializable
-@SerialName("custom")
+// 15. Custom & Unknown (Escape Hatch and Fallback)
 data class CustomComponent(
     override val id: String,
     override val visibleIf: String? = null,
     override val a11y: HeimAccessibility? = null,
     val name: String,
-    val data: JsonObject
+    val data: Map<String, Any?> = emptyMap()
 ) : HeimComponent
 
-@Serializable
-@SerialName("unknown")
 data class UnknownComponent(
     override val id: String,
     override val visibleIf: String? = null,
