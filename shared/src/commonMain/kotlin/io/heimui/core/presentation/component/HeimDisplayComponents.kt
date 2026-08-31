@@ -180,31 +180,11 @@ fun HeimIconRenderer(
         colorScheme.onSurface
     )
 
-    Box(
-        modifier = modifier
-            .size(component.size.dp)
-            .heimAccessibility(component.a11y),
-        contentAlignment = Alignment.Center
-    ) {
-        val iconEmoji = when (component.name.lowercase()) {
-            "star", "favorite" -> "⭐"
-            "heart" -> "❤️"
-            "check" -> "✓"
-            "close" -> "✕"
-            "info" -> "ℹ️"
-            "chevron_right", "arrow_forward" -> "›"
-            "chevron_left", "arrow_back" -> "‹"
-            "search" -> "🔍"
-            "settings" -> "⚙️"
-            "user", "person", "account" -> "👤"
-            "shopping_cart", "cart" -> "🛒"
-            "notifications", "bell" -> "🔔"
-            else -> "●"
-        }
-        Text(
-            text = iconEmoji,
-            color = tint,
-            fontSize = (component.size * 0.75).sp
-        )
-    }
+    val iconProvider = io.heimui.core.presentation.designsystem.LocalHeimIconProvider.current
+    iconProvider.RenderIcon(
+        name = component.name,
+        tint = tint,
+        size = component.size.dp,
+        modifier = modifier.heimAccessibility(component.a11y)
+    )
 }
