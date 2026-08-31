@@ -9,9 +9,15 @@ import io.heimui.core.data.mapper.toDomain
 import io.heimui.core.domain.model.action.NavigateAction
 import io.heimui.core.domain.model.action.ShowSnackbarAction
 import io.heimui.core.domain.model.action.SubmitFormAction
-import io.heimui.core.presentation.HeimScreenRenderer
+import io.heimui.core.domain.repository.HeimScreenRepository
+import io.heimui.core.domain.repository.HeimScreenResult
+import io.heimui.core.domain.repository.HeimSubmitResult
+import io.heimui.core.presentation.HeimScreen
 import io.heimui.core.presentation.designsystem.HeimTheme
 import io.heimui.core.presentation.state.HeimStateManager
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
 import kotlinx.serialization.json.Json
 
@@ -22,8 +28,8 @@ fun App() {
         val scope = rememberCoroutineScope()
         val stateManager = remember { HeimStateManager(screenId = "demo_onboarding") }
 
-        // Raw Server-Driven UI JSON payload received from remote backend / cache
-        val demoScreen = remember {
+        // Setup Repository simulating remote delivery and caching
+        val repository = remember {
             val rawJson = """
             {
                 "id": "onboarding_showcase",
@@ -81,7 +87,7 @@ fun App() {
                         {
                             "type": "text",
                             "id": "subtitle",
-                            "text": "Server-Driven UI running natively on Kotlin Multiplatform & Compose.",
+                            "text": "Server-Driven UI running natively on Kotlin Multiplatform & Compose with Ktor & SWR Cache.",
                             "style": "bodyMedium",
                             "color": "onSurfaceVariant"
                         },
@@ -216,17 +222,35 @@ fun App() {
             """.trimIndent()
 
             val json = Json { ignoreUnknownKeys = true; isLenient = true }
-            // 1. Data Layer DTO Parsing
-            val dto = json.decodeFromString<HeimScreenResponseDto>(rawJson)
-            // 2. Map to Pure Domain Layer Entity
-            dto.toDomain()
+            val screenDto = json.decodeFromString<HeimScreenResponseDto>(rawJson)
+            val domainScreen = screenDto.toDomain()
+
+            object : HeimScreenRepository {
+                override fun getScreen(
+                    screenId: String,
+                    queryParams: Map<String, String>
+                ): Flow<HeimScreenResult> = flow {
+                    // Simulate fast local / remote delivery
+                    delay(300)
+                    emit(HeimScreenResult.Success(screen = domainScreen, isStale = false))
+                }
+
+                override suspend fun submitForm(
+                    endpoint: String,
+                    method: String,
+                    payload: Map<String, Any?>?
+                ): HeimSubmitResult {
+                    return HeimSubmitResult.Success(message = "Submitted to $endpoint")
+                }
+            }
         }
 
         Scaffold(
             snackbarHost = { SnackbarHost(snackbarHostState) }
         ) { paddingValues ->
-            HeimScreenRenderer(
-                response = demoScreen,
+            HeimScreen(
+                screenId = "onboarding_showcase",
+                repository = repository,
                 stateManager = stateManager,
                 onAction = { action ->
                     when (action) {
