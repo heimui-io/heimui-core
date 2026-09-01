@@ -32,7 +32,7 @@ class MockHeimScreenRepositoryTest {
 
         val result = repository.getScreen("home", emptyMap()).first()
         assertTrue(result is HeimScreenResult.Success)
-        assertEquals("mock_home", (result as HeimScreenResult.Success).screen.id)
+        assertEquals("mock_home", result.screen.id)
         assertEquals("Mock Home", result.screen.title)
 
         val missingResult = repository.getScreen("missing", emptyMap()).first()
