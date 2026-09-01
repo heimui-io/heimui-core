@@ -65,6 +65,32 @@ becomes unlimited, duplicate sibling ids are disambiguated. The client reports e
 `PayloadViolation` telemetry event, which is how you find out your backend is emitting invalid
 SDUI before users do.
 
+**Padding takes a number or an object.** Both are valid; the number form is the shorthand for all
+four sides.
+
+```json
+"padding": 16
+"padding": { "horizontal": 16, "vertical": 24 }
+"padding": { "start": 48, "top": 32, "end": 8, "bottom": 0 }
+```
+
+Sides are `start`/`end`, not left/right, so one payload lays out correctly in Arabic and Hebrew
+without the server knowing the reader's locale. `all`, `horizontal` and `vertical` are shorthands,
+and an explicit side always overrides the shorthand that would otherwise set it — JSON guarantees
+no key order, so `{ "horizontal": 16, "start": 0 }` reads the same either way round.
+
+**Padding means one of two things, depending on the component.** On `container`, `card` and `box`
+it is layout padding, applied inside the scroll viewport — it scrolls away with the content. On
+`lazy_row` and `lazy_column` it is content padding, which stays put while items scroll edge to
+edge. For a chip strip or a carousel that must keep a fixed inset at both ends, `lazy_row` is the
+component you want.
+
+**Name icons, don't draw them.** A `button` takes an optional `icon`, and there is a standalone
+`icon` component. Both name a glyph that the app's `HeimIconProvider` resolves, so the same payload
+renders Material symbols in one app and brand assets in another. Prefer this to an emoji in a
+label: an emoji is announced by screen readers, renders differently on every OS version, and
+cannot take the button's content colour.
+
 **`visible_if` is presentation, not authorization.** The payload already reached the device.
 Never use it to hide data the user must not see.
 
