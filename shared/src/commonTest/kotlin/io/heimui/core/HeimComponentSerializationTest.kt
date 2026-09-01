@@ -7,6 +7,7 @@ import io.heimui.core.data.dto.HeimScreenResponseDto
 import io.heimui.core.data.serialization.HeimJson
 import io.heimui.core.data.mapper.toDomain
 import io.heimui.core.domain.model.accessibility.AccessibilityRole
+import io.heimui.core.domain.model.component.HeimArrangement
 import io.heimui.core.domain.model.component.HeimPadding
 import io.heimui.core.domain.model.component.*
 import kotlinx.serialization.json.Json
@@ -205,6 +206,61 @@ class HeimComponentSerializationTest {
             HeimPadding.None,
             paddingOf("""{"type":"container","id":"c","padding":"nonsense"}""")
         )
+    }
+
+
+    @Test
+    fun `arrangement distributes along the container's own axis`() {
+        fun containerOf(json: String) =
+            (HeimJson.instance.decodeFromString(HeimComponentDto.serializer(), json)
+                as ContainerComponentDto).toDomain() as ContainerComponent
+
+        // Absent means the previous behaviour, so no existing payload shifts.
+        assertEquals(
+            HeimArrangement.PACKED,
+            containerOf("""{"type":"container","id":"c"}""").arrangement
+        )
+
+        val row = containerOf(
+            """{"type":"container","id":"c","direction":"HORIZONTAL",
+                "arrangement":"SPACE_BETWEEN","alignment":"CENTER","spacing":8}"""
+        )
+        // The two are independent axes: arrangement spreads along the row, alignment centres
+        // the children across its height. Conflating them is the usual confusion.
+        assertEquals(HeimArrangement.SPACE_BETWEEN, row.arrangement)
+        assertEquals(Alignment.CENTER, row.alignment)
+        assertEquals(8, row.spacing)
+
+        // An unknown value must not fail the screen: a newer server naming an arrangement this
+        // client has never heard of should still render, packed.
+        assertEquals(
+            HeimArrangement.PACKED,
+            containerOf("""{"type":"container","id":"c","arrangement":"DIAGONAL"}""").arrangement
+        )
+    }
+
+    @Test
+    fun `weight is carried by any child and ignored when meaningless`() {
+        val row = HeimJson.decodeScreen(
+            """{"id":"s","root":{"type":"container","id":"r","direction":"HORIZONTAL","children":[
+                 {"type":"card","id":"a","weight":2},
+                 {"type":"card","id":"b","weight":1},
+                 {"type":"card","id":"c"}]}}"""
+        ).toDomain().root as ContainerComponent
+
+        assertEquals(2f, row.children[0].weight)
+        assertEquals(1f, row.children[1].weight)
+        // Absent means "size yourself", not "weight 0" — a 0 would collapse the child to nothing.
+        assertNull(row.children[2].weight)
+
+        // A non-positive weight is not a layout instruction, it is a bug upstream. Compose throws
+        // on it, so one bad number would cost the whole screen.
+        val bad = HeimJson.decodeScreen(
+            """{"id":"s","root":{"type":"container","id":"r","children":[
+                 {"type":"card","id":"a","weight":0},{"type":"card","id":"b","weight":-3}]}}"""
+        ).toDomain().root as ContainerComponent
+        assertNull(bad.children[0].weight)
+        assertNull(bad.children[1].weight)
     }
 
 }

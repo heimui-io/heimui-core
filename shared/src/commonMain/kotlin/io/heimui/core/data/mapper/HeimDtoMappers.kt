@@ -2,6 +2,7 @@ package io.heimui.core.data.mapper
 
 import io.heimui.core.data.dto.AccessibilityRoleDto
 import io.heimui.core.data.dto.AlignmentDto
+import io.heimui.core.data.dto.ArrangementDto
 import io.heimui.core.data.dto.BadgeComponentDto
 import io.heimui.core.data.dto.BoxComponentDto
 import io.heimui.core.data.dto.ButtonComponentDto
@@ -56,6 +57,7 @@ import io.heimui.core.domain.model.action.ShowSnackbarAction
 import io.heimui.core.domain.model.action.SubmitFormAction
 import io.heimui.core.domain.model.action.UnknownAction
 import io.heimui.core.domain.model.component.Alignment
+import io.heimui.core.domain.model.component.HeimArrangement
 import io.heimui.core.domain.model.component.BadgeComponent
 import io.heimui.core.domain.model.component.BoxComponent
 import io.heimui.core.domain.model.component.ButtonComponent
@@ -120,6 +122,9 @@ internal fun HeimComponentDto.toDomain(
             id = id,
             visibleIf = visibleIf,
             a11y = a11y?.toDomain(),
+            // A weight of 0 or less is not a layout instruction; Compose throws on it, so one bad
+            // number would cost the whole screen rather than one component.
+            weight = weight?.takeIf { it > 0f },
             originalType = "depth_limit_exceeded"
         )
     }
@@ -129,6 +134,9 @@ internal fun HeimComponentDto.toDomain(
             id = id,
             visibleIf = visibleIf,
             a11y = a11y?.toDomain(),
+            // A weight of 0 or less is not a layout instruction; Compose throws on it, so one bad
+            // number would cost the whole screen rather than one component.
+            weight = weight?.takeIf { it > 0f },
             direction = when (direction) {
                 DirectionDto.VERTICAL -> Direction.VERTICAL
                 DirectionDto.HORIZONTAL -> Direction.HORIZONTAL
@@ -140,6 +148,14 @@ internal fun HeimComponentDto.toDomain(
                 AlignmentDto.TOP -> Alignment.TOP
                 AlignmentDto.BOTTOM -> Alignment.BOTTOM
             },
+            arrangement = when (arrangement) {
+                ArrangementDto.PACKED -> HeimArrangement.PACKED
+                ArrangementDto.CENTER -> HeimArrangement.CENTER
+                ArrangementDto.END -> HeimArrangement.END
+                ArrangementDto.SPACE_BETWEEN -> HeimArrangement.SPACE_BETWEEN
+                ArrangementDto.SPACE_AROUND -> HeimArrangement.SPACE_AROUND
+                ArrangementDto.SPACE_EVENLY -> HeimArrangement.SPACE_EVENLY
+            },
             padding = padding.clampedToZero(),
             spacing = maxOf(0, spacing),
             backgroundColor = backgroundColor,
@@ -150,6 +166,9 @@ internal fun HeimComponentDto.toDomain(
             id = id,
             visibleIf = visibleIf,
             a11y = a11y?.toDomain(),
+            // A weight of 0 or less is not a layout instruction; Compose throws on it, so one bad
+            // number would cost the whole screen rather than one component.
+            weight = weight?.takeIf { it > 0f },
             contentAlignment = when (contentAlignment) {
                 AlignmentDto.START -> Alignment.START
                 AlignmentDto.CENTER -> Alignment.CENTER
@@ -157,14 +176,34 @@ internal fun HeimComponentDto.toDomain(
                 AlignmentDto.TOP -> Alignment.TOP
                 AlignmentDto.BOTTOM -> Alignment.BOTTOM
             },
+            padding = padding.clampedToZero(),
+            backgroundColor = backgroundColor,
             children = children.mapDeduplicated(depth = depth + 1, report = report)
         )
         is LazyColumnComponentDto -> LazyColumnComponent(
             id = id,
             visibleIf = visibleIf,
             a11y = a11y?.toDomain(),
+            // A weight of 0 or less is not a layout instruction; Compose throws on it, so one bad
+            // number would cost the whole screen rather than one component.
+            weight = weight?.takeIf { it > 0f },
             spacing = maxOf(0, spacing),
             padding = padding.clampedToZero(),
+            alignment = when (alignment) {
+                AlignmentDto.START -> Alignment.START
+                AlignmentDto.CENTER -> Alignment.CENTER
+                AlignmentDto.END -> Alignment.END
+                AlignmentDto.TOP -> Alignment.TOP
+                AlignmentDto.BOTTOM -> Alignment.BOTTOM
+            },
+            arrangement = when (arrangement) {
+                ArrangementDto.PACKED -> HeimArrangement.PACKED
+                ArrangementDto.CENTER -> HeimArrangement.CENTER
+                ArrangementDto.END -> HeimArrangement.END
+                ArrangementDto.SPACE_BETWEEN -> HeimArrangement.SPACE_BETWEEN
+                ArrangementDto.SPACE_AROUND -> HeimArrangement.SPACE_AROUND
+                ArrangementDto.SPACE_EVENLY -> HeimArrangement.SPACE_EVENLY
+            },
             items = items.mapDeduplicated(depth = depth + 1, report = report),
             pagination = pagination?.toDomain()
         )
@@ -172,8 +211,26 @@ internal fun HeimComponentDto.toDomain(
             id = id,
             visibleIf = visibleIf,
             a11y = a11y?.toDomain(),
+            // A weight of 0 or less is not a layout instruction; Compose throws on it, so one bad
+            // number would cost the whole screen rather than one component.
+            weight = weight?.takeIf { it > 0f },
             spacing = maxOf(0, spacing),
             padding = padding.clampedToZero(),
+            alignment = when (alignment) {
+                AlignmentDto.START -> Alignment.START
+                AlignmentDto.CENTER -> Alignment.CENTER
+                AlignmentDto.END -> Alignment.END
+                AlignmentDto.TOP -> Alignment.TOP
+                AlignmentDto.BOTTOM -> Alignment.BOTTOM
+            },
+            arrangement = when (arrangement) {
+                ArrangementDto.PACKED -> HeimArrangement.PACKED
+                ArrangementDto.CENTER -> HeimArrangement.CENTER
+                ArrangementDto.END -> HeimArrangement.END
+                ArrangementDto.SPACE_BETWEEN -> HeimArrangement.SPACE_BETWEEN
+                ArrangementDto.SPACE_AROUND -> HeimArrangement.SPACE_AROUND
+                ArrangementDto.SPACE_EVENLY -> HeimArrangement.SPACE_EVENLY
+            },
             items = items.mapDeduplicated(depth = depth + 1, report = report),
             pagination = pagination?.toDomain()
         )
@@ -181,6 +238,9 @@ internal fun HeimComponentDto.toDomain(
             id = id,
             visibleIf = visibleIf,
             a11y = a11y?.toDomain(),
+            // A weight of 0 or less is not a layout instruction; Compose throws on it, so one bad
+            // number would cost the whole screen rather than one component.
+            weight = weight?.takeIf { it > 0f },
             text = text,
             style = style,
             color = color,
@@ -196,6 +256,9 @@ internal fun HeimComponentDto.toDomain(
             id = id,
             visibleIf = visibleIf,
             a11y = a11y?.toDomain(),
+            // A weight of 0 or less is not a layout instruction; Compose throws on it, so one bad
+            // number would cost the whole screen rather than one component.
+            weight = weight?.takeIf { it > 0f },
             url = url,
             blurHash = blurHash,
             aspectRatio = if (aspectRatio != null && aspectRatio > 0f) aspectRatio else null,
@@ -212,6 +275,9 @@ internal fun HeimComponentDto.toDomain(
             id = id,
             visibleIf = visibleIf,
             a11y = a11y?.toDomain(),
+            // A weight of 0 or less is not a layout instruction; Compose throws on it, so one bad
+            // number would cost the whole screen rather than one component.
+            weight = weight?.takeIf { it > 0f },
             elevation = maxOf(0, elevation),
             cornerRadius = maxOf(0, cornerRadius),
             backgroundColor = backgroundColor,
@@ -224,6 +290,9 @@ internal fun HeimComponentDto.toDomain(
             id = id,
             visibleIf = visibleIf,
             a11y = a11y?.toDomain(),
+            // A weight of 0 or less is not a layout instruction; Compose throws on it, so one bad
+            // number would cost the whole screen rather than one component.
+            weight = weight?.takeIf { it > 0f },
             text = text,
             backgroundColor = backgroundColor,
             textColor = textColor,
@@ -233,6 +302,9 @@ internal fun HeimComponentDto.toDomain(
             id = id,
             visibleIf = visibleIf,
             a11y = a11y?.toDomain(),
+            // A weight of 0 or less is not a layout instruction; Compose throws on it, so one bad
+            // number would cost the whole screen rather than one component.
+            weight = weight?.takeIf { it > 0f },
             title = title,
             variant = when (variant) {
                 ButtonVariantDto.FILLED -> ButtonVariant.FILLED
@@ -250,6 +322,9 @@ internal fun HeimComponentDto.toDomain(
             id = id,
             visibleIf = visibleIf,
             a11y = a11y?.toDomain(),
+            // A weight of 0 or less is not a layout instruction; Compose throws on it, so one bad
+            // number would cost the whole screen rather than one component.
+            weight = weight?.takeIf { it > 0f },
             stateKey = stateKey,
             label = label,
             placeholder = placeholder,
@@ -268,6 +343,9 @@ internal fun HeimComponentDto.toDomain(
             id = id,
             visibleIf = visibleIf,
             a11y = a11y?.toDomain(),
+            // A weight of 0 or less is not a layout instruction; Compose throws on it, so one bad
+            // number would cost the whole screen rather than one component.
+            weight = weight?.takeIf { it > 0f },
             stateKey = stateKey,
             label = label,
             initialChecked = initialChecked,
@@ -277,6 +355,9 @@ internal fun HeimComponentDto.toDomain(
             id = id,
             visibleIf = visibleIf,
             a11y = a11y?.toDomain(),
+            // A weight of 0 or less is not a layout instruction; Compose throws on it, so one bad
+            // number would cost the whole screen rather than one component.
+            weight = weight?.takeIf { it > 0f },
             name = name,
             tint = tint,
             size = maxOf(1, size)
@@ -285,6 +366,9 @@ internal fun HeimComponentDto.toDomain(
             id = id,
             visibleIf = visibleIf,
             a11y = a11y?.toDomain(),
+            // A weight of 0 or less is not a layout instruction; Compose throws on it, so one bad
+            // number would cost the whole screen rather than one component.
+            weight = weight?.takeIf { it > 0f },
             size = maxOf(0, size),
             isFlexible = isFlexible
         )
@@ -292,6 +376,9 @@ internal fun HeimComponentDto.toDomain(
             id = id,
             visibleIf = visibleIf,
             a11y = a11y?.toDomain(),
+            // A weight of 0 or less is not a layout instruction; Compose throws on it, so one bad
+            // number would cost the whole screen rather than one component.
+            weight = weight?.takeIf { it > 0f },
             thickness = maxOf(1, thickness),
             color = color
         )
@@ -299,6 +386,9 @@ internal fun HeimComponentDto.toDomain(
             id = id,
             visibleIf = visibleIf,
             a11y = a11y?.toDomain(),
+            // A weight of 0 or less is not a layout instruction; Compose throws on it, so one bad
+            // number would cost the whole screen rather than one component.
+            weight = weight?.takeIf { it > 0f },
             name = name,
             data = data?.toMapHeimValue() ?: emptyMap()
         )
@@ -306,6 +396,9 @@ internal fun HeimComponentDto.toDomain(
             id = id,
             visibleIf = visibleIf,
             a11y = a11y?.toDomain(),
+            // A weight of 0 or less is not a layout instruction; Compose throws on it, so one bad
+            // number would cost the whole screen rather than one component.
+            weight = weight?.takeIf { it > 0f },
             originalType = originalType
         )
     }

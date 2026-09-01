@@ -20,6 +20,7 @@ import io.heimui.core.domain.model.component.LazyRowComponent
 import io.heimui.core.presentation.HeimRenderer
 import io.heimui.core.presentation.accessibility.heimAccessibility
 import io.heimui.core.presentation.state.HeimStateManager
+import io.heimui.core.presentation.designsystem.HeimTokenResolver
 import io.heimui.core.presentation.component.LocalInsideVerticalScroller
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.mutableStateOf
@@ -63,7 +64,8 @@ internal fun HeimLazyColumnRenderer(
             .fillMaxWidth()
             .heimAccessibility(component.a11y, componentId = component.id),
         contentPadding = component.padding.toPaddingValues(),
-        verticalArrangement = Arrangement.spacedBy(component.spacing.dp)
+        verticalArrangement = heimVerticalArrangement(component.arrangement, component.spacing),
+        horizontalAlignment = HeimTokenResolver.resolveHorizontalAlignment(component.alignment)
     ) {
         itemsIndexed(
             items = component.items,
@@ -117,7 +119,8 @@ internal fun HeimLazyRowRenderer(
             .fillMaxWidth()
             .heimAccessibility(component.a11y, componentId = component.id),
         contentPadding = component.padding.toPaddingValues(),
-        horizontalArrangement = Arrangement.spacedBy(component.spacing.dp)
+        horizontalArrangement = heimHorizontalArrangement(component.arrangement, component.spacing),
+        verticalAlignment = HeimTokenResolver.resolveVerticalAlignment(component.alignment)
     ) {
         itemsIndexed(
             items = component.items,

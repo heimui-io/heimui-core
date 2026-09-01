@@ -26,12 +26,33 @@ public sealed interface HeimComponentDto {
     public val id: String
     public val visibleIf: String? get() = null
     public val a11y: HeimAccessibilityDto? get() = null
+
+    /**
+     * Share of the parent's main axis this component claims, when the parent is a `container`.
+     *
+     * Two cards with `weight: 1` split a row in half; one with `2` and one with `1` split it two
+     * thirds to one third. Ignored outside a container, because there is no axis to divide.
+     *
+     * Declared here rather than per component so the parent can apply it uniformly — a size is a
+     * relationship between a child and its parent, not a property of the child alone.
+     */
+    public val weight: Float? get() = null
 }
 
 @Serializable
 public enum class DirectionDto {
     @SerialName("VERTICAL") VERTICAL,
     @SerialName("HORIZONTAL") HORIZONTAL
+}
+
+@Serializable
+public enum class ArrangementDto {
+    @SerialName("PACKED") PACKED,
+    @SerialName("CENTER") CENTER,
+    @SerialName("END") END,
+    @SerialName("SPACE_BETWEEN") SPACE_BETWEEN,
+    @SerialName("SPACE_AROUND") SPACE_AROUND,
+    @SerialName("SPACE_EVENLY") SPACE_EVENLY
 }
 
 @Serializable
@@ -84,10 +105,12 @@ public data class ContainerComponentDto(
     override val a11y: HeimAccessibilityDto? = null,
     val direction: DirectionDto = DirectionDto.VERTICAL,
     val alignment: AlignmentDto = AlignmentDto.START,
+    val arrangement: ArrangementDto = ArrangementDto.PACKED,
     val padding: PaddingSpec = HeimPadding.None,
     @Serializable(with = LenientIntSerializer::class) val spacing: Int = 0,
     @SerialName("background_color") val backgroundColor: String? = null,
     @Serializable(with = LenientBooleanSerializer::class) val scrollable: Boolean = true,
+    override val weight: Float? = null,
     val children: List<HeimComponentDto> = emptyList()
 ) : HeimComponentDto
 
@@ -98,6 +121,9 @@ public data class BoxComponentDto(
     @SerialName("visible_if") override val visibleIf: String? = null,
     override val a11y: HeimAccessibilityDto? = null,
     @SerialName("content_alignment") val contentAlignment: AlignmentDto = AlignmentDto.CENTER,
+    val padding: PaddingSpec = HeimPadding.None,
+    @SerialName("background_color") val backgroundColor: String? = null,
+    override val weight: Float? = null,
     val children: List<HeimComponentDto> = emptyList()
 ) : HeimComponentDto
 
@@ -107,8 +133,11 @@ public data class LazyColumnComponentDto(
     override val id: String = "",
     @SerialName("visible_if") override val visibleIf: String? = null,
     override val a11y: HeimAccessibilityDto? = null,
+    override val weight: Float? = null,
     @Serializable(with = LenientIntSerializer::class) val spacing: Int = 8,
     val padding: PaddingSpec = HeimPadding.None,
+    val alignment: AlignmentDto = AlignmentDto.START,
+    val arrangement: ArrangementDto = ArrangementDto.PACKED,
     val items: List<HeimComponentDto> = emptyList(),
     val pagination: PaginationConfigDto? = null
 ) : HeimComponentDto
@@ -119,8 +148,11 @@ public data class LazyRowComponentDto(
     override val id: String = "",
     @SerialName("visible_if") override val visibleIf: String? = null,
     override val a11y: HeimAccessibilityDto? = null,
+    override val weight: Float? = null,
     @Serializable(with = LenientIntSerializer::class) val spacing: Int = 8,
     val padding: PaddingSpec = HeimPadding.None,
+    val alignment: AlignmentDto = AlignmentDto.START,
+    val arrangement: ArrangementDto = ArrangementDto.PACKED,
     val items: List<HeimComponentDto> = emptyList(),
     val pagination: PaginationConfigDto? = null
 ) : HeimComponentDto
@@ -139,6 +171,7 @@ public data class TextComponentDto(
     override val id: String = "",
     @SerialName("visible_if") override val visibleIf: String? = null,
     override val a11y: HeimAccessibilityDto? = null,
+    override val weight: Float? = null,
     val text: String = "",
     val style: String = "bodyMedium",
     val color: String? = null,
@@ -152,6 +185,7 @@ public data class ImageComponentDto(
     override val id: String = "",
     @SerialName("visible_if") override val visibleIf: String? = null,
     override val a11y: HeimAccessibilityDto? = null,
+    override val weight: Float? = null,
     val url: String = "",
     @SerialName("blur_hash") val blurHash: String? = null,
     @SerialName("aspect_ratio") @Serializable(with = LenientNullableFloatSerializer::class) val aspectRatio: Float? = null,
@@ -172,6 +206,7 @@ public data class CardComponentDto(
     @SerialName("border_color") val borderColor: String? = null,
     val padding: PaddingSpec = HeimPadding.all(12),
     val actions: List<HeimActionDto> = emptyList(),
+    override val weight: Float? = null,
     val child: HeimComponentDto = UnknownComponentDto(id = "missing_child")
 ) : HeimComponentDto
 
@@ -181,6 +216,7 @@ public data class BadgeComponentDto(
     override val id: String = "",
     @SerialName("visible_if") override val visibleIf: String? = null,
     override val a11y: HeimAccessibilityDto? = null,
+    override val weight: Float? = null,
     val text: String = "",
     @SerialName("background_color") val backgroundColor: String = "primaryContainer",
     @SerialName("text_color") val textColor: String = "onPrimaryContainer",
@@ -193,6 +229,7 @@ public data class ButtonComponentDto(
     override val id: String = "",
     @SerialName("visible_if") override val visibleIf: String? = null,
     override val a11y: HeimAccessibilityDto? = null,
+    override val weight: Float? = null,
     val title: String = "",
     val variant: ButtonVariantDto = ButtonVariantDto.FILLED,
     @SerialName("is_full_width") @Serializable(with = LenientBooleanSerializer::class) val isFullWidth: Boolean = false,
@@ -208,6 +245,7 @@ public data class TextFieldComponentDto(
     override val id: String = "",
     @SerialName("visible_if") override val visibleIf: String? = null,
     override val a11y: HeimAccessibilityDto? = null,
+    override val weight: Float? = null,
     @SerialName("state_key") val stateKey: String = "",
     val label: String? = null,
     val placeholder: String? = null,
@@ -223,6 +261,7 @@ public data class SwitchComponentDto(
     override val id: String = "",
     @SerialName("visible_if") override val visibleIf: String? = null,
     override val a11y: HeimAccessibilityDto? = null,
+    override val weight: Float? = null,
     @SerialName("state_key") val stateKey: String = "",
     val label: String = "",
     @SerialName("initial_checked") @Serializable(with = LenientBooleanSerializer::class) val initialChecked: Boolean = false,
@@ -235,6 +274,7 @@ public data class IconComponentDto(
     override val id: String = "",
     @SerialName("visible_if") override val visibleIf: String? = null,
     override val a11y: HeimAccessibilityDto? = null,
+    override val weight: Float? = null,
     val name: String = "",
     val tint: String? = null,
     @Serializable(with = LenientIntSerializer::class) val size: Int = 24
@@ -246,6 +286,7 @@ public data class SpacerComponentDto(
     override val id: String = "",
     @SerialName("visible_if") override val visibleIf: String? = null,
     override val a11y: HeimAccessibilityDto? = null,
+    override val weight: Float? = null,
     @Serializable(with = LenientIntSerializer::class) val size: Int = 0,
     @SerialName("is_flexible") @Serializable(with = LenientBooleanSerializer::class) val isFlexible: Boolean = false
 ) : HeimComponentDto
@@ -256,6 +297,7 @@ public data class DividerComponentDto(
     override val id: String = "",
     @SerialName("visible_if") override val visibleIf: String? = null,
     override val a11y: HeimAccessibilityDto? = null,
+    override val weight: Float? = null,
     @Serializable(with = LenientIntSerializer::class) val thickness: Int = 1,
     val color: String = "outlineVariant"
 ) : HeimComponentDto
@@ -266,6 +308,7 @@ public data class CustomComponentDto(
     override val id: String = "",
     @SerialName("visible_if") override val visibleIf: String? = null,
     override val a11y: HeimAccessibilityDto? = null,
+    override val weight: Float? = null,
     val name: String = "",
     val data: JsonObject? = null
 ) : HeimComponentDto
@@ -276,5 +319,6 @@ public data class UnknownComponentDto(
     override val id: String = "unknown_component",
     @SerialName("visible_if") override val visibleIf: String? = null,
     override val a11y: HeimAccessibilityDto? = null,
+    override val weight: Float? = null,
     @SerialName("original_type") val originalType: String? = null
 ) : HeimComponentDto

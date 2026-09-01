@@ -2,6 +2,7 @@ package io.heimui.core.presentation.component
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.ui.Alignment
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -23,6 +24,7 @@ import androidx.compose.ui.unit.dp
 import io.heimui.core.domain.model.action.HeimAction
 import io.heimui.core.domain.model.component.BoxComponent
 import io.heimui.core.domain.model.component.ContainerComponent
+import io.heimui.core.domain.model.component.HeimArrangement
 import io.heimui.core.domain.model.component.Direction
 import io.heimui.core.domain.model.component.DividerComponent
 import io.heimui.core.domain.model.component.SpacerComponent
@@ -74,7 +76,7 @@ internal fun HeimContainerRenderer(
         Direction.VERTICAL -> {
             Column(
                 modifier = scrolledModifier,
-                verticalArrangement = Arrangement.spacedBy(component.spacing.dp),
+                verticalArrangement = component.verticalArrangement(),
                 horizontalAlignment = HeimTokenResolver.resolveHorizontalAlignment(component.alignment)
             ) {
                 component.children.forEach { child ->
@@ -84,7 +86,12 @@ internal fun HeimContainerRenderer(
                         HeimRenderer(
                             component = child,
                             stateManager = stateManager,
-                            onAction = onAction
+                            onAction = onAction,
+                            // Weight is only expressible from inside the scope, which is why the
+                            // parent applies it rather than the child asking for it.
+                            modifier = child.weight
+                                ?.let { Modifier.weight(it) }
+                                ?: Modifier
                         )
                     }
                 }
@@ -100,14 +107,19 @@ internal fun HeimContainerRenderer(
             // so the first child sits `start` dp in and scrolls away with everything else. A
             // chip strip that must keep its inset while scrolling edge to edge wants `lazy_row`,
             // whose padding becomes `contentPadding` and therefore stays outside the scroll.
-            val horizontalModifier = if (component.scrollable) {
+            // `scrollable` defaults to true, but a weighted child says the row divides a finite
+            // width — and the two cannot both hold, since a scrolling axis is unbounded. An
+            // explicit weight in the payload outranks a flag nobody set, so weight wins and the
+            // row does not scroll. Without this the default silently defeated every weight.
+            val hasWeightedChild = component.children.any { it.weight != null }
+            val horizontalModifier = if (component.scrollable && !hasWeightedChild) {
                 containerModifier.horizontalScroll(rememberScrollState())
             } else {
                 containerModifier
             }
             Row(
                 modifier = horizontalModifier,
-                horizontalArrangement = Arrangement.spacedBy(component.spacing.dp),
+                horizontalArrangement = component.horizontalArrangement(),
                 verticalAlignment = HeimTokenResolver.resolveVerticalAlignment(component.alignment)
             ) {
                 component.children.forEach { child ->
@@ -117,7 +129,14 @@ internal fun HeimContainerRenderer(
                         HeimRenderer(
                             component = child,
                             stateManager = stateManager,
-                            onAction = onAction
+                            onAction = onAction,
+                            // A scrolling row measures against infinite width, and `weight` divides
+                            // a finite one — asking for both throws. The scroll wins, because a
+                            // payload that scrolls and weights is contradictory and crashing the
+                            // screen over it helps nobody.
+                            modifier = child.weight
+                                ?.let { Modifier.weight(it) }
+                                ?: Modifier
                         )
                     }
                 }
@@ -137,9 +156,15 @@ internal fun HeimBoxRenderer(
     onAction: (HeimAction) -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val bgColor = heimColor(component.backgroundColor, Color.Transparent)
+
     Box(
         modifier = modifier
             .fillMaxWidth()
+            // Background before padding, so the colour fills the padded area rather than being
+            // inset by it — the same order the container uses.
+            .background(bgColor)
+            .heimPadding(component.padding)
             .heimAccessibility(component.a11y, componentId = component.id),
         contentAlignment = HeimTokenResolver.resolveBoxAlignment(component.contentAlignment)
     ) {
@@ -206,4 +231,41 @@ internal fun HeimDividerRenderer(
         thickness = component.thickness.dp,
         color = dividerColor
     )
+}
+
+/**
+ * Resolves a container's arrangement along its own axis.
+ *
+ * `spacedBy` is applied *with* the distributing arrangements, not instead of them: Compose treats
+ * `spacing` as a minimum in that case, so a payload that sets both gets at least its gap and the
+ * leftover space distributed on top. Dropping the spacing would silently ignore half the payload.
+ */
+private fun ContainerComponent.verticalArrangement(): Arrangement.Vertical =
+    heimVerticalArrangement(arrangement, spacing)
+
+private fun ContainerComponent.horizontalArrangement(): Arrangement.Horizontal =
+    heimHorizontalArrangement(arrangement, spacing)
+
+internal fun heimVerticalArrangement(arrangement: HeimArrangement, spacing: Int): Arrangement.Vertical {
+    val gap = spacing.dp
+    return when (arrangement) {
+        HeimArrangement.PACKED -> Arrangement.spacedBy(gap)
+        HeimArrangement.CENTER -> Arrangement.spacedBy(gap, Alignment.CenterVertically)
+        HeimArrangement.END -> Arrangement.spacedBy(gap, Alignment.Bottom)
+        HeimArrangement.SPACE_BETWEEN -> Arrangement.SpaceBetween
+        HeimArrangement.SPACE_AROUND -> Arrangement.SpaceAround
+        HeimArrangement.SPACE_EVENLY -> Arrangement.SpaceEvenly
+    }
+}
+
+internal fun heimHorizontalArrangement(arrangement: HeimArrangement, spacing: Int): Arrangement.Horizontal {
+    val gap = spacing.dp
+    return when (arrangement) {
+        HeimArrangement.PACKED -> Arrangement.spacedBy(gap)
+        HeimArrangement.CENTER -> Arrangement.spacedBy(gap, Alignment.CenterHorizontally)
+        HeimArrangement.END -> Arrangement.spacedBy(gap, Alignment.End)
+        HeimArrangement.SPACE_BETWEEN -> Arrangement.SpaceBetween
+        HeimArrangement.SPACE_AROUND -> Arrangement.SpaceAround
+        HeimArrangement.SPACE_EVENLY -> Arrangement.SpaceEvenly
+    }
 }

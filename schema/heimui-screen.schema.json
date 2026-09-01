@@ -401,7 +401,7 @@
           "type": "integer",
           "minimum": 0,
           "default": 0,
-          "description": "dp between children."
+          "description": "Gap between children in dp. With a SPACE_* arrangement this is the minimum gap, not the exact one."
         },
         "background_color": {
           "$ref": "#/$defs/color"
@@ -416,6 +416,24 @@
           "items": {
             "$ref": "#/$defs/component"
           }
+        },
+        "arrangement": {
+          "type": "string",
+          "enum": [
+            "PACKED",
+            "CENTER",
+            "END",
+            "SPACE_BETWEEN",
+            "SPACE_AROUND",
+            "SPACE_EVENLY"
+          ],
+          "default": "PACKED",
+          "description": "How children are distributed along the container's own axis. Distinct from `alignment`, which positions them across the other axis: in a VERTICAL container `alignment` decides left/centre/right and `arrangement` decides top/centre/spread. PACKED is the default and separates children by `spacing`. The distributing values (SPACE_*) treat `spacing` as a minimum gap rather than replacing it."
+        },
+        "weight": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "description": "Share of the parent container's main axis. Two children with weight 1 split a row in half; 2 and 1 split it two thirds to one third. Any component may carry it. Ignored unless the parent is a `container`, and ignored inside a scrolling container — a scrolling axis is unbounded, so there is nothing to divide."
         }
       }
     },
@@ -454,6 +472,19 @@
           "items": {
             "$ref": "#/$defs/component"
           }
+        },
+        "weight": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "description": "Share of the parent container's main axis. Two children with weight 1 split a row in half; 2 and 1 split it two thirds to one third. Any component may carry it. Ignored unless the parent is a `container`, and ignored inside a scrolling container — a scrolling axis is unbounded, so there is nothing to divide."
+        },
+        "padding": {
+          "$ref": "#/$defs/padding",
+          "default": 0
+        },
+        "background_color": {
+          "type": "string",
+          "description": "Design token or #RRGGBB hex. Absent is transparent."
         }
       }
     },
@@ -495,6 +526,36 @@
         },
         "pagination": {
           "$ref": "#/$defs/pagination"
+        },
+        "arrangement": {
+          "type": "string",
+          "enum": [
+            "PACKED",
+            "CENTER",
+            "END",
+            "SPACE_BETWEEN",
+            "SPACE_AROUND",
+            "SPACE_EVENLY"
+          ],
+          "default": "PACKED",
+          "description": "How children are distributed along the container's own axis. Distinct from `alignment`, which positions them across the other axis: in a VERTICAL container `alignment` decides left/centre/right and `arrangement` decides top/centre/spread. PACKED is the default and separates children by `spacing`. The distributing values (SPACE_*) treat `spacing` as a minimum gap rather than replacing it."
+        },
+        "alignment": {
+          "type": "string",
+          "enum": [
+            "START",
+            "CENTER",
+            "END",
+            "TOP",
+            "BOTTOM"
+          ],
+          "default": "START",
+          "description": "Cross-axis alignment of the items: horizontal in a lazy_column, vertical in a lazy_row."
+        },
+        "weight": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "description": "Share of the parent container's main axis. Two children with weight 1 split a row in half; 2 and 1 split it two thirds to one third. Any component may carry it. Ignored unless the parent is a `container`, and ignored inside a scrolling container — a scrolling axis is unbounded, so there is nothing to divide."
         }
       }
     },
@@ -536,6 +597,36 @@
         },
         "pagination": {
           "$ref": "#/$defs/pagination"
+        },
+        "arrangement": {
+          "type": "string",
+          "enum": [
+            "PACKED",
+            "CENTER",
+            "END",
+            "SPACE_BETWEEN",
+            "SPACE_AROUND",
+            "SPACE_EVENLY"
+          ],
+          "default": "PACKED",
+          "description": "How children are distributed along the container's own axis. Distinct from `alignment`, which positions them across the other axis: in a VERTICAL container `alignment` decides left/centre/right and `arrangement` decides top/centre/spread. PACKED is the default and separates children by `spacing`. The distributing values (SPACE_*) treat `spacing` as a minimum gap rather than replacing it."
+        },
+        "alignment": {
+          "type": "string",
+          "enum": [
+            "START",
+            "CENTER",
+            "END",
+            "TOP",
+            "BOTTOM"
+          ],
+          "default": "START",
+          "description": "Cross-axis alignment of the items: horizontal in a lazy_column, vertical in a lazy_row."
+        },
+        "weight": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "description": "Share of the parent container's main axis. Two children with weight 1 split a row in half; 2 and 1 split it two thirds to one third. Any component may carry it. Ignored unless the parent is a `container`, and ignored inside a scrolling container — a scrolling axis is unbounded, so there is nothing to divide."
         }
       }
     },
@@ -616,6 +707,11 @@
             "JUSTIFY"
           ],
           "default": "START"
+        },
+        "weight": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "description": "Share of the parent container's main axis. Two children with weight 1 split a row in half; 2 and 1 split it two thirds to one third. Any component may carry it. Ignored unless the parent is a `container`, and ignored inside a scrolling container — a scrolling axis is unbounded, so there is nothing to divide."
         }
       }
     },
@@ -679,6 +775,11 @@
             "INSIDE"
           ],
           "default": "CROP"
+        },
+        "weight": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "description": "Share of the parent container's main axis. Two children with weight 1 split a row in half; 2 and 1 split it two thirds to one third. Any component may carry it. Ignored unless the parent is a `container`, and ignored inside a scrolling container — a scrolling axis is unbounded, so there is nothing to divide."
         }
       }
     },
@@ -732,6 +833,11 @@
         },
         "child": {
           "$ref": "#/$defs/component"
+        },
+        "weight": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "description": "Share of the parent container's main axis. Two children with weight 1 split a row in half; 2 and 1 split it two thirds to one third. Any component may carry it. Ignored unless the parent is a `container`, and ignored inside a scrolling container — a scrolling axis is unbounded, so there is nothing to divide."
         }
       }
     },
@@ -772,6 +878,11 @@
             "string",
             "null"
           ]
+        },
+        "weight": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "description": "Share of the parent container's main axis. Two children with weight 1 split a row in half; 2 and 1 split it two thirds to one third. Any component may carry it. Ignored unless the parent is a `container`, and ignored inside a scrolling container — a scrolling axis is unbounded, so there is nothing to divide."
         }
       }
     },
@@ -830,6 +941,11 @@
           "items": {
             "$ref": "#/$defs/action"
           }
+        },
+        "weight": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "description": "Share of the parent container's main axis. Two children with weight 1 split a row in half; 2 and 1 split it two thirds to one third. Any component may carry it. Ignored unless the parent is a `container`, and ignored inside a scrolling container — a scrolling axis is unbounded, so there is nothing to divide."
         }
       }
     },
@@ -896,6 +1012,11 @@
             "null"
           ],
           "description": "Shown below the field while there is no validation error."
+        },
+        "weight": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "description": "Share of the parent container's main axis. Two children with weight 1 split a row in half; 2 and 1 split it two thirds to one third. Any component may carry it. Ignored unless the parent is a `container`, and ignored inside a scrolling container — a scrolling axis is unbounded, so there is nothing to divide."
         }
       }
     },
@@ -935,6 +1056,11 @@
           "items": {
             "$ref": "#/$defs/action"
           }
+        },
+        "weight": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "description": "Share of the parent container's main axis. Two children with weight 1 split a row in half; 2 and 1 split it two thirds to one third. Any component may carry it. Ignored unless the parent is a `container`, and ignored inside a scrolling container — a scrolling axis is unbounded, so there is nothing to divide."
         }
       }
     },
@@ -983,6 +1109,11 @@
           "type": "integer",
           "minimum": 1,
           "default": 24
+        },
+        "weight": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "description": "Share of the parent container's main axis. Two children with weight 1 split a row in half; 2 and 1 split it two thirds to one third. Any component may carry it. Ignored unless the parent is a `container`, and ignored inside a scrolling container — a scrolling axis is unbounded, so there is nothing to divide."
         }
       }
     },
@@ -1015,6 +1146,11 @@
           "type": "boolean",
           "default": false,
           "description": "Absorbs the remaining space along the parent's axis instead of using a fixed size."
+        },
+        "weight": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "description": "Share of the parent container's main axis. Two children with weight 1 split a row in half; 2 and 1 split it two thirds to one third. Any component may carry it. Ignored unless the parent is a `container`, and ignored inside a scrolling container — a scrolling axis is unbounded, so there is nothing to divide."
         }
       }
     },
@@ -1046,6 +1182,11 @@
         "color": {
           "$ref": "#/$defs/color",
           "default": "outlineVariant"
+        },
+        "weight": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "description": "Share of the parent container's main axis. Two children with weight 1 split a row in half; 2 and 1 split it two thirds to one third. Any component may carry it. Ignored unless the parent is a `container`, and ignored inside a scrolling container — a scrolling axis is unbounded, so there is nothing to divide."
         }
       }
     },
@@ -1079,6 +1220,11 @@
             "null"
           ],
           "description": "Arbitrary typed parameters passed to the native component."
+        },
+        "weight": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "description": "Share of the parent container's main axis. Two children with weight 1 split a row in half; 2 and 1 split it two thirds to one third. Any component may carry it. Ignored unless the parent is a `container`, and ignored inside a scrolling container — a scrolling axis is unbounded, so there is nothing to divide."
         }
       }
     },
@@ -1327,6 +1473,11 @@
           "additionalProperties": {
             "type": "string"
           }
+        },
+        "weight": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "description": "Share of the parent container's main axis. Two children with weight 1 split a row in half; 2 and 1 split it two thirds to one third. Any component may carry it. Ignored unless the parent is a `container`, and ignored inside a scrolling container — a scrolling axis is unbounded, so there is nothing to divide."
         }
       }
     },
@@ -1359,6 +1510,11 @@
             "null"
           ],
           "description": "Values of the form \"{{state.key}}\" are replaced with form state before sending, preserving type: a numeric state value is sent as a number. Placeholders may also be embedded inside a longer string."
+        },
+        "weight": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "description": "Share of the parent container's main axis. Two children with weight 1 split a row in half; 2 and 1 split it two thirds to one third. Any component may carry it. Ignored unless the parent is a `container`, and ignored inside a scrolling container — a scrolling axis is unbounded, so there is nothing to divide."
         }
       }
     },
@@ -1376,6 +1532,11 @@
         "url": {
           "type": "string",
           "description": "Filtered by HeimUrlPolicy. https only by default; add your own deep-link scheme to permit it."
+        },
+        "weight": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "description": "Share of the parent container's main axis. Two children with weight 1 split a row in half; 2 and 1 split it two thirds to one third. Any component may carry it. Ignored unless the parent is a `container`, and ignored inside a scrolling container — a scrolling axis is unbounded, so there is nothing to divide."
         }
       }
     },
@@ -1400,6 +1561,11 @@
             "LONG"
           ],
           "default": "SHORT"
+        },
+        "weight": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "description": "Share of the parent container's main axis. Two children with weight 1 split a row in half; 2 and 1 split it two thirds to one third. Any component may carry it. Ignored unless the parent is a `container`, and ignored inside a scrolling container — a scrolling axis is unbounded, so there is nothing to divide."
         }
       }
     },
@@ -1426,6 +1592,11 @@
         },
         "content": {
           "$ref": "#/$defs/component"
+        },
+        "weight": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "description": "Share of the parent container's main axis. Two children with weight 1 split a row in half; 2 and 1 split it two thirds to one third. Any component may carry it. Ignored unless the parent is a `container`, and ignored inside a scrolling container — a scrolling axis is unbounded, so there is nothing to divide."
         }
       }
     },
@@ -1469,6 +1640,11 @@
           "items": {
             "$ref": "#/$defs/action"
           }
+        },
+        "weight": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "description": "Share of the parent container's main axis. Two children with weight 1 split a row in half; 2 and 1 split it two thirds to one third. Any component may carry it. Ignored unless the parent is a `container`, and ignored inside a scrolling container — a scrolling axis is unbounded, so there is nothing to divide."
         }
       }
     },
@@ -1482,6 +1658,11 @@
       "properties": {
         "type": {
           "const": "dismiss_modal"
+        },
+        "weight": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "description": "Share of the parent container's main axis. Two children with weight 1 split a row in half; 2 and 1 split it two thirds to one third. Any component may carry it. Ignored unless the parent is a `container`, and ignored inside a scrolling container — a scrolling axis is unbounded, so there is nothing to divide."
         }
       }
     },
@@ -1495,6 +1676,11 @@
       "properties": {
         "type": {
           "const": "dismiss"
+        },
+        "weight": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "description": "Share of the parent container's main axis. Two children with weight 1 split a row in half; 2 and 1 split it two thirds to one third. Any component may carry it. Ignored unless the parent is a `container`, and ignored inside a scrolling container — a scrolling axis is unbounded, so there is nothing to divide."
         }
       }
     },
@@ -1518,6 +1704,11 @@
             "object",
             "null"
           ]
+        },
+        "weight": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "description": "Share of the parent container's main axis. Two children with weight 1 split a row in half; 2 and 1 split it two thirds to one third. Any component may carry it. Ignored unless the parent is a `container`, and ignored inside a scrolling container — a scrolling axis is unbounded, so there is nothing to divide."
         }
       }
     },
