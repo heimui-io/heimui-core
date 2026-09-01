@@ -702,5 +702,5 @@ HeimScreen(
 El módulo `shared` está preparado para publicación multiplataforma a Maven Central / GitHub Packages con coordenadas:
 * **Group:** `io.heimui`
 * **Artifact:** `core`
-* **Versión:** `0.1.0`
+* **Versión:** `0.0.1-alpha`
 * **Plataformas soportadas:** Android (.aar), iOS Arm64 (.klib / framework), iOS Simulator Arm64 (.klib / framework).
