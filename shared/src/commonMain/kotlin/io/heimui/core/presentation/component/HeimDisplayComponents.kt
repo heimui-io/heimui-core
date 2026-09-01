@@ -110,7 +110,7 @@ internal fun HeimCardRenderer(
         elevation = CardDefaults.cardElevation(defaultElevation = component.elevation.dp),
         border = borderStroke
     ) {
-        Box(modifier = Modifier.padding(component.padding.dp)) {
+        Box(modifier = Modifier.heimPadding(component.padding)) {
             HeimRenderer(
                 component = component.child,
                 stateManager = stateManager,

@@ -1,11 +1,13 @@
 package io.heimui.core
 
 import io.heimui.core.data.dto.ButtonComponentDto
+import io.heimui.core.data.dto.ContainerComponentDto
 import io.heimui.core.data.dto.HeimComponentDto
 import io.heimui.core.data.dto.HeimScreenResponseDto
 import io.heimui.core.data.serialization.HeimJson
 import io.heimui.core.data.mapper.toDomain
 import io.heimui.core.domain.model.accessibility.AccessibilityRole
+import io.heimui.core.domain.model.component.HeimPadding
 import io.heimui.core.domain.model.component.*
 import kotlinx.serialization.json.Json
 import kotlin.test.Test
@@ -159,6 +161,50 @@ class HeimComponentSerializationTest {
             """{"type":"button","id":"plain","title":"Plain"}"""
         )
         assertNull(((absent as ButtonComponentDto).toDomain() as ButtonComponent).icon)
+    }
+
+
+    @Test
+    fun `padding accepts a number and an object alike`() {
+        fun paddingOf(json: String): HeimPadding =
+            (HeimJson.instance.decodeFromString(HeimComponentDto.serializer(), json)
+                as ContainerComponentDto).toDomain().let { (it as ContainerComponent).padding }
+
+        // The number form is what every existing payload uses and must keep working unchanged.
+        assertEquals(
+            HeimPadding.all(16),
+            paddingOf("""{"type":"container","id":"c","padding":16}""")
+        )
+
+        // Shorthands fill the sides they cover.
+        assertEquals(
+            HeimPadding(start = 16, top = 8, end = 16, bottom = 8),
+            paddingOf("""{"type":"container","id":"c","padding":{"horizontal":16,"vertical":8}}""")
+        )
+
+        // An explicit side beats the shorthand that would otherwise set it. JSON does not
+        // guarantee key order, so this must not depend on which appears first.
+        assertEquals(
+            HeimPadding(start = 0, top = 0, end = 16, bottom = 0),
+            paddingOf("""{"type":"container","id":"c","padding":{"horizontal":16,"start":0}}""")
+        )
+        assertEquals(
+            HeimPadding(start = 0, top = 0, end = 16, bottom = 0),
+            paddingOf("""{"type":"container","id":"c","padding":{"start":0,"horizontal":16}}""")
+        )
+
+        // Absent means none, and a negative side is clamped rather than failing the screen.
+        assertEquals(HeimPadding.None, paddingOf("""{"type":"container","id":"c"}"""))
+        assertEquals(
+            HeimPadding(start = 0, top = 4, end = 0, bottom = 0),
+            paddingOf("""{"type":"container","id":"c","padding":{"start":-8,"top":4}}""")
+        )
+
+        // Garbage is cosmetic, not fatal: a malformed padding must not cost the whole screen.
+        assertEquals(
+            HeimPadding.None,
+            paddingOf("""{"type":"container","id":"c","padding":"nonsense"}""")
+        )
     }
 
 }

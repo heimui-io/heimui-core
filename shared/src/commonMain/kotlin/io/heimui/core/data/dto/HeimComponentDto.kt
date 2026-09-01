@@ -4,6 +4,7 @@ import io.heimui.core.data.serialization.LenientBooleanSerializer
 import io.heimui.core.data.serialization.LenientIntSerializer
 import io.heimui.core.data.serialization.LenientNullableFloatSerializer
 import io.heimui.core.data.serialization.LenientNullableIntSerializer
+import io.heimui.core.domain.model.component.HeimPadding
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.JsonObject
@@ -83,7 +84,7 @@ public data class ContainerComponentDto(
     override val a11y: HeimAccessibilityDto? = null,
     val direction: DirectionDto = DirectionDto.VERTICAL,
     val alignment: AlignmentDto = AlignmentDto.START,
-    @Serializable(with = LenientIntSerializer::class) val padding: Int = 0,
+    val padding: PaddingSpec = HeimPadding.None,
     @Serializable(with = LenientIntSerializer::class) val spacing: Int = 0,
     @SerialName("background_color") val backgroundColor: String? = null,
     @Serializable(with = LenientBooleanSerializer::class) val scrollable: Boolean = true,
@@ -107,7 +108,7 @@ public data class LazyColumnComponentDto(
     @SerialName("visible_if") override val visibleIf: String? = null,
     override val a11y: HeimAccessibilityDto? = null,
     @Serializable(with = LenientIntSerializer::class) val spacing: Int = 8,
-    @Serializable(with = LenientIntSerializer::class) val padding: Int = 0,
+    val padding: PaddingSpec = HeimPadding.None,
     val items: List<HeimComponentDto> = emptyList(),
     val pagination: PaginationConfigDto? = null
 ) : HeimComponentDto
@@ -119,7 +120,7 @@ public data class LazyRowComponentDto(
     @SerialName("visible_if") override val visibleIf: String? = null,
     override val a11y: HeimAccessibilityDto? = null,
     @Serializable(with = LenientIntSerializer::class) val spacing: Int = 8,
-    @Serializable(with = LenientIntSerializer::class) val padding: Int = 0,
+    val padding: PaddingSpec = HeimPadding.None,
     val items: List<HeimComponentDto> = emptyList(),
     val pagination: PaginationConfigDto? = null
 ) : HeimComponentDto
@@ -169,7 +170,7 @@ public data class CardComponentDto(
     @SerialName("corner_radius") @Serializable(with = LenientIntSerializer::class) val cornerRadius: Int = 12,
     @SerialName("background_color") val backgroundColor: String = "surface",
     @SerialName("border_color") val borderColor: String? = null,
-    @Serializable(with = LenientIntSerializer::class) val padding: Int = 12,
+    val padding: PaddingSpec = HeimPadding.all(12),
     val actions: List<HeimActionDto> = emptyList(),
     val child: HeimComponentDto = UnknownComponentDto(id = "missing_child")
 ) : HeimComponentDto

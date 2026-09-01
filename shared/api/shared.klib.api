@@ -1058,7 +1058,7 @@ final class io.heimui.core.data.dto/ButtonComponentDto : io.heimui.core.data.dto
 }
 
 final class io.heimui.core.data.dto/CardComponentDto : io.heimui.core.data.dto/HeimComponentDto { // io.heimui.core.data.dto/CardComponentDto|null[0]
-    constructor <init>(kotlin/String = ..., kotlin/String? = ..., io.heimui.core.data.dto/HeimAccessibilityDto? = ..., kotlin/Int = ..., kotlin/Int = ..., kotlin/String = ..., kotlin/String? = ..., kotlin/Int = ..., kotlin.collections/List<io.heimui.core.data.dto/HeimActionDto> = ..., io.heimui.core.data.dto/HeimComponentDto = ...) // io.heimui.core.data.dto/CardComponentDto.<init>|<init>(kotlin.String;kotlin.String?;io.heimui.core.data.dto.HeimAccessibilityDto?;kotlin.Int;kotlin.Int;kotlin.String;kotlin.String?;kotlin.Int;kotlin.collections.List<io.heimui.core.data.dto.HeimActionDto>;io.heimui.core.data.dto.HeimComponentDto){}[0]
+    constructor <init>(kotlin/String = ..., kotlin/String? = ..., io.heimui.core.data.dto/HeimAccessibilityDto? = ..., kotlin/Int = ..., kotlin/Int = ..., kotlin/String = ..., kotlin/String? = ..., io.heimui.core.domain.model.component/HeimPadding = ..., kotlin.collections/List<io.heimui.core.data.dto/HeimActionDto> = ..., io.heimui.core.data.dto/HeimComponentDto = ...) // io.heimui.core.data.dto/CardComponentDto.<init>|<init>(kotlin.String;kotlin.String?;io.heimui.core.data.dto.HeimAccessibilityDto?;kotlin.Int;kotlin.Int;kotlin.String;kotlin.String?;io.heimui.core.domain.model.component.HeimPadding;kotlin.collections.List<io.heimui.core.data.dto.HeimActionDto>;io.heimui.core.data.dto.HeimComponentDto){}[0]
 
     final val a11y // io.heimui.core.data.dto/CardComponentDto.a11y|{}a11y[0]
         final fun <get-a11y>(): io.heimui.core.data.dto/HeimAccessibilityDto? // io.heimui.core.data.dto/CardComponentDto.a11y.<get-a11y>|<get-a11y>(){}[0]
@@ -1077,7 +1077,7 @@ final class io.heimui.core.data.dto/CardComponentDto : io.heimui.core.data.dto/H
     final val id // io.heimui.core.data.dto/CardComponentDto.id|{}id[0]
         final fun <get-id>(): kotlin/String // io.heimui.core.data.dto/CardComponentDto.id.<get-id>|<get-id>(){}[0]
     final val padding // io.heimui.core.data.dto/CardComponentDto.padding|{}padding[0]
-        final fun <get-padding>(): kotlin/Int // io.heimui.core.data.dto/CardComponentDto.padding.<get-padding>|<get-padding>(){}[0]
+        final fun <get-padding>(): io.heimui.core.domain.model.component/HeimPadding // io.heimui.core.data.dto/CardComponentDto.padding.<get-padding>|<get-padding>(){}[0]
     final val visibleIf // io.heimui.core.data.dto/CardComponentDto.visibleIf|{}visibleIf[0]
         final fun <get-visibleIf>(): kotlin/String? // io.heimui.core.data.dto/CardComponentDto.visibleIf.<get-visibleIf>|<get-visibleIf>(){}[0]
 
@@ -1089,9 +1089,9 @@ final class io.heimui.core.data.dto/CardComponentDto : io.heimui.core.data.dto/H
     final fun component5(): kotlin/Int // io.heimui.core.data.dto/CardComponentDto.component5|component5(){}[0]
     final fun component6(): kotlin/String // io.heimui.core.data.dto/CardComponentDto.component6|component6(){}[0]
     final fun component7(): kotlin/String? // io.heimui.core.data.dto/CardComponentDto.component7|component7(){}[0]
-    final fun component8(): kotlin/Int // io.heimui.core.data.dto/CardComponentDto.component8|component8(){}[0]
+    final fun component8(): io.heimui.core.domain.model.component/HeimPadding // io.heimui.core.data.dto/CardComponentDto.component8|component8(){}[0]
     final fun component9(): kotlin.collections/List<io.heimui.core.data.dto/HeimActionDto> // io.heimui.core.data.dto/CardComponentDto.component9|component9(){}[0]
-    final fun copy(kotlin/String = ..., kotlin/String? = ..., io.heimui.core.data.dto/HeimAccessibilityDto? = ..., kotlin/Int = ..., kotlin/Int = ..., kotlin/String = ..., kotlin/String? = ..., kotlin/Int = ..., kotlin.collections/List<io.heimui.core.data.dto/HeimActionDto> = ..., io.heimui.core.data.dto/HeimComponentDto = ...): io.heimui.core.data.dto/CardComponentDto // io.heimui.core.data.dto/CardComponentDto.copy|copy(kotlin.String;kotlin.String?;io.heimui.core.data.dto.HeimAccessibilityDto?;kotlin.Int;kotlin.Int;kotlin.String;kotlin.String?;kotlin.Int;kotlin.collections.List<io.heimui.core.data.dto.HeimActionDto>;io.heimui.core.data.dto.HeimComponentDto){}[0]
+    final fun copy(kotlin/String = ..., kotlin/String? = ..., io.heimui.core.data.dto/HeimAccessibilityDto? = ..., kotlin/Int = ..., kotlin/Int = ..., kotlin/String = ..., kotlin/String? = ..., io.heimui.core.domain.model.component/HeimPadding = ..., kotlin.collections/List<io.heimui.core.data.dto/HeimActionDto> = ..., io.heimui.core.data.dto/HeimComponentDto = ...): io.heimui.core.data.dto/CardComponentDto // io.heimui.core.data.dto/CardComponentDto.copy|copy(kotlin.String;kotlin.String?;io.heimui.core.data.dto.HeimAccessibilityDto?;kotlin.Int;kotlin.Int;kotlin.String;kotlin.String?;io.heimui.core.domain.model.component.HeimPadding;kotlin.collections.List<io.heimui.core.data.dto.HeimActionDto>;io.heimui.core.data.dto.HeimComponentDto){}[0]
     final fun equals(kotlin/Any?): kotlin/Boolean // io.heimui.core.data.dto/CardComponentDto.equals|equals(kotlin.Any?){}[0]
     final fun hashCode(): kotlin/Int // io.heimui.core.data.dto/CardComponentDto.hashCode|hashCode(){}[0]
     final fun toString(): kotlin/String // io.heimui.core.data.dto/CardComponentDto.toString|toString(){}[0]
@@ -1113,7 +1113,7 @@ final class io.heimui.core.data.dto/CardComponentDto : io.heimui.core.data.dto/H
 }
 
 final class io.heimui.core.data.dto/ContainerComponentDto : io.heimui.core.data.dto/HeimComponentDto { // io.heimui.core.data.dto/ContainerComponentDto|null[0]
-    constructor <init>(kotlin/String = ..., kotlin/String? = ..., io.heimui.core.data.dto/HeimAccessibilityDto? = ..., io.heimui.core.data.dto/DirectionDto = ..., io.heimui.core.data.dto/AlignmentDto = ..., kotlin/Int = ..., kotlin/Int = ..., kotlin/String? = ..., kotlin/Boolean = ..., kotlin.collections/List<io.heimui.core.data.dto/HeimComponentDto> = ...) // io.heimui.core.data.dto/ContainerComponentDto.<init>|<init>(kotlin.String;kotlin.String?;io.heimui.core.data.dto.HeimAccessibilityDto?;io.heimui.core.data.dto.DirectionDto;io.heimui.core.data.dto.AlignmentDto;kotlin.Int;kotlin.Int;kotlin.String?;kotlin.Boolean;kotlin.collections.List<io.heimui.core.data.dto.HeimComponentDto>){}[0]
+    constructor <init>(kotlin/String = ..., kotlin/String? = ..., io.heimui.core.data.dto/HeimAccessibilityDto? = ..., io.heimui.core.data.dto/DirectionDto = ..., io.heimui.core.data.dto/AlignmentDto = ..., io.heimui.core.domain.model.component/HeimPadding = ..., kotlin/Int = ..., kotlin/String? = ..., kotlin/Boolean = ..., kotlin.collections/List<io.heimui.core.data.dto/HeimComponentDto> = ...) // io.heimui.core.data.dto/ContainerComponentDto.<init>|<init>(kotlin.String;kotlin.String?;io.heimui.core.data.dto.HeimAccessibilityDto?;io.heimui.core.data.dto.DirectionDto;io.heimui.core.data.dto.AlignmentDto;io.heimui.core.domain.model.component.HeimPadding;kotlin.Int;kotlin.String?;kotlin.Boolean;kotlin.collections.List<io.heimui.core.data.dto.HeimComponentDto>){}[0]
 
     final val a11y // io.heimui.core.data.dto/ContainerComponentDto.a11y|{}a11y[0]
         final fun <get-a11y>(): io.heimui.core.data.dto/HeimAccessibilityDto? // io.heimui.core.data.dto/ContainerComponentDto.a11y.<get-a11y>|<get-a11y>(){}[0]
@@ -1128,7 +1128,7 @@ final class io.heimui.core.data.dto/ContainerComponentDto : io.heimui.core.data.
     final val id // io.heimui.core.data.dto/ContainerComponentDto.id|{}id[0]
         final fun <get-id>(): kotlin/String // io.heimui.core.data.dto/ContainerComponentDto.id.<get-id>|<get-id>(){}[0]
     final val padding // io.heimui.core.data.dto/ContainerComponentDto.padding|{}padding[0]
-        final fun <get-padding>(): kotlin/Int // io.heimui.core.data.dto/ContainerComponentDto.padding.<get-padding>|<get-padding>(){}[0]
+        final fun <get-padding>(): io.heimui.core.domain.model.component/HeimPadding // io.heimui.core.data.dto/ContainerComponentDto.padding.<get-padding>|<get-padding>(){}[0]
     final val scrollable // io.heimui.core.data.dto/ContainerComponentDto.scrollable|{}scrollable[0]
         final fun <get-scrollable>(): kotlin/Boolean // io.heimui.core.data.dto/ContainerComponentDto.scrollable.<get-scrollable>|<get-scrollable>(){}[0]
     final val spacing // io.heimui.core.data.dto/ContainerComponentDto.spacing|{}spacing[0]
@@ -1142,11 +1142,11 @@ final class io.heimui.core.data.dto/ContainerComponentDto : io.heimui.core.data.
     final fun component3(): io.heimui.core.data.dto/HeimAccessibilityDto? // io.heimui.core.data.dto/ContainerComponentDto.component3|component3(){}[0]
     final fun component4(): io.heimui.core.data.dto/DirectionDto // io.heimui.core.data.dto/ContainerComponentDto.component4|component4(){}[0]
     final fun component5(): io.heimui.core.data.dto/AlignmentDto // io.heimui.core.data.dto/ContainerComponentDto.component5|component5(){}[0]
-    final fun component6(): kotlin/Int // io.heimui.core.data.dto/ContainerComponentDto.component6|component6(){}[0]
+    final fun component6(): io.heimui.core.domain.model.component/HeimPadding // io.heimui.core.data.dto/ContainerComponentDto.component6|component6(){}[0]
     final fun component7(): kotlin/Int // io.heimui.core.data.dto/ContainerComponentDto.component7|component7(){}[0]
     final fun component8(): kotlin/String? // io.heimui.core.data.dto/ContainerComponentDto.component8|component8(){}[0]
     final fun component9(): kotlin/Boolean // io.heimui.core.data.dto/ContainerComponentDto.component9|component9(){}[0]
-    final fun copy(kotlin/String = ..., kotlin/String? = ..., io.heimui.core.data.dto/HeimAccessibilityDto? = ..., io.heimui.core.data.dto/DirectionDto = ..., io.heimui.core.data.dto/AlignmentDto = ..., kotlin/Int = ..., kotlin/Int = ..., kotlin/String? = ..., kotlin/Boolean = ..., kotlin.collections/List<io.heimui.core.data.dto/HeimComponentDto> = ...): io.heimui.core.data.dto/ContainerComponentDto // io.heimui.core.data.dto/ContainerComponentDto.copy|copy(kotlin.String;kotlin.String?;io.heimui.core.data.dto.HeimAccessibilityDto?;io.heimui.core.data.dto.DirectionDto;io.heimui.core.data.dto.AlignmentDto;kotlin.Int;kotlin.Int;kotlin.String?;kotlin.Boolean;kotlin.collections.List<io.heimui.core.data.dto.HeimComponentDto>){}[0]
+    final fun copy(kotlin/String = ..., kotlin/String? = ..., io.heimui.core.data.dto/HeimAccessibilityDto? = ..., io.heimui.core.data.dto/DirectionDto = ..., io.heimui.core.data.dto/AlignmentDto = ..., io.heimui.core.domain.model.component/HeimPadding = ..., kotlin/Int = ..., kotlin/String? = ..., kotlin/Boolean = ..., kotlin.collections/List<io.heimui.core.data.dto/HeimComponentDto> = ...): io.heimui.core.data.dto/ContainerComponentDto // io.heimui.core.data.dto/ContainerComponentDto.copy|copy(kotlin.String;kotlin.String?;io.heimui.core.data.dto.HeimAccessibilityDto?;io.heimui.core.data.dto.DirectionDto;io.heimui.core.data.dto.AlignmentDto;io.heimui.core.domain.model.component.HeimPadding;kotlin.Int;kotlin.String?;kotlin.Boolean;kotlin.collections.List<io.heimui.core.data.dto.HeimComponentDto>){}[0]
     final fun equals(kotlin/Any?): kotlin/Boolean // io.heimui.core.data.dto/ContainerComponentDto.equals|equals(kotlin.Any?){}[0]
     final fun hashCode(): kotlin/Int // io.heimui.core.data.dto/ContainerComponentDto.hashCode|hashCode(){}[0]
     final fun toString(): kotlin/String // io.heimui.core.data.dto/ContainerComponentDto.toString|toString(){}[0]
@@ -1452,7 +1452,7 @@ final class io.heimui.core.data.dto/ImageComponentDto : io.heimui.core.data.dto/
 }
 
 final class io.heimui.core.data.dto/LazyColumnComponentDto : io.heimui.core.data.dto/HeimComponentDto { // io.heimui.core.data.dto/LazyColumnComponentDto|null[0]
-    constructor <init>(kotlin/String = ..., kotlin/String? = ..., io.heimui.core.data.dto/HeimAccessibilityDto? = ..., kotlin/Int = ..., kotlin/Int = ..., kotlin.collections/List<io.heimui.core.data.dto/HeimComponentDto> = ..., io.heimui.core.data.dto/PaginationConfigDto? = ...) // io.heimui.core.data.dto/LazyColumnComponentDto.<init>|<init>(kotlin.String;kotlin.String?;io.heimui.core.data.dto.HeimAccessibilityDto?;kotlin.Int;kotlin.Int;kotlin.collections.List<io.heimui.core.data.dto.HeimComponentDto>;io.heimui.core.data.dto.PaginationConfigDto?){}[0]
+    constructor <init>(kotlin/String = ..., kotlin/String? = ..., io.heimui.core.data.dto/HeimAccessibilityDto? = ..., kotlin/Int = ..., io.heimui.core.domain.model.component/HeimPadding = ..., kotlin.collections/List<io.heimui.core.data.dto/HeimComponentDto> = ..., io.heimui.core.data.dto/PaginationConfigDto? = ...) // io.heimui.core.data.dto/LazyColumnComponentDto.<init>|<init>(kotlin.String;kotlin.String?;io.heimui.core.data.dto.HeimAccessibilityDto?;kotlin.Int;io.heimui.core.domain.model.component.HeimPadding;kotlin.collections.List<io.heimui.core.data.dto.HeimComponentDto>;io.heimui.core.data.dto.PaginationConfigDto?){}[0]
 
     final val a11y // io.heimui.core.data.dto/LazyColumnComponentDto.a11y|{}a11y[0]
         final fun <get-a11y>(): io.heimui.core.data.dto/HeimAccessibilityDto? // io.heimui.core.data.dto/LazyColumnComponentDto.a11y.<get-a11y>|<get-a11y>(){}[0]
@@ -1461,7 +1461,7 @@ final class io.heimui.core.data.dto/LazyColumnComponentDto : io.heimui.core.data
     final val items // io.heimui.core.data.dto/LazyColumnComponentDto.items|{}items[0]
         final fun <get-items>(): kotlin.collections/List<io.heimui.core.data.dto/HeimComponentDto> // io.heimui.core.data.dto/LazyColumnComponentDto.items.<get-items>|<get-items>(){}[0]
     final val padding // io.heimui.core.data.dto/LazyColumnComponentDto.padding|{}padding[0]
-        final fun <get-padding>(): kotlin/Int // io.heimui.core.data.dto/LazyColumnComponentDto.padding.<get-padding>|<get-padding>(){}[0]
+        final fun <get-padding>(): io.heimui.core.domain.model.component/HeimPadding // io.heimui.core.data.dto/LazyColumnComponentDto.padding.<get-padding>|<get-padding>(){}[0]
     final val pagination // io.heimui.core.data.dto/LazyColumnComponentDto.pagination|{}pagination[0]
         final fun <get-pagination>(): io.heimui.core.data.dto/PaginationConfigDto? // io.heimui.core.data.dto/LazyColumnComponentDto.pagination.<get-pagination>|<get-pagination>(){}[0]
     final val spacing // io.heimui.core.data.dto/LazyColumnComponentDto.spacing|{}spacing[0]
@@ -1473,10 +1473,10 @@ final class io.heimui.core.data.dto/LazyColumnComponentDto : io.heimui.core.data
     final fun component2(): kotlin/String? // io.heimui.core.data.dto/LazyColumnComponentDto.component2|component2(){}[0]
     final fun component3(): io.heimui.core.data.dto/HeimAccessibilityDto? // io.heimui.core.data.dto/LazyColumnComponentDto.component3|component3(){}[0]
     final fun component4(): kotlin/Int // io.heimui.core.data.dto/LazyColumnComponentDto.component4|component4(){}[0]
-    final fun component5(): kotlin/Int // io.heimui.core.data.dto/LazyColumnComponentDto.component5|component5(){}[0]
+    final fun component5(): io.heimui.core.domain.model.component/HeimPadding // io.heimui.core.data.dto/LazyColumnComponentDto.component5|component5(){}[0]
     final fun component6(): kotlin.collections/List<io.heimui.core.data.dto/HeimComponentDto> // io.heimui.core.data.dto/LazyColumnComponentDto.component6|component6(){}[0]
     final fun component7(): io.heimui.core.data.dto/PaginationConfigDto? // io.heimui.core.data.dto/LazyColumnComponentDto.component7|component7(){}[0]
-    final fun copy(kotlin/String = ..., kotlin/String? = ..., io.heimui.core.data.dto/HeimAccessibilityDto? = ..., kotlin/Int = ..., kotlin/Int = ..., kotlin.collections/List<io.heimui.core.data.dto/HeimComponentDto> = ..., io.heimui.core.data.dto/PaginationConfigDto? = ...): io.heimui.core.data.dto/LazyColumnComponentDto // io.heimui.core.data.dto/LazyColumnComponentDto.copy|copy(kotlin.String;kotlin.String?;io.heimui.core.data.dto.HeimAccessibilityDto?;kotlin.Int;kotlin.Int;kotlin.collections.List<io.heimui.core.data.dto.HeimComponentDto>;io.heimui.core.data.dto.PaginationConfigDto?){}[0]
+    final fun copy(kotlin/String = ..., kotlin/String? = ..., io.heimui.core.data.dto/HeimAccessibilityDto? = ..., kotlin/Int = ..., io.heimui.core.domain.model.component/HeimPadding = ..., kotlin.collections/List<io.heimui.core.data.dto/HeimComponentDto> = ..., io.heimui.core.data.dto/PaginationConfigDto? = ...): io.heimui.core.data.dto/LazyColumnComponentDto // io.heimui.core.data.dto/LazyColumnComponentDto.copy|copy(kotlin.String;kotlin.String?;io.heimui.core.data.dto.HeimAccessibilityDto?;kotlin.Int;io.heimui.core.domain.model.component.HeimPadding;kotlin.collections.List<io.heimui.core.data.dto.HeimComponentDto>;io.heimui.core.data.dto.PaginationConfigDto?){}[0]
     final fun equals(kotlin/Any?): kotlin/Boolean // io.heimui.core.data.dto/LazyColumnComponentDto.equals|equals(kotlin.Any?){}[0]
     final fun hashCode(): kotlin/Int // io.heimui.core.data.dto/LazyColumnComponentDto.hashCode|hashCode(){}[0]
     final fun toString(): kotlin/String // io.heimui.core.data.dto/LazyColumnComponentDto.toString|toString(){}[0]
@@ -1498,7 +1498,7 @@ final class io.heimui.core.data.dto/LazyColumnComponentDto : io.heimui.core.data
 }
 
 final class io.heimui.core.data.dto/LazyRowComponentDto : io.heimui.core.data.dto/HeimComponentDto { // io.heimui.core.data.dto/LazyRowComponentDto|null[0]
-    constructor <init>(kotlin/String = ..., kotlin/String? = ..., io.heimui.core.data.dto/HeimAccessibilityDto? = ..., kotlin/Int = ..., kotlin/Int = ..., kotlin.collections/List<io.heimui.core.data.dto/HeimComponentDto> = ..., io.heimui.core.data.dto/PaginationConfigDto? = ...) // io.heimui.core.data.dto/LazyRowComponentDto.<init>|<init>(kotlin.String;kotlin.String?;io.heimui.core.data.dto.HeimAccessibilityDto?;kotlin.Int;kotlin.Int;kotlin.collections.List<io.heimui.core.data.dto.HeimComponentDto>;io.heimui.core.data.dto.PaginationConfigDto?){}[0]
+    constructor <init>(kotlin/String = ..., kotlin/String? = ..., io.heimui.core.data.dto/HeimAccessibilityDto? = ..., kotlin/Int = ..., io.heimui.core.domain.model.component/HeimPadding = ..., kotlin.collections/List<io.heimui.core.data.dto/HeimComponentDto> = ..., io.heimui.core.data.dto/PaginationConfigDto? = ...) // io.heimui.core.data.dto/LazyRowComponentDto.<init>|<init>(kotlin.String;kotlin.String?;io.heimui.core.data.dto.HeimAccessibilityDto?;kotlin.Int;io.heimui.core.domain.model.component.HeimPadding;kotlin.collections.List<io.heimui.core.data.dto.HeimComponentDto>;io.heimui.core.data.dto.PaginationConfigDto?){}[0]
 
     final val a11y // io.heimui.core.data.dto/LazyRowComponentDto.a11y|{}a11y[0]
         final fun <get-a11y>(): io.heimui.core.data.dto/HeimAccessibilityDto? // io.heimui.core.data.dto/LazyRowComponentDto.a11y.<get-a11y>|<get-a11y>(){}[0]
@@ -1507,7 +1507,7 @@ final class io.heimui.core.data.dto/LazyRowComponentDto : io.heimui.core.data.dt
     final val items // io.heimui.core.data.dto/LazyRowComponentDto.items|{}items[0]
         final fun <get-items>(): kotlin.collections/List<io.heimui.core.data.dto/HeimComponentDto> // io.heimui.core.data.dto/LazyRowComponentDto.items.<get-items>|<get-items>(){}[0]
     final val padding // io.heimui.core.data.dto/LazyRowComponentDto.padding|{}padding[0]
-        final fun <get-padding>(): kotlin/Int // io.heimui.core.data.dto/LazyRowComponentDto.padding.<get-padding>|<get-padding>(){}[0]
+        final fun <get-padding>(): io.heimui.core.domain.model.component/HeimPadding // io.heimui.core.data.dto/LazyRowComponentDto.padding.<get-padding>|<get-padding>(){}[0]
     final val pagination // io.heimui.core.data.dto/LazyRowComponentDto.pagination|{}pagination[0]
         final fun <get-pagination>(): io.heimui.core.data.dto/PaginationConfigDto? // io.heimui.core.data.dto/LazyRowComponentDto.pagination.<get-pagination>|<get-pagination>(){}[0]
     final val spacing // io.heimui.core.data.dto/LazyRowComponentDto.spacing|{}spacing[0]
@@ -1519,10 +1519,10 @@ final class io.heimui.core.data.dto/LazyRowComponentDto : io.heimui.core.data.dt
     final fun component2(): kotlin/String? // io.heimui.core.data.dto/LazyRowComponentDto.component2|component2(){}[0]
     final fun component3(): io.heimui.core.data.dto/HeimAccessibilityDto? // io.heimui.core.data.dto/LazyRowComponentDto.component3|component3(){}[0]
     final fun component4(): kotlin/Int // io.heimui.core.data.dto/LazyRowComponentDto.component4|component4(){}[0]
-    final fun component5(): kotlin/Int // io.heimui.core.data.dto/LazyRowComponentDto.component5|component5(){}[0]
+    final fun component5(): io.heimui.core.domain.model.component/HeimPadding // io.heimui.core.data.dto/LazyRowComponentDto.component5|component5(){}[0]
     final fun component6(): kotlin.collections/List<io.heimui.core.data.dto/HeimComponentDto> // io.heimui.core.data.dto/LazyRowComponentDto.component6|component6(){}[0]
     final fun component7(): io.heimui.core.data.dto/PaginationConfigDto? // io.heimui.core.data.dto/LazyRowComponentDto.component7|component7(){}[0]
-    final fun copy(kotlin/String = ..., kotlin/String? = ..., io.heimui.core.data.dto/HeimAccessibilityDto? = ..., kotlin/Int = ..., kotlin/Int = ..., kotlin.collections/List<io.heimui.core.data.dto/HeimComponentDto> = ..., io.heimui.core.data.dto/PaginationConfigDto? = ...): io.heimui.core.data.dto/LazyRowComponentDto // io.heimui.core.data.dto/LazyRowComponentDto.copy|copy(kotlin.String;kotlin.String?;io.heimui.core.data.dto.HeimAccessibilityDto?;kotlin.Int;kotlin.Int;kotlin.collections.List<io.heimui.core.data.dto.HeimComponentDto>;io.heimui.core.data.dto.PaginationConfigDto?){}[0]
+    final fun copy(kotlin/String = ..., kotlin/String? = ..., io.heimui.core.data.dto/HeimAccessibilityDto? = ..., kotlin/Int = ..., io.heimui.core.domain.model.component/HeimPadding = ..., kotlin.collections/List<io.heimui.core.data.dto/HeimComponentDto> = ..., io.heimui.core.data.dto/PaginationConfigDto? = ...): io.heimui.core.data.dto/LazyRowComponentDto // io.heimui.core.data.dto/LazyRowComponentDto.copy|copy(kotlin.String;kotlin.String?;io.heimui.core.data.dto.HeimAccessibilityDto?;kotlin.Int;io.heimui.core.domain.model.component.HeimPadding;kotlin.collections.List<io.heimui.core.data.dto.HeimComponentDto>;io.heimui.core.data.dto.PaginationConfigDto?){}[0]
     final fun equals(kotlin/Any?): kotlin/Boolean // io.heimui.core.data.dto/LazyRowComponentDto.equals|equals(kotlin.Any?){}[0]
     final fun hashCode(): kotlin/Int // io.heimui.core.data.dto/LazyRowComponentDto.hashCode|hashCode(){}[0]
     final fun toString(): kotlin/String // io.heimui.core.data.dto/LazyRowComponentDto.toString|toString(){}[0]
@@ -2428,7 +2428,7 @@ final class io.heimui.core.domain.model.component/ButtonComponent : io.heimui.co
 }
 
 final class io.heimui.core.domain.model.component/CardComponent : io.heimui.core.domain.model.component/HeimComponent { // io.heimui.core.domain.model.component/CardComponent|null[0]
-    constructor <init>(kotlin/String, kotlin/String? = ..., io.heimui.core.domain.model.accessibility/HeimAccessibility? = ..., kotlin/Int = ..., kotlin/Int = ..., kotlin/String = ..., kotlin/String? = ..., kotlin/Int = ..., kotlin.collections/List<io.heimui.core.domain.model.action/HeimAction> = ..., io.heimui.core.domain.model.component/HeimComponent) // io.heimui.core.domain.model.component/CardComponent.<init>|<init>(kotlin.String;kotlin.String?;io.heimui.core.domain.model.accessibility.HeimAccessibility?;kotlin.Int;kotlin.Int;kotlin.String;kotlin.String?;kotlin.Int;kotlin.collections.List<io.heimui.core.domain.model.action.HeimAction>;io.heimui.core.domain.model.component.HeimComponent){}[0]
+    constructor <init>(kotlin/String, kotlin/String? = ..., io.heimui.core.domain.model.accessibility/HeimAccessibility? = ..., kotlin/Int = ..., kotlin/Int = ..., kotlin/String = ..., kotlin/String? = ..., io.heimui.core.domain.model.component/HeimPadding = ..., kotlin.collections/List<io.heimui.core.domain.model.action/HeimAction> = ..., io.heimui.core.domain.model.component/HeimComponent) // io.heimui.core.domain.model.component/CardComponent.<init>|<init>(kotlin.String;kotlin.String?;io.heimui.core.domain.model.accessibility.HeimAccessibility?;kotlin.Int;kotlin.Int;kotlin.String;kotlin.String?;io.heimui.core.domain.model.component.HeimPadding;kotlin.collections.List<io.heimui.core.domain.model.action.HeimAction>;io.heimui.core.domain.model.component.HeimComponent){}[0]
 
     final val a11y // io.heimui.core.domain.model.component/CardComponent.a11y|{}a11y[0]
         final fun <get-a11y>(): io.heimui.core.domain.model.accessibility/HeimAccessibility? // io.heimui.core.domain.model.component/CardComponent.a11y.<get-a11y>|<get-a11y>(){}[0]
@@ -2447,7 +2447,7 @@ final class io.heimui.core.domain.model.component/CardComponent : io.heimui.core
     final val id // io.heimui.core.domain.model.component/CardComponent.id|{}id[0]
         final fun <get-id>(): kotlin/String // io.heimui.core.domain.model.component/CardComponent.id.<get-id>|<get-id>(){}[0]
     final val padding // io.heimui.core.domain.model.component/CardComponent.padding|{}padding[0]
-        final fun <get-padding>(): kotlin/Int // io.heimui.core.domain.model.component/CardComponent.padding.<get-padding>|<get-padding>(){}[0]
+        final fun <get-padding>(): io.heimui.core.domain.model.component/HeimPadding // io.heimui.core.domain.model.component/CardComponent.padding.<get-padding>|<get-padding>(){}[0]
     final val visibleIf // io.heimui.core.domain.model.component/CardComponent.visibleIf|{}visibleIf[0]
         final fun <get-visibleIf>(): kotlin/String? // io.heimui.core.domain.model.component/CardComponent.visibleIf.<get-visibleIf>|<get-visibleIf>(){}[0]
 
@@ -2459,16 +2459,16 @@ final class io.heimui.core.domain.model.component/CardComponent : io.heimui.core
     final fun component5(): kotlin/Int // io.heimui.core.domain.model.component/CardComponent.component5|component5(){}[0]
     final fun component6(): kotlin/String // io.heimui.core.domain.model.component/CardComponent.component6|component6(){}[0]
     final fun component7(): kotlin/String? // io.heimui.core.domain.model.component/CardComponent.component7|component7(){}[0]
-    final fun component8(): kotlin/Int // io.heimui.core.domain.model.component/CardComponent.component8|component8(){}[0]
+    final fun component8(): io.heimui.core.domain.model.component/HeimPadding // io.heimui.core.domain.model.component/CardComponent.component8|component8(){}[0]
     final fun component9(): kotlin.collections/List<io.heimui.core.domain.model.action/HeimAction> // io.heimui.core.domain.model.component/CardComponent.component9|component9(){}[0]
-    final fun copy(kotlin/String = ..., kotlin/String? = ..., io.heimui.core.domain.model.accessibility/HeimAccessibility? = ..., kotlin/Int = ..., kotlin/Int = ..., kotlin/String = ..., kotlin/String? = ..., kotlin/Int = ..., kotlin.collections/List<io.heimui.core.domain.model.action/HeimAction> = ..., io.heimui.core.domain.model.component/HeimComponent = ...): io.heimui.core.domain.model.component/CardComponent // io.heimui.core.domain.model.component/CardComponent.copy|copy(kotlin.String;kotlin.String?;io.heimui.core.domain.model.accessibility.HeimAccessibility?;kotlin.Int;kotlin.Int;kotlin.String;kotlin.String?;kotlin.Int;kotlin.collections.List<io.heimui.core.domain.model.action.HeimAction>;io.heimui.core.domain.model.component.HeimComponent){}[0]
+    final fun copy(kotlin/String = ..., kotlin/String? = ..., io.heimui.core.domain.model.accessibility/HeimAccessibility? = ..., kotlin/Int = ..., kotlin/Int = ..., kotlin/String = ..., kotlin/String? = ..., io.heimui.core.domain.model.component/HeimPadding = ..., kotlin.collections/List<io.heimui.core.domain.model.action/HeimAction> = ..., io.heimui.core.domain.model.component/HeimComponent = ...): io.heimui.core.domain.model.component/CardComponent // io.heimui.core.domain.model.component/CardComponent.copy|copy(kotlin.String;kotlin.String?;io.heimui.core.domain.model.accessibility.HeimAccessibility?;kotlin.Int;kotlin.Int;kotlin.String;kotlin.String?;io.heimui.core.domain.model.component.HeimPadding;kotlin.collections.List<io.heimui.core.domain.model.action.HeimAction>;io.heimui.core.domain.model.component.HeimComponent){}[0]
     final fun equals(kotlin/Any?): kotlin/Boolean // io.heimui.core.domain.model.component/CardComponent.equals|equals(kotlin.Any?){}[0]
     final fun hashCode(): kotlin/Int // io.heimui.core.domain.model.component/CardComponent.hashCode|hashCode(){}[0]
     final fun toString(): kotlin/String // io.heimui.core.domain.model.component/CardComponent.toString|toString(){}[0]
 }
 
 final class io.heimui.core.domain.model.component/ContainerComponent : io.heimui.core.domain.model.component/HeimComponent { // io.heimui.core.domain.model.component/ContainerComponent|null[0]
-    constructor <init>(kotlin/String, kotlin/String? = ..., io.heimui.core.domain.model.accessibility/HeimAccessibility? = ..., io.heimui.core.domain.model.component/Direction = ..., io.heimui.core.domain.model.component/Alignment = ..., kotlin/Int = ..., kotlin/Int = ..., kotlin/String? = ..., kotlin/Boolean = ..., kotlin.collections/List<io.heimui.core.domain.model.component/HeimComponent> = ...) // io.heimui.core.domain.model.component/ContainerComponent.<init>|<init>(kotlin.String;kotlin.String?;io.heimui.core.domain.model.accessibility.HeimAccessibility?;io.heimui.core.domain.model.component.Direction;io.heimui.core.domain.model.component.Alignment;kotlin.Int;kotlin.Int;kotlin.String?;kotlin.Boolean;kotlin.collections.List<io.heimui.core.domain.model.component.HeimComponent>){}[0]
+    constructor <init>(kotlin/String, kotlin/String? = ..., io.heimui.core.domain.model.accessibility/HeimAccessibility? = ..., io.heimui.core.domain.model.component/Direction = ..., io.heimui.core.domain.model.component/Alignment = ..., io.heimui.core.domain.model.component/HeimPadding = ..., kotlin/Int = ..., kotlin/String? = ..., kotlin/Boolean = ..., kotlin.collections/List<io.heimui.core.domain.model.component/HeimComponent> = ...) // io.heimui.core.domain.model.component/ContainerComponent.<init>|<init>(kotlin.String;kotlin.String?;io.heimui.core.domain.model.accessibility.HeimAccessibility?;io.heimui.core.domain.model.component.Direction;io.heimui.core.domain.model.component.Alignment;io.heimui.core.domain.model.component.HeimPadding;kotlin.Int;kotlin.String?;kotlin.Boolean;kotlin.collections.List<io.heimui.core.domain.model.component.HeimComponent>){}[0]
 
     final val a11y // io.heimui.core.domain.model.component/ContainerComponent.a11y|{}a11y[0]
         final fun <get-a11y>(): io.heimui.core.domain.model.accessibility/HeimAccessibility? // io.heimui.core.domain.model.component/ContainerComponent.a11y.<get-a11y>|<get-a11y>(){}[0]
@@ -2483,7 +2483,7 @@ final class io.heimui.core.domain.model.component/ContainerComponent : io.heimui
     final val id // io.heimui.core.domain.model.component/ContainerComponent.id|{}id[0]
         final fun <get-id>(): kotlin/String // io.heimui.core.domain.model.component/ContainerComponent.id.<get-id>|<get-id>(){}[0]
     final val padding // io.heimui.core.domain.model.component/ContainerComponent.padding|{}padding[0]
-        final fun <get-padding>(): kotlin/Int // io.heimui.core.domain.model.component/ContainerComponent.padding.<get-padding>|<get-padding>(){}[0]
+        final fun <get-padding>(): io.heimui.core.domain.model.component/HeimPadding // io.heimui.core.domain.model.component/ContainerComponent.padding.<get-padding>|<get-padding>(){}[0]
     final val scrollable // io.heimui.core.domain.model.component/ContainerComponent.scrollable|{}scrollable[0]
         final fun <get-scrollable>(): kotlin/Boolean // io.heimui.core.domain.model.component/ContainerComponent.scrollable.<get-scrollable>|<get-scrollable>(){}[0]
     final val spacing // io.heimui.core.domain.model.component/ContainerComponent.spacing|{}spacing[0]
@@ -2497,11 +2497,11 @@ final class io.heimui.core.domain.model.component/ContainerComponent : io.heimui
     final fun component3(): io.heimui.core.domain.model.accessibility/HeimAccessibility? // io.heimui.core.domain.model.component/ContainerComponent.component3|component3(){}[0]
     final fun component4(): io.heimui.core.domain.model.component/Direction // io.heimui.core.domain.model.component/ContainerComponent.component4|component4(){}[0]
     final fun component5(): io.heimui.core.domain.model.component/Alignment // io.heimui.core.domain.model.component/ContainerComponent.component5|component5(){}[0]
-    final fun component6(): kotlin/Int // io.heimui.core.domain.model.component/ContainerComponent.component6|component6(){}[0]
+    final fun component6(): io.heimui.core.domain.model.component/HeimPadding // io.heimui.core.domain.model.component/ContainerComponent.component6|component6(){}[0]
     final fun component7(): kotlin/Int // io.heimui.core.domain.model.component/ContainerComponent.component7|component7(){}[0]
     final fun component8(): kotlin/String? // io.heimui.core.domain.model.component/ContainerComponent.component8|component8(){}[0]
     final fun component9(): kotlin/Boolean // io.heimui.core.domain.model.component/ContainerComponent.component9|component9(){}[0]
-    final fun copy(kotlin/String = ..., kotlin/String? = ..., io.heimui.core.domain.model.accessibility/HeimAccessibility? = ..., io.heimui.core.domain.model.component/Direction = ..., io.heimui.core.domain.model.component/Alignment = ..., kotlin/Int = ..., kotlin/Int = ..., kotlin/String? = ..., kotlin/Boolean = ..., kotlin.collections/List<io.heimui.core.domain.model.component/HeimComponent> = ...): io.heimui.core.domain.model.component/ContainerComponent // io.heimui.core.domain.model.component/ContainerComponent.copy|copy(kotlin.String;kotlin.String?;io.heimui.core.domain.model.accessibility.HeimAccessibility?;io.heimui.core.domain.model.component.Direction;io.heimui.core.domain.model.component.Alignment;kotlin.Int;kotlin.Int;kotlin.String?;kotlin.Boolean;kotlin.collections.List<io.heimui.core.domain.model.component.HeimComponent>){}[0]
+    final fun copy(kotlin/String = ..., kotlin/String? = ..., io.heimui.core.domain.model.accessibility/HeimAccessibility? = ..., io.heimui.core.domain.model.component/Direction = ..., io.heimui.core.domain.model.component/Alignment = ..., io.heimui.core.domain.model.component/HeimPadding = ..., kotlin/Int = ..., kotlin/String? = ..., kotlin/Boolean = ..., kotlin.collections/List<io.heimui.core.domain.model.component/HeimComponent> = ...): io.heimui.core.domain.model.component/ContainerComponent // io.heimui.core.domain.model.component/ContainerComponent.copy|copy(kotlin.String;kotlin.String?;io.heimui.core.domain.model.accessibility.HeimAccessibility?;io.heimui.core.domain.model.component.Direction;io.heimui.core.domain.model.component.Alignment;io.heimui.core.domain.model.component.HeimPadding;kotlin.Int;kotlin.String?;kotlin.Boolean;kotlin.collections.List<io.heimui.core.domain.model.component.HeimComponent>){}[0]
     final fun equals(kotlin/Any?): kotlin/Boolean // io.heimui.core.domain.model.component/ContainerComponent.equals|equals(kotlin.Any?){}[0]
     final fun hashCode(): kotlin/Int // io.heimui.core.domain.model.component/ContainerComponent.hashCode|hashCode(){}[0]
     final fun toString(): kotlin/String // io.heimui.core.domain.model.component/ContainerComponent.toString|toString(){}[0]
@@ -2555,6 +2555,38 @@ final class io.heimui.core.domain.model.component/DividerComponent : io.heimui.c
     final fun equals(kotlin/Any?): kotlin/Boolean // io.heimui.core.domain.model.component/DividerComponent.equals|equals(kotlin.Any?){}[0]
     final fun hashCode(): kotlin/Int // io.heimui.core.domain.model.component/DividerComponent.hashCode|hashCode(){}[0]
     final fun toString(): kotlin/String // io.heimui.core.domain.model.component/DividerComponent.toString|toString(){}[0]
+}
+
+final class io.heimui.core.domain.model.component/HeimPadding { // io.heimui.core.domain.model.component/HeimPadding|null[0]
+    constructor <init>(kotlin/Int = ..., kotlin/Int = ..., kotlin/Int = ..., kotlin/Int = ...) // io.heimui.core.domain.model.component/HeimPadding.<init>|<init>(kotlin.Int;kotlin.Int;kotlin.Int;kotlin.Int){}[0]
+
+    final val bottom // io.heimui.core.domain.model.component/HeimPadding.bottom|{}bottom[0]
+        final fun <get-bottom>(): kotlin/Int // io.heimui.core.domain.model.component/HeimPadding.bottom.<get-bottom>|<get-bottom>(){}[0]
+    final val end // io.heimui.core.domain.model.component/HeimPadding.end|{}end[0]
+        final fun <get-end>(): kotlin/Int // io.heimui.core.domain.model.component/HeimPadding.end.<get-end>|<get-end>(){}[0]
+    final val isEmpty // io.heimui.core.domain.model.component/HeimPadding.isEmpty|{}isEmpty[0]
+        final fun <get-isEmpty>(): kotlin/Boolean // io.heimui.core.domain.model.component/HeimPadding.isEmpty.<get-isEmpty>|<get-isEmpty>(){}[0]
+    final val start // io.heimui.core.domain.model.component/HeimPadding.start|{}start[0]
+        final fun <get-start>(): kotlin/Int // io.heimui.core.domain.model.component/HeimPadding.start.<get-start>|<get-start>(){}[0]
+    final val top // io.heimui.core.domain.model.component/HeimPadding.top|{}top[0]
+        final fun <get-top>(): kotlin/Int // io.heimui.core.domain.model.component/HeimPadding.top.<get-top>|<get-top>(){}[0]
+
+    final fun clampedToZero(): io.heimui.core.domain.model.component/HeimPadding // io.heimui.core.domain.model.component/HeimPadding.clampedToZero|clampedToZero(){}[0]
+    final fun component1(): kotlin/Int // io.heimui.core.domain.model.component/HeimPadding.component1|component1(){}[0]
+    final fun component2(): kotlin/Int // io.heimui.core.domain.model.component/HeimPadding.component2|component2(){}[0]
+    final fun component3(): kotlin/Int // io.heimui.core.domain.model.component/HeimPadding.component3|component3(){}[0]
+    final fun component4(): kotlin/Int // io.heimui.core.domain.model.component/HeimPadding.component4|component4(){}[0]
+    final fun copy(kotlin/Int = ..., kotlin/Int = ..., kotlin/Int = ..., kotlin/Int = ...): io.heimui.core.domain.model.component/HeimPadding // io.heimui.core.domain.model.component/HeimPadding.copy|copy(kotlin.Int;kotlin.Int;kotlin.Int;kotlin.Int){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // io.heimui.core.domain.model.component/HeimPadding.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // io.heimui.core.domain.model.component/HeimPadding.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // io.heimui.core.domain.model.component/HeimPadding.toString|toString(){}[0]
+
+    final object Companion { // io.heimui.core.domain.model.component/HeimPadding.Companion|null[0]
+        final val None // io.heimui.core.domain.model.component/HeimPadding.Companion.None|{}None[0]
+            final fun <get-None>(): io.heimui.core.domain.model.component/HeimPadding // io.heimui.core.domain.model.component/HeimPadding.Companion.None.<get-None>|<get-None>(){}[0]
+
+        final fun all(kotlin/Int): io.heimui.core.domain.model.component/HeimPadding // io.heimui.core.domain.model.component/HeimPadding.Companion.all|all(kotlin.Int){}[0]
+    }
 }
 
 final class io.heimui.core.domain.model.component/IconComponent : io.heimui.core.domain.model.component/HeimComponent { // io.heimui.core.domain.model.component/IconComponent|null[0]
@@ -2623,7 +2655,7 @@ final class io.heimui.core.domain.model.component/ImageComponent : io.heimui.cor
 }
 
 final class io.heimui.core.domain.model.component/LazyColumnComponent : io.heimui.core.domain.model.component/HeimComponent { // io.heimui.core.domain.model.component/LazyColumnComponent|null[0]
-    constructor <init>(kotlin/String, kotlin/String? = ..., io.heimui.core.domain.model.accessibility/HeimAccessibility? = ..., kotlin/Int = ..., kotlin/Int = ..., kotlin.collections/List<io.heimui.core.domain.model.component/HeimComponent> = ..., io.heimui.core.domain.model.component/PaginationConfig? = ...) // io.heimui.core.domain.model.component/LazyColumnComponent.<init>|<init>(kotlin.String;kotlin.String?;io.heimui.core.domain.model.accessibility.HeimAccessibility?;kotlin.Int;kotlin.Int;kotlin.collections.List<io.heimui.core.domain.model.component.HeimComponent>;io.heimui.core.domain.model.component.PaginationConfig?){}[0]
+    constructor <init>(kotlin/String, kotlin/String? = ..., io.heimui.core.domain.model.accessibility/HeimAccessibility? = ..., kotlin/Int = ..., io.heimui.core.domain.model.component/HeimPadding = ..., kotlin.collections/List<io.heimui.core.domain.model.component/HeimComponent> = ..., io.heimui.core.domain.model.component/PaginationConfig? = ...) // io.heimui.core.domain.model.component/LazyColumnComponent.<init>|<init>(kotlin.String;kotlin.String?;io.heimui.core.domain.model.accessibility.HeimAccessibility?;kotlin.Int;io.heimui.core.domain.model.component.HeimPadding;kotlin.collections.List<io.heimui.core.domain.model.component.HeimComponent>;io.heimui.core.domain.model.component.PaginationConfig?){}[0]
 
     final val a11y // io.heimui.core.domain.model.component/LazyColumnComponent.a11y|{}a11y[0]
         final fun <get-a11y>(): io.heimui.core.domain.model.accessibility/HeimAccessibility? // io.heimui.core.domain.model.component/LazyColumnComponent.a11y.<get-a11y>|<get-a11y>(){}[0]
@@ -2632,7 +2664,7 @@ final class io.heimui.core.domain.model.component/LazyColumnComponent : io.heimu
     final val items // io.heimui.core.domain.model.component/LazyColumnComponent.items|{}items[0]
         final fun <get-items>(): kotlin.collections/List<io.heimui.core.domain.model.component/HeimComponent> // io.heimui.core.domain.model.component/LazyColumnComponent.items.<get-items>|<get-items>(){}[0]
     final val padding // io.heimui.core.domain.model.component/LazyColumnComponent.padding|{}padding[0]
-        final fun <get-padding>(): kotlin/Int // io.heimui.core.domain.model.component/LazyColumnComponent.padding.<get-padding>|<get-padding>(){}[0]
+        final fun <get-padding>(): io.heimui.core.domain.model.component/HeimPadding // io.heimui.core.domain.model.component/LazyColumnComponent.padding.<get-padding>|<get-padding>(){}[0]
     final val pagination // io.heimui.core.domain.model.component/LazyColumnComponent.pagination|{}pagination[0]
         final fun <get-pagination>(): io.heimui.core.domain.model.component/PaginationConfig? // io.heimui.core.domain.model.component/LazyColumnComponent.pagination.<get-pagination>|<get-pagination>(){}[0]
     final val spacing // io.heimui.core.domain.model.component/LazyColumnComponent.spacing|{}spacing[0]
@@ -2644,17 +2676,17 @@ final class io.heimui.core.domain.model.component/LazyColumnComponent : io.heimu
     final fun component2(): kotlin/String? // io.heimui.core.domain.model.component/LazyColumnComponent.component2|component2(){}[0]
     final fun component3(): io.heimui.core.domain.model.accessibility/HeimAccessibility? // io.heimui.core.domain.model.component/LazyColumnComponent.component3|component3(){}[0]
     final fun component4(): kotlin/Int // io.heimui.core.domain.model.component/LazyColumnComponent.component4|component4(){}[0]
-    final fun component5(): kotlin/Int // io.heimui.core.domain.model.component/LazyColumnComponent.component5|component5(){}[0]
+    final fun component5(): io.heimui.core.domain.model.component/HeimPadding // io.heimui.core.domain.model.component/LazyColumnComponent.component5|component5(){}[0]
     final fun component6(): kotlin.collections/List<io.heimui.core.domain.model.component/HeimComponent> // io.heimui.core.domain.model.component/LazyColumnComponent.component6|component6(){}[0]
     final fun component7(): io.heimui.core.domain.model.component/PaginationConfig? // io.heimui.core.domain.model.component/LazyColumnComponent.component7|component7(){}[0]
-    final fun copy(kotlin/String = ..., kotlin/String? = ..., io.heimui.core.domain.model.accessibility/HeimAccessibility? = ..., kotlin/Int = ..., kotlin/Int = ..., kotlin.collections/List<io.heimui.core.domain.model.component/HeimComponent> = ..., io.heimui.core.domain.model.component/PaginationConfig? = ...): io.heimui.core.domain.model.component/LazyColumnComponent // io.heimui.core.domain.model.component/LazyColumnComponent.copy|copy(kotlin.String;kotlin.String?;io.heimui.core.domain.model.accessibility.HeimAccessibility?;kotlin.Int;kotlin.Int;kotlin.collections.List<io.heimui.core.domain.model.component.HeimComponent>;io.heimui.core.domain.model.component.PaginationConfig?){}[0]
+    final fun copy(kotlin/String = ..., kotlin/String? = ..., io.heimui.core.domain.model.accessibility/HeimAccessibility? = ..., kotlin/Int = ..., io.heimui.core.domain.model.component/HeimPadding = ..., kotlin.collections/List<io.heimui.core.domain.model.component/HeimComponent> = ..., io.heimui.core.domain.model.component/PaginationConfig? = ...): io.heimui.core.domain.model.component/LazyColumnComponent // io.heimui.core.domain.model.component/LazyColumnComponent.copy|copy(kotlin.String;kotlin.String?;io.heimui.core.domain.model.accessibility.HeimAccessibility?;kotlin.Int;io.heimui.core.domain.model.component.HeimPadding;kotlin.collections.List<io.heimui.core.domain.model.component.HeimComponent>;io.heimui.core.domain.model.component.PaginationConfig?){}[0]
     final fun equals(kotlin/Any?): kotlin/Boolean // io.heimui.core.domain.model.component/LazyColumnComponent.equals|equals(kotlin.Any?){}[0]
     final fun hashCode(): kotlin/Int // io.heimui.core.domain.model.component/LazyColumnComponent.hashCode|hashCode(){}[0]
     final fun toString(): kotlin/String // io.heimui.core.domain.model.component/LazyColumnComponent.toString|toString(){}[0]
 }
 
 final class io.heimui.core.domain.model.component/LazyRowComponent : io.heimui.core.domain.model.component/HeimComponent { // io.heimui.core.domain.model.component/LazyRowComponent|null[0]
-    constructor <init>(kotlin/String, kotlin/String? = ..., io.heimui.core.domain.model.accessibility/HeimAccessibility? = ..., kotlin/Int = ..., kotlin/Int = ..., kotlin.collections/List<io.heimui.core.domain.model.component/HeimComponent> = ..., io.heimui.core.domain.model.component/PaginationConfig? = ...) // io.heimui.core.domain.model.component/LazyRowComponent.<init>|<init>(kotlin.String;kotlin.String?;io.heimui.core.domain.model.accessibility.HeimAccessibility?;kotlin.Int;kotlin.Int;kotlin.collections.List<io.heimui.core.domain.model.component.HeimComponent>;io.heimui.core.domain.model.component.PaginationConfig?){}[0]
+    constructor <init>(kotlin/String, kotlin/String? = ..., io.heimui.core.domain.model.accessibility/HeimAccessibility? = ..., kotlin/Int = ..., io.heimui.core.domain.model.component/HeimPadding = ..., kotlin.collections/List<io.heimui.core.domain.model.component/HeimComponent> = ..., io.heimui.core.domain.model.component/PaginationConfig? = ...) // io.heimui.core.domain.model.component/LazyRowComponent.<init>|<init>(kotlin.String;kotlin.String?;io.heimui.core.domain.model.accessibility.HeimAccessibility?;kotlin.Int;io.heimui.core.domain.model.component.HeimPadding;kotlin.collections.List<io.heimui.core.domain.model.component.HeimComponent>;io.heimui.core.domain.model.component.PaginationConfig?){}[0]
 
     final val a11y // io.heimui.core.domain.model.component/LazyRowComponent.a11y|{}a11y[0]
         final fun <get-a11y>(): io.heimui.core.domain.model.accessibility/HeimAccessibility? // io.heimui.core.domain.model.component/LazyRowComponent.a11y.<get-a11y>|<get-a11y>(){}[0]
@@ -2663,7 +2695,7 @@ final class io.heimui.core.domain.model.component/LazyRowComponent : io.heimui.c
     final val items // io.heimui.core.domain.model.component/LazyRowComponent.items|{}items[0]
         final fun <get-items>(): kotlin.collections/List<io.heimui.core.domain.model.component/HeimComponent> // io.heimui.core.domain.model.component/LazyRowComponent.items.<get-items>|<get-items>(){}[0]
     final val padding // io.heimui.core.domain.model.component/LazyRowComponent.padding|{}padding[0]
-        final fun <get-padding>(): kotlin/Int // io.heimui.core.domain.model.component/LazyRowComponent.padding.<get-padding>|<get-padding>(){}[0]
+        final fun <get-padding>(): io.heimui.core.domain.model.component/HeimPadding // io.heimui.core.domain.model.component/LazyRowComponent.padding.<get-padding>|<get-padding>(){}[0]
     final val pagination // io.heimui.core.domain.model.component/LazyRowComponent.pagination|{}pagination[0]
         final fun <get-pagination>(): io.heimui.core.domain.model.component/PaginationConfig? // io.heimui.core.domain.model.component/LazyRowComponent.pagination.<get-pagination>|<get-pagination>(){}[0]
     final val spacing // io.heimui.core.domain.model.component/LazyRowComponent.spacing|{}spacing[0]
@@ -2675,10 +2707,10 @@ final class io.heimui.core.domain.model.component/LazyRowComponent : io.heimui.c
     final fun component2(): kotlin/String? // io.heimui.core.domain.model.component/LazyRowComponent.component2|component2(){}[0]
     final fun component3(): io.heimui.core.domain.model.accessibility/HeimAccessibility? // io.heimui.core.domain.model.component/LazyRowComponent.component3|component3(){}[0]
     final fun component4(): kotlin/Int // io.heimui.core.domain.model.component/LazyRowComponent.component4|component4(){}[0]
-    final fun component5(): kotlin/Int // io.heimui.core.domain.model.component/LazyRowComponent.component5|component5(){}[0]
+    final fun component5(): io.heimui.core.domain.model.component/HeimPadding // io.heimui.core.domain.model.component/LazyRowComponent.component5|component5(){}[0]
     final fun component6(): kotlin.collections/List<io.heimui.core.domain.model.component/HeimComponent> // io.heimui.core.domain.model.component/LazyRowComponent.component6|component6(){}[0]
     final fun component7(): io.heimui.core.domain.model.component/PaginationConfig? // io.heimui.core.domain.model.component/LazyRowComponent.component7|component7(){}[0]
-    final fun copy(kotlin/String = ..., kotlin/String? = ..., io.heimui.core.domain.model.accessibility/HeimAccessibility? = ..., kotlin/Int = ..., kotlin/Int = ..., kotlin.collections/List<io.heimui.core.domain.model.component/HeimComponent> = ..., io.heimui.core.domain.model.component/PaginationConfig? = ...): io.heimui.core.domain.model.component/LazyRowComponent // io.heimui.core.domain.model.component/LazyRowComponent.copy|copy(kotlin.String;kotlin.String?;io.heimui.core.domain.model.accessibility.HeimAccessibility?;kotlin.Int;kotlin.Int;kotlin.collections.List<io.heimui.core.domain.model.component.HeimComponent>;io.heimui.core.domain.model.component.PaginationConfig?){}[0]
+    final fun copy(kotlin/String = ..., kotlin/String? = ..., io.heimui.core.domain.model.accessibility/HeimAccessibility? = ..., kotlin/Int = ..., io.heimui.core.domain.model.component/HeimPadding = ..., kotlin.collections/List<io.heimui.core.domain.model.component/HeimComponent> = ..., io.heimui.core.domain.model.component/PaginationConfig? = ...): io.heimui.core.domain.model.component/LazyRowComponent // io.heimui.core.domain.model.component/LazyRowComponent.copy|copy(kotlin.String;kotlin.String?;io.heimui.core.domain.model.accessibility.HeimAccessibility?;kotlin.Int;io.heimui.core.domain.model.component.HeimPadding;kotlin.collections.List<io.heimui.core.domain.model.component.HeimComponent>;io.heimui.core.domain.model.component.PaginationConfig?){}[0]
     final fun equals(kotlin/Any?): kotlin/Boolean // io.heimui.core.domain.model.component/LazyRowComponent.equals|equals(kotlin.Any?){}[0]
     final fun hashCode(): kotlin/Int // io.heimui.core.domain.model.component/LazyRowComponent.hashCode|hashCode(){}[0]
     final fun toString(): kotlin/String // io.heimui.core.domain.model.component/LazyRowComponent.toString|toString(){}[0]
@@ -3280,6 +3312,7 @@ final val io.heimui.core.domain.model.component/io_heimui_core_domain_model_comp
 final val io.heimui.core.domain.model.component/io_heimui_core_domain_model_component_ContainerComponent$stableprop // io.heimui.core.domain.model.component/io_heimui_core_domain_model_component_ContainerComponent$stableprop|#static{}io_heimui_core_domain_model_component_ContainerComponent$stableprop[0]
 final val io.heimui.core.domain.model.component/io_heimui_core_domain_model_component_CustomComponent$stableprop // io.heimui.core.domain.model.component/io_heimui_core_domain_model_component_CustomComponent$stableprop|#static{}io_heimui_core_domain_model_component_CustomComponent$stableprop[0]
 final val io.heimui.core.domain.model.component/io_heimui_core_domain_model_component_DividerComponent$stableprop // io.heimui.core.domain.model.component/io_heimui_core_domain_model_component_DividerComponent$stableprop|#static{}io_heimui_core_domain_model_component_DividerComponent$stableprop[0]
+final val io.heimui.core.domain.model.component/io_heimui_core_domain_model_component_HeimPadding$stableprop // io.heimui.core.domain.model.component/io_heimui_core_domain_model_component_HeimPadding$stableprop|#static{}io_heimui_core_domain_model_component_HeimPadding$stableprop[0]
 final val io.heimui.core.domain.model.component/io_heimui_core_domain_model_component_IconComponent$stableprop // io.heimui.core.domain.model.component/io_heimui_core_domain_model_component_IconComponent$stableprop|#static{}io_heimui_core_domain_model_component_IconComponent$stableprop[0]
 final val io.heimui.core.domain.model.component/io_heimui_core_domain_model_component_ImageComponent$stableprop // io.heimui.core.domain.model.component/io_heimui_core_domain_model_component_ImageComponent$stableprop|#static{}io_heimui_core_domain_model_component_ImageComponent$stableprop[0]
 final val io.heimui.core.domain.model.component/io_heimui_core_domain_model_component_LazyColumnComponent$stableprop // io.heimui.core.domain.model.component/io_heimui_core_domain_model_component_LazyColumnComponent$stableprop|#static{}io_heimui_core_domain_model_component_LazyColumnComponent$stableprop[0]
@@ -3474,6 +3507,7 @@ final fun io.heimui.core.domain.model.component/io_heimui_core_domain_model_comp
 final fun io.heimui.core.domain.model.component/io_heimui_core_domain_model_component_ContainerComponent$stableprop_getter(): kotlin/Int // io.heimui.core.domain.model.component/io_heimui_core_domain_model_component_ContainerComponent$stableprop_getter|io_heimui_core_domain_model_component_ContainerComponent$stableprop_getter(){}[0]
 final fun io.heimui.core.domain.model.component/io_heimui_core_domain_model_component_CustomComponent$stableprop_getter(): kotlin/Int // io.heimui.core.domain.model.component/io_heimui_core_domain_model_component_CustomComponent$stableprop_getter|io_heimui_core_domain_model_component_CustomComponent$stableprop_getter(){}[0]
 final fun io.heimui.core.domain.model.component/io_heimui_core_domain_model_component_DividerComponent$stableprop_getter(): kotlin/Int // io.heimui.core.domain.model.component/io_heimui_core_domain_model_component_DividerComponent$stableprop_getter|io_heimui_core_domain_model_component_DividerComponent$stableprop_getter(){}[0]
+final fun io.heimui.core.domain.model.component/io_heimui_core_domain_model_component_HeimPadding$stableprop_getter(): kotlin/Int // io.heimui.core.domain.model.component/io_heimui_core_domain_model_component_HeimPadding$stableprop_getter|io_heimui_core_domain_model_component_HeimPadding$stableprop_getter(){}[0]
 final fun io.heimui.core.domain.model.component/io_heimui_core_domain_model_component_IconComponent$stableprop_getter(): kotlin/Int // io.heimui.core.domain.model.component/io_heimui_core_domain_model_component_IconComponent$stableprop_getter|io_heimui_core_domain_model_component_IconComponent$stableprop_getter(){}[0]
 final fun io.heimui.core.domain.model.component/io_heimui_core_domain_model_component_ImageComponent$stableprop_getter(): kotlin/Int // io.heimui.core.domain.model.component/io_heimui_core_domain_model_component_ImageComponent$stableprop_getter|io_heimui_core_domain_model_component_ImageComponent$stableprop_getter(){}[0]
 final fun io.heimui.core.domain.model.component/io_heimui_core_domain_model_component_LazyColumnComponent$stableprop_getter(): kotlin/Int // io.heimui.core.domain.model.component/io_heimui_core_domain_model_component_LazyColumnComponent$stableprop_getter|io_heimui_core_domain_model_component_LazyColumnComponent$stableprop_getter(){}[0]

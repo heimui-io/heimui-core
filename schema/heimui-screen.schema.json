@@ -393,10 +393,9 @@
           "default": "START"
         },
         "padding": {
-          "type": "integer",
-          "minimum": 0,
+          "$ref": "#/$defs/padding",
           "default": 0,
-          "description": "dp. Negative values are clamped to 0 by the client."
+          "description": "Applied to the container's own box, inside the scroll viewport — the padding scrolls away with the content. For a chip strip or carousel that must keep a fixed inset while scrolling edge to edge, use lazy_row instead, where padding becomes scroll-safe content padding."
         },
         "spacing": {
           "type": "integer",
@@ -410,7 +409,7 @@
         "scrollable": {
           "type": "boolean",
           "default": true,
-          "description": "Vertical containers scroll by default. Set false when nesting inside another scrolling container."
+          "description": "Scrolls along `direction`. Set false when nesting inside another scroller on the same axis."
         },
         "children": {
           "type": "array",
@@ -484,9 +483,9 @@
           "default": 8
         },
         "padding": {
-          "type": "integer",
-          "minimum": 0,
-          "default": 0
+          "$ref": "#/$defs/padding",
+          "default": 0,
+          "description": "Content padding: insets the items but stays outside the scrolling viewport, so the first and last items keep their gap while the list still scrolls edge to edge. This is the scroll-safe padding — a container's padding scrolls away with its content instead."
         },
         "items": {
           "type": "array",
@@ -525,9 +524,9 @@
           "default": 8
         },
         "padding": {
-          "type": "integer",
-          "minimum": 0,
-          "default": 0
+          "$ref": "#/$defs/padding",
+          "default": 0,
+          "description": "Content padding: insets the items but stays outside the scrolling viewport, so the first and last items keep their gap while the list still scrolls edge to edge. This is the scroll-safe padding — a container's padding scrolls away with its content instead."
         },
         "items": {
           "type": "array",
@@ -721,8 +720,7 @@
           "$ref": "#/$defs/color"
         },
         "padding": {
-          "type": "integer",
-          "minimum": 0,
+          "$ref": "#/$defs/padding",
           "default": 12
         },
         "actions": {
@@ -1522,6 +1520,56 @@
           ]
         }
       }
+    },
+    "padding": {
+      "description": "Padding in dp. A number applies to all four sides; an object sets sides independently. Use start/end rather than left/right so the same payload mirrors correctly in right-to-left locales. An explicit side overrides the shorthand that would otherwise set it, whatever order the keys appear in.",
+      "anyOf": [
+        {
+          "type": "integer",
+          "minimum": 0,
+          "description": "The same padding on all four sides."
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "minProperties": 1,
+          "properties": {
+            "all": {
+              "type": "integer",
+              "minimum": 0,
+              "description": "All four sides. Overridden by any narrower key."
+            },
+            "horizontal": {
+              "type": "integer",
+              "minimum": 0,
+              "description": "start and end. Overrides 'all'."
+            },
+            "vertical": {
+              "type": "integer",
+              "minimum": 0,
+              "description": "top and bottom. Overrides 'all'."
+            },
+            "start": {
+              "type": "integer",
+              "minimum": 0,
+              "description": "Leading edge: left in LTR, right in RTL."
+            },
+            "top": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "end": {
+              "type": "integer",
+              "minimum": 0,
+              "description": "Trailing edge: right in LTR, left in RTL."
+            },
+            "bottom": {
+              "type": "integer",
+              "minimum": 0
+            }
+          }
+        }
+      ]
     }
   }
 }

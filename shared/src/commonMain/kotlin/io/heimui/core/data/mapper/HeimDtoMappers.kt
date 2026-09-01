@@ -140,7 +140,7 @@ internal fun HeimComponentDto.toDomain(
                 AlignmentDto.TOP -> Alignment.TOP
                 AlignmentDto.BOTTOM -> Alignment.BOTTOM
             },
-            padding = maxOf(0, padding),
+            padding = padding.clampedToZero(),
             spacing = maxOf(0, spacing),
             backgroundColor = backgroundColor,
             scrollable = scrollable,
@@ -164,7 +164,7 @@ internal fun HeimComponentDto.toDomain(
             visibleIf = visibleIf,
             a11y = a11y?.toDomain(),
             spacing = maxOf(0, spacing),
-            padding = maxOf(0, padding),
+            padding = padding.clampedToZero(),
             items = items.mapDeduplicated(depth = depth + 1, report = report),
             pagination = pagination?.toDomain()
         )
@@ -173,7 +173,7 @@ internal fun HeimComponentDto.toDomain(
             visibleIf = visibleIf,
             a11y = a11y?.toDomain(),
             spacing = maxOf(0, spacing),
-            padding = maxOf(0, padding),
+            padding = padding.clampedToZero(),
             items = items.mapDeduplicated(depth = depth + 1, report = report),
             pagination = pagination?.toDomain()
         )
@@ -216,7 +216,7 @@ internal fun HeimComponentDto.toDomain(
             cornerRadius = maxOf(0, cornerRadius),
             backgroundColor = backgroundColor,
             borderColor = borderColor,
-            padding = maxOf(0, padding),
+            padding = padding.clampedToZero(),
             actions = actions.map { it.toDomain() },
             child = child.toDomain(depth = depth + 1)
         )

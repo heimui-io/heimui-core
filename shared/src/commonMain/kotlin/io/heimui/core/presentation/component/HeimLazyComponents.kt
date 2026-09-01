@@ -62,7 +62,7 @@ internal fun HeimLazyColumnRenderer(
         modifier = modifier
             .fillMaxWidth()
             .heimAccessibility(component.a11y, componentId = component.id),
-        contentPadding = PaddingValues(component.padding.dp),
+        contentPadding = component.padding.toPaddingValues(),
         verticalArrangement = Arrangement.spacedBy(component.spacing.dp)
     ) {
         itemsIndexed(
@@ -116,7 +116,7 @@ internal fun HeimLazyRowRenderer(
         modifier = modifier
             .fillMaxWidth()
             .heimAccessibility(component.a11y, componentId = component.id),
-        contentPadding = PaddingValues(component.padding.dp),
+        contentPadding = component.padding.toPaddingValues(),
         horizontalArrangement = Arrangement.spacedBy(component.spacing.dp)
     ) {
         itemsIndexed(

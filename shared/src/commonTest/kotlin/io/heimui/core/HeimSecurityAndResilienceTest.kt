@@ -10,6 +10,7 @@ import io.heimui.core.domain.model.HeimValue
 import io.heimui.core.domain.model.action.UnknownAction
 import io.heimui.core.domain.model.component.ButtonComponent
 import io.heimui.core.domain.model.component.ContainerComponent
+import io.heimui.core.domain.model.component.HeimPadding
 import io.heimui.core.domain.model.component.LazyColumnComponent
 import io.heimui.core.domain.model.component.TextComponent
 import io.heimui.core.domain.model.component.UnknownComponent
@@ -115,12 +116,12 @@ class HeimSecurityAndResilienceTest {
         val garbage = HeimJson.decodeScreen(
             """{"id":"s","root":{"type":"container","id":"c","padding":"sixteen"}}"""
         ).toDomain()
-        assertEquals(0, assertIs<ContainerComponent>(garbage.root).padding)
+        assertEquals(HeimPadding.None, assertIs<ContainerComponent>(garbage.root).padding)
 
         val stringNumber = HeimJson.decodeScreen(
             """{"id":"s","root":{"type":"container","id":"c","padding":"16"}}"""
         ).toDomain()
-        assertEquals(16, assertIs<ContainerComponent>(stringNumber.root).padding)
+        assertEquals(HeimPadding.all(16), assertIs<ContainerComponent>(stringNumber.root).padding)
     }
 
     @Test
@@ -133,7 +134,7 @@ class HeimSecurityAndResilienceTest {
         ).toDomain()
 
         val root = assertIs<ContainerComponent>(screen.root)
-        assertEquals(0, root.padding)   // Modifier.padding requires non-negative
+        assertEquals(HeimPadding.None, root.padding)   // Modifier.padding requires non-negative
         assertEquals(0, root.spacing)   // Arrangement.spacedBy requires non-negative
         assertEquals(1, assertIs<TextComponent>(root.children[0]).maxLines) // Text requires > 0
     }

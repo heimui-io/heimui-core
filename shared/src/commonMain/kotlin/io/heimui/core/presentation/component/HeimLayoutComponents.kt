@@ -32,6 +32,7 @@ import io.heimui.core.presentation.designsystem.HeimTokenResolver
 import io.heimui.core.presentation.designsystem.heimColor
 import io.heimui.core.presentation.state.HeimStateManager
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.staticCompositionLocalOf
@@ -49,7 +50,7 @@ internal fun HeimContainerRenderer(
     val containerModifier = modifier
         .fillMaxWidth()
         .background(bgColor)
-        .padding(component.padding.dp)
+        .heimPadding(component.padding)
         .heimAccessibility(component.a11y, componentId = component.id)
 
     // A vertical container taller than the viewport was previously clipped with no way to
@@ -90,8 +91,22 @@ internal fun HeimContainerRenderer(
             }
         }
         Direction.HORIZONTAL -> {
+            // A horizontal row that overflows used to clip its last children with no way to
+            // reach them: `scrollable` was only ever honoured on the vertical axis. Horizontal
+            // overflow is the normal case for a chip row or a category strip, so silently
+            // cutting it off loses content rather than merely looking wrong.
+            //
+            // Note this scrolls the row *and its padding* — the padding is inside the viewport,
+            // so the first child sits `start` dp in and scrolls away with everything else. A
+            // chip strip that must keep its inset while scrolling edge to edge wants `lazy_row`,
+            // whose padding becomes `contentPadding` and therefore stays outside the scroll.
+            val horizontalModifier = if (component.scrollable) {
+                containerModifier.horizontalScroll(rememberScrollState())
+            } else {
+                containerModifier
+            }
             Row(
-                modifier = containerModifier,
+                modifier = horizontalModifier,
                 horizontalArrangement = Arrangement.spacedBy(component.spacing.dp),
                 verticalAlignment = HeimTokenResolver.resolveVerticalAlignment(component.alignment)
             ) {

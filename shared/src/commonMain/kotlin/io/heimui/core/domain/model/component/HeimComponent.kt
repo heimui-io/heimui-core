@@ -56,12 +56,23 @@ public enum class InputType {
 /**
  * Linear layout. Stacks [children] along [direction].
  *
- * Vertical containers scroll by default; set [scrollable] to `false` when nesting one inside
- * another scrolling container, which would otherwise fail to measure.
+ * ### Padding here scrolls with the content
+ * A container's [padding] is applied to the container's own box, *inside* the scroll viewport.
+ * The first child therefore starts `start` dp in and that gap scrolls away with everything else.
+ *
+ * That is the right behaviour for a form or a page, and the wrong one for a chip strip or a
+ * carousel, where the row should scroll edge to edge while keeping a fixed inset at both ends.
+ * For those use [LazyRowComponent], whose padding becomes Compose's `contentPadding` and so sits
+ * outside the scrolling area. This is the same distinction other design systems draw by naming
+ * the two separately — a `padding` that clips and an `insets` that does not.
+ *
+ * ### Scrolling
+ * Both axes scroll by default. Set [scrollable] to `false` when nesting inside another scroller
+ * on the same axis, which would otherwise fail to measure against infinite constraints.
  *
  * @property direction axis the children are laid out along.
  * @property alignment cross-axis alignment of the children.
- * @property padding inner padding in dp. Negative values are clamped to 0.
+ * @property padding inner padding in dp, per side. Negative values are clamped to 0.
  * @property spacing gap between children in dp. Negative values are clamped to 0.
  * @property backgroundColor design token or `#RRGGBB` hex. `null` is transparent.
  */
@@ -71,10 +82,10 @@ public data class ContainerComponent(
     override val a11y: HeimAccessibility? = null,
     val direction: Direction = Direction.VERTICAL,
     val alignment: Alignment = Alignment.START,
-    val padding: Int = 0,
+    val padding: HeimPadding = HeimPadding.None,
     val spacing: Int = 0,
     val backgroundColor: String? = null,
-    /** Vertical containers scroll by default; set false when nesting inside another scroller. */
+    /** Scrolls along [direction] by default; set false when nesting inside another scroller. */
     val scrollable: Boolean = true,
     val children: List<HeimComponent> = emptyList()
 ) : HeimComponent
@@ -97,6 +108,11 @@ public data class BoxComponent(
  * Prefer this over a [ContainerComponent] for long or paginated collections. Item ids must be
  * unique within the list; duplicates are disambiguated during mapping rather than crashing.
  *
+ * [padding] becomes Compose's `contentPadding`: it insets the items but stays *outside* the
+ * scrolling viewport, so the first and last items keep their gap while the list still scrolls
+ * edge to edge. A [ContainerComponent]'s padding scrolls away with the content instead — the
+ * distinction matters, and it is why the same key behaves differently on the two.
+ *
  * @property pagination cursor and actions for loading the next page. `null` for a fixed list.
  */
 public data class LazyColumnComponent(
@@ -104,20 +120,25 @@ public data class LazyColumnComponent(
     override val visibleIf: String? = null,
     override val a11y: HeimAccessibility? = null,
     val spacing: Int = 8,
-    val padding: Int = 0,
+    val padding: HeimPadding = HeimPadding.None,
     val items: List<HeimComponent> = emptyList(),
     val pagination: PaginationConfig? = null
 ) : HeimComponent
 
 /**
  * Horizontally scrolling carousel that only composes visible items. See [LazyColumnComponent].
+ *
+ * This is the right component for a chip strip or a category rail. [padding] is `contentPadding`,
+ * so `{ "horizontal": 16 }` keeps a 16dp inset at both ends while the items still scroll all the
+ * way to the screen edge — rather than clipping them 16dp early, which is what a padded
+ * [ContainerComponent] would do.
  */
 public data class LazyRowComponent(
     override val id: String,
     override val visibleIf: String? = null,
     override val a11y: HeimAccessibility? = null,
     val spacing: Int = 8,
-    val padding: Int = 0,
+    val padding: HeimPadding = HeimPadding.None,
     val items: List<HeimComponent> = emptyList(),
     val pagination: PaginationConfig? = null
 ) : HeimComponent
@@ -182,7 +203,7 @@ public data class CardComponent(
     val cornerRadius: Int = 12,
     val backgroundColor: String = "surface",
     val borderColor: String? = null,
-    val padding: Int = 12,
+    val padding: HeimPadding = HeimPadding.all(12),
     val actions: List<HeimAction> = emptyList(),
     val child: HeimComponent
 ) : HeimComponent
