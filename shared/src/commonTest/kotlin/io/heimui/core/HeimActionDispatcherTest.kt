@@ -101,4 +101,37 @@ class HeimActionDispatcherTest {
         assertIs<UnknownAction>((screen.root as ButtonComponent).actions.single())
     }
 
+    @Test
+    fun `tracking carries nested provider blocks verbatim`() {
+        // The exact shape a real design system uses: one block per analytics provider, because
+        // each names the same click differently. The SDK must carry all of it without knowing
+        // that "amplitude" or "eventAction" mean anything.
+        val screen = HeimJson.decodeScreen(
+            """
+            {"id":"s","root":{"type":"button","id":"b","title":"x","actions":[
+              {"type":"navigate","screen_id":"shopfront","tracking":{
+                "analytics":{"eventName":"categorias","eventAction":"click",
+                             "attributes":{"event_category":"home","interaction":"event"}},
+                "amplitude":{"event":"click categoria home","properties":[{"key":"event_id","value":7}]}
+              }}]}}
+            """.trimIndent()
+        ).toDomain()
+
+        val tracking = (screen.root as ButtonComponent).actions.single().tracking!!
+
+        val analytics = assertIs<HeimValue.Obj>(tracking["analytics"]).fields
+        assertEquals(HeimValue.Str("categorias"), analytics["eventName"])
+        assertEquals(HeimValue.Str("click"), analytics["eventAction"])
+        assertEquals(
+            HeimValue.Str("home"),
+            assertIs<HeimValue.Obj>(analytics["attributes"]).fields["event_category"]
+        )
+
+        // Arrays survive too, so a provider that wants a list of key/value pairs is expressible.
+        val props = assertIs<HeimValue.Arr>(
+            assertIs<HeimValue.Obj>(tracking["amplitude"]).fields["properties"]
+        ).items
+        assertEquals(HeimValue.Int64(7), assertIs<HeimValue.Obj>(props.single()).fields["value"])
+    }
+
 }

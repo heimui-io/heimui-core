@@ -74,6 +74,9 @@ kotlin {
             implementation(libs.androidx.lifecycle.viewmodelCompose)
             implementation(libs.androidx.lifecycle.runtimeCompose)
             implementation(libs.kotlinx.serialization.json)
+            // Civil-calendar maths for `date_picker`. Hand-rolling epoch-to-date is how an SDK
+            // ends up with a bug that only appears on 29 February.
+            implementation(libs.kotlinx.datetime)
             implementation(libs.ktor.client.content.negotiation)
             implementation(libs.ktor.serialization.kotlinx.json)
             implementation(libs.koin.core)
