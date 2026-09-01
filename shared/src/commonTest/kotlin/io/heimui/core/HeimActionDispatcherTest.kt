@@ -1,6 +1,12 @@
 package io.heimui.core
 
+import io.heimui.core.data.mapper.toDomain
+import io.heimui.core.data.serialization.HeimJson
+import io.heimui.core.domain.model.HeimValue
 import io.heimui.core.domain.model.action.HeimAction
+import io.heimui.core.domain.model.action.SetStateAction
+import io.heimui.core.domain.model.action.UnknownAction
+import io.heimui.core.domain.model.component.ButtonComponent
 import io.heimui.core.domain.model.action.ShowSnackbarAction
 import io.heimui.core.presentation.action.HeimActionDispatcher
 import io.heimui.core.presentation.action.HeimActionInterceptor
@@ -8,6 +14,8 @@ import io.heimui.core.presentation.state.HeimStateManager
 import kotlinx.coroutines.test.runTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertIs
+import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
 class HeimActionDispatcherTest {
@@ -53,4 +61,44 @@ class HeimActionDispatcherTest {
         assertTrue(finalReceivedAction is ShowSnackbarAction)
         assertEquals("Hello World [modified]", (finalReceivedAction as ShowSnackbarAction).message)
     }
+    @Test
+    fun `set_state and tracking survive the wire`() {
+        val screen = HeimJson.decodeScreen(
+            """
+            {"id":"s","root":{"type":"button","id":"b","title":"Pro","actions":[
+              {"type":"set_state","key":" plan ","value":"pro",
+               "tracking":{"event":"plan_selected","tier":2}},
+              {"type":"set_state","key":"cleared"}
+            ]}}
+            """.trimIndent()
+        ).toDomain()
+
+        val actions = (screen.root as ButtonComponent).actions
+        val first = assertIs<SetStateAction>(actions[0])
+
+        // Trimmed, because a key with a stray space would silently never match a visible_if.
+        assertEquals("plan", first.key)
+        assertEquals(HeimValue.Str("pro"), first.value)
+
+        // Tracking is carried verbatim and never interpreted — the SDK does not know what an
+        // "event" or a "tier" is, and must not start knowing.
+        assertEquals(HeimValue.Str("plan_selected"), first.tracking?.get("event"))
+        assertEquals(HeimValue.Int64(2), first.tracking?.get("tier"))
+
+        // A missing value is an explicit null, so a payload can clear a key it previously set.
+        assertEquals(HeimValue.Null, assertIs<SetStateAction>(actions[1]).value)
+        assertNull(actions[1].tracking)
+    }
+
+    @Test
+    fun `an action type this client has never heard of does not take the screen down`() {
+        val screen = HeimJson.decodeScreen(
+            """{"id":"s","root":{"type":"button","id":"b","title":"x","actions":[
+                 {"type":"teleport","destination":"mars"}]}}"""
+        ).toDomain()
+
+        // Forward compatibility is the whole reason a client can lag behind its server.
+        assertIs<UnknownAction>((screen.root as ButtonComponent).actions.single())
+    }
+
 }

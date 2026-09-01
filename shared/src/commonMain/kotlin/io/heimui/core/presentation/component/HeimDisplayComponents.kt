@@ -32,6 +32,7 @@ import io.heimui.core.presentation.designsystem.heimColor
 import io.heimui.core.presentation.designsystem.heimTextStyle
 import io.heimui.core.presentation.designsystem.LocalHeimIconProvider
 import io.heimui.core.presentation.imageloader.LocalHeimImageLoader
+import io.heimui.core.presentation.action.LocalHeimActionRunner
 import io.heimui.core.presentation.state.HeimStateManager
 
 @Composable
@@ -95,12 +96,11 @@ internal fun HeimCardRenderer(
         .fillMaxWidth()
         .heimAccessibility(component.a11y, componentId = component.id)
 
+    val actionRunner = LocalHeimActionRunner.current
     if (component.actions.isNotEmpty()) {
-        cardModifier = cardModifier.clickable {
-            component.actions.forEach { action ->
-                onAction(action)
-            }
-        }
+        // The runner, not a forEach: a card whose actions submit and then navigate must do
+        // those in that order, and only navigate if the submission worked.
+        cardModifier = cardModifier.clickable { actionRunner.run(component.actions) }
     }
 
     Card(

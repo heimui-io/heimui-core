@@ -141,6 +141,10 @@ internal class HeimRemoteDataSource(
                 ?.authHeaderFor(HeimAuthContext.ScreenFetch(screenUrl))
                 ?.takeIf { it.isNotBlank() }
                 ?.let { append(HttpHeaders.Authorization, it) }
+
+          // Tells the backend who it is answering, so it can localise the payload. Localising on
+          // the server beats shipping every translation to every device.
+          heimDeviceLanguageTag()?.let { append(HttpHeaders.AcceptLanguage, it) }
             ifNoneMatchEtag?.let { append(HttpHeaders.IfNoneMatch, it) }
           }
           url { queryParams.forEach { (key, value) -> parameters.append(key, value) } }

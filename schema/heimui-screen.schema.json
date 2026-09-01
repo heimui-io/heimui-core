@@ -1420,6 +1420,21 @@
           "then": {
             "$ref": "#/$defs/action_custom"
           }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "set_state"
+              }
+            },
+            "required": [
+              "type"
+            ]
+          },
+          "then": {
+            "$ref": "#/$defs/action_set_state"
+          }
         }
       ]
     },
@@ -1526,6 +1541,10 @@
         },
         "frame": {
           "$ref": "#/$defs/frame"
+        },
+        "tracking": {
+          "type": "object",
+          "description": "Business analytics to report when this action runs. Opaque to the SDK: it carries the names your analytics team chose and hands the map to the app's HeimTrackingDispatcher, which decides where they go. The point is that renaming an event becomes a backend deploy instead of an app release."
         }
       }
     },
@@ -1566,6 +1585,10 @@
         },
         "frame": {
           "$ref": "#/$defs/frame"
+        },
+        "tracking": {
+          "type": "object",
+          "description": "Business analytics to report when this action runs. Opaque to the SDK: it carries the names your analytics team chose and hands the map to the app's HeimTrackingDispatcher, which decides where they go. The point is that renaming an event becomes a backend deploy instead of an app release."
         }
       }
     },
@@ -1591,6 +1614,10 @@
         },
         "frame": {
           "$ref": "#/$defs/frame"
+        },
+        "tracking": {
+          "type": "object",
+          "description": "Business analytics to report when this action runs. Opaque to the SDK: it carries the names your analytics team chose and hands the map to the app's HeimTrackingDispatcher, which decides where they go. The point is that renaming an event becomes a backend deploy instead of an app release."
         }
       }
     },
@@ -1623,6 +1650,10 @@
         },
         "frame": {
           "$ref": "#/$defs/frame"
+        },
+        "tracking": {
+          "type": "object",
+          "description": "Business analytics to report when this action runs. Opaque to the SDK: it carries the names your analytics team chose and hands the map to the app's HeimTrackingDispatcher, which decides where they go. The point is that renaming an event becomes a backend deploy instead of an app release."
         }
       }
     },
@@ -1657,6 +1688,10 @@
         },
         "frame": {
           "$ref": "#/$defs/frame"
+        },
+        "tracking": {
+          "type": "object",
+          "description": "Business analytics to report when this action runs. Opaque to the SDK: it carries the names your analytics team chose and hands the map to the app's HeimTrackingDispatcher, which decides where they go. The point is that renaming an event becomes a backend deploy instead of an app release."
         }
       }
     },
@@ -1708,6 +1743,10 @@
         },
         "frame": {
           "$ref": "#/$defs/frame"
+        },
+        "tracking": {
+          "type": "object",
+          "description": "Business analytics to report when this action runs. Opaque to the SDK: it carries the names your analytics team chose and hands the map to the app's HeimTrackingDispatcher, which decides where they go. The point is that renaming an event becomes a backend deploy instead of an app release."
         }
       }
     },
@@ -1729,6 +1768,10 @@
         },
         "frame": {
           "$ref": "#/$defs/frame"
+        },
+        "tracking": {
+          "type": "object",
+          "description": "Business analytics to report when this action runs. Opaque to the SDK: it carries the names your analytics team chose and hands the map to the app's HeimTrackingDispatcher, which decides where they go. The point is that renaming an event becomes a backend deploy instead of an app release."
         }
       }
     },
@@ -1750,6 +1793,10 @@
         },
         "frame": {
           "$ref": "#/$defs/frame"
+        },
+        "tracking": {
+          "type": "object",
+          "description": "Business analytics to report when this action runs. Opaque to the SDK: it carries the names your analytics team chose and hands the map to the app's HeimTrackingDispatcher, which decides where they go. The point is that renaming an event becomes a backend deploy instead of an app release."
         }
       }
     },
@@ -1781,6 +1828,10 @@
         },
         "frame": {
           "$ref": "#/$defs/frame"
+        },
+        "tracking": {
+          "type": "object",
+          "description": "Business analytics to report when this action runs. Opaque to the SDK: it carries the names your analytics team chose and hands the map to the app's HeimTrackingDispatcher, which decides where they go. The point is that renaming an event becomes a backend deploy instead of an app release."
         }
       }
     },
@@ -1864,6 +1915,31 @@
           "type": "integer",
           "exclusiveMinimum": 0,
           "description": "Fixed dp. Does not grow with the user's font scale — do not put text in it."
+        }
+      }
+    },
+    "action_set_state": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "Writes a value into the screen's form state. Purely local — nothing leaves the device. This is what lets anything that is not an input drive visible_if: selecting a card, switching a tab, expanding a section. Combine it with another action when the change must also reach the server; actions run in the order the list declares them.",
+      "required": [
+        "type",
+        "key"
+      ],
+      "properties": {
+        "type": {
+          "const": "set_state"
+        },
+        "key": {
+          "type": "string",
+          "description": "State key to write, the same namespace text_field and switch use."
+        },
+        "value": {
+          "description": "Any JSON value. Null writes an empty string rather than removing the key, because visible_if distinguishes empty from never-set."
+        },
+        "tracking": {
+          "type": "object",
+          "description": "Business analytics to report when this action runs. Opaque to the SDK: it carries the names your analytics team chose and hands the map to the app's HeimTrackingDispatcher, which decides where they go. The point is that renaming an event becomes a backend deploy instead of an app release."
         }
       }
     }

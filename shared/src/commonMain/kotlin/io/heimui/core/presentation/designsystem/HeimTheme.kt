@@ -30,6 +30,9 @@ import io.heimui.core.presentation.telemetry.HeimTelemetryEvent
 import io.heimui.core.presentation.telemetry.HeimTelemetryObserver
 import io.heimui.core.presentation.telemetry.LocalHeimTelemetryObserver
 import io.heimui.core.presentation.telemetry.NoOpHeimTelemetryObserver
+import io.heimui.core.presentation.tracking.HeimTrackingDispatcher
+import io.heimui.core.presentation.tracking.LocalHeimTrackingDispatcher
+import io.heimui.core.presentation.tracking.NoOpHeimTrackingDispatcher
 import io.heimui.core.presentation.state.HeimFormDraftStorage
 import io.heimui.core.presentation.state.LocalHeimFormDraftStorage
 import io.heimui.core.presentation.validation.LocalHeimValidatorRegistry
@@ -100,6 +103,11 @@ public fun HeimTheme(
     actionDispatcher: HeimActionDispatcher = remember { HeimActionDispatcher() },
     validatorRegistry: HeimValidatorRegistry = remember { HeimValidatorRegistry() },
     telemetryObserver: HeimTelemetryObserver = NoOpHeimTelemetryObserver,
+    /**
+     * Where a payload's `tracking` goes. Distinct from [telemetryObserver], which is the SDK
+     * reporting on itself — this is the product reporting on the user, with names the payload owns.
+     */
+    trackingDispatcher: HeimTrackingDispatcher = NoOpHeimTrackingDispatcher,
     customComponentRegistry: HeimCustomComponentRegistry = remember { HeimCustomComponentRegistry() },
     content: @Composable () -> Unit
 ) {
@@ -131,6 +139,7 @@ public fun HeimTheme(
         LocalHeimUrlLauncher provides effectiveUrlLauncher,
         LocalHeimActionDispatcher provides actionDispatcher,
         LocalHeimTelemetryObserver provides telemetryObserver,
+        LocalHeimTrackingDispatcher provides trackingDispatcher,
         LocalHeimCustomComponentRegistry provides customComponentRegistry,
         LocalHeimValidatorRegistry provides validatorRegistry,
         LocalHeimFormDraftStorage provides formDraftStorage

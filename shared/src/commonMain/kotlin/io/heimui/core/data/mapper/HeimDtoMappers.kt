@@ -26,6 +26,7 @@ import io.heimui.core.data.dto.InputTypeDto
 import io.heimui.core.data.dto.LazyColumnComponentDto
 import io.heimui.core.data.dto.LazyRowComponentDto
 import io.heimui.core.data.dto.NavigateActionDto
+import io.heimui.core.data.dto.SetStateActionDto
 import io.heimui.core.data.dto.OpenUrlActionDto
 import io.heimui.core.data.dto.PaginationConfigDto
 import io.heimui.core.data.dto.ShowBottomSheetActionDto
@@ -50,6 +51,7 @@ import io.heimui.core.domain.model.action.DismissAction
 import io.heimui.core.domain.model.action.DismissModalAction
 import io.heimui.core.domain.model.action.HeimAction
 import io.heimui.core.domain.model.action.NavigateAction
+import io.heimui.core.domain.model.action.SetStateAction
 import io.heimui.core.domain.model.action.OpenUrlAction
 import io.heimui.core.domain.model.action.ShowBottomSheetAction
 import io.heimui.core.domain.model.action.ShowDialogAction
@@ -484,16 +486,27 @@ internal fun PaginationConfigDto.toDomain() = PaginationConfig(
 )
 
 internal fun HeimActionDto.toDomain(): HeimAction {
+    // Analytics travels as an opaque map. The SDK never inspects it, so a payload can name a new
+    // event or a new provider's fields without the client knowing either exists.
+    val track = tracking?.toMapHeimValue()
     return when (this) {
-        is NavigateActionDto -> NavigateAction(screenId = screenId, params = params)
-        is SubmitFormActionDto -> SubmitFormAction(endpoint = endpoint, method = method, payload = payload?.toMapHeimValue())
-        is ShowSnackbarActionDto -> ShowSnackbarAction(message = message, duration = duration)
-        is OpenUrlActionDto -> OpenUrlAction(url = url)
-        is CustomActionDto -> CustomAction(name = name, payload = payload?.toMapHeimValue())
+        is NavigateActionDto -> NavigateAction(screenId = screenId, params = params, tracking = track)
+        is SetStateActionDto -> SetStateAction(
+            key = key.trim(),
+            // A missing value writes an explicit null rather than being dropped, so a payload can
+            // clear a key it previously set — dropping it would leave the old value in place.
+            value = value?.toHeimValue() ?: HeimValue.Null,
+            tracking = track
+        )
+        is SubmitFormActionDto -> SubmitFormAction(endpoint = endpoint, method = method, payload = payload?.toMapHeimValue(), tracking = track)
+        is ShowSnackbarActionDto -> ShowSnackbarAction(message = message, duration = duration, tracking = track)
+        is OpenUrlActionDto -> OpenUrlAction(url = url, tracking = track)
+        is CustomActionDto -> CustomAction(name = name, payload = payload?.toMapHeimValue(), tracking = track)
         is ShowBottomSheetActionDto -> ShowBottomSheetAction(
             title = title,
             isDismissible = isDismissible,
-            content = content.toDomain()
+            content = content.toDomain(),
+            tracking = track
         )
         is ShowDialogActionDto -> ShowDialogAction(
             title = title,
@@ -501,7 +514,8 @@ internal fun HeimActionDto.toDomain(): HeimAction {
             confirmText = confirmText,
             confirmActions = confirmActions.map { it.toDomain() },
             dismissText = dismissText,
-            dismissActions = dismissActions.map { it.toDomain() }
+            dismissActions = dismissActions.map { it.toDomain() },
+            tracking = track
         )
         is DismissModalActionDto -> DismissModalAction
         is DismissActionDto -> DismissAction

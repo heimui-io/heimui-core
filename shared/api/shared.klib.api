@@ -310,12 +310,20 @@ abstract fun interface io.heimui.core.domain.port/HeimClock { // io.heimui.core.
     }
 }
 
+abstract fun interface io.heimui.core.presentation.action/HeimActionRunner { // io.heimui.core.presentation.action/HeimActionRunner|null[0]
+    abstract fun run(kotlin.collections/List<io.heimui.core.domain.model.action/HeimAction>) // io.heimui.core.presentation.action/HeimActionRunner.run|run(kotlin.collections.List<io.heimui.core.domain.model.action.HeimAction>){}[0]
+}
+
 abstract fun interface io.heimui.core.presentation.designsystem/HeimIconProvider { // io.heimui.core.presentation.designsystem/HeimIconProvider|null[0]
     abstract fun RenderIcon(kotlin/String, androidx.compose.ui.graphics/Color, androidx.compose.ui.unit/Dp, androidx.compose.ui/Modifier, androidx.compose.runtime/Composer?, kotlin/Int) // io.heimui.core.presentation.designsystem/HeimIconProvider.RenderIcon|RenderIcon(kotlin.String;androidx.compose.ui.graphics.Color;androidx.compose.ui.unit.Dp;androidx.compose.ui.Modifier;androidx.compose.runtime.Composer?;kotlin.Int){}[0]
 }
 
 abstract fun interface io.heimui.core.presentation.telemetry/HeimTelemetryObserver { // io.heimui.core.presentation.telemetry/HeimTelemetryObserver|null[0]
     abstract fun onEvent(io.heimui.core.presentation.telemetry/HeimTelemetryEvent) // io.heimui.core.presentation.telemetry/HeimTelemetryObserver.onEvent|onEvent(io.heimui.core.presentation.telemetry.HeimTelemetryEvent){}[0]
+}
+
+abstract fun interface io.heimui.core.presentation.tracking/HeimTrackingDispatcher { // io.heimui.core.presentation.tracking/HeimTrackingDispatcher|null[0]
+    abstract fun track(io.heimui.core.domain.model.action/HeimAction, kotlin.collections/Map<kotlin/String, io.heimui.core.domain.model/HeimValue>) // io.heimui.core.presentation.tracking/HeimTrackingDispatcher.track|track(io.heimui.core.domain.model.action.HeimAction;kotlin.collections.Map<kotlin.String,io.heimui.core.domain.model.HeimValue>){}[0]
 }
 
 abstract interface io.heimui.core.data.datasource.local/HeimCacheDataSource { // io.heimui.core.data.datasource.local/HeimCacheDataSource|null[0]
@@ -401,6 +409,9 @@ sealed interface io.heimui.core.data.datasource.remote/HeimAuthContext { // io.h
 }
 
 sealed interface io.heimui.core.data.dto/HeimActionDto { // io.heimui.core.data.dto/HeimActionDto|null[0]
+    open val tracking // io.heimui.core.data.dto/HeimActionDto.tracking|{}tracking[0]
+        open fun <get-tracking>(): kotlinx.serialization.json/JsonObject? // io.heimui.core.data.dto/HeimActionDto.tracking.<get-tracking>|<get-tracking>(){}[0]
+
     final object Companion : kotlinx.serialization.internal/SerializerFactory { // io.heimui.core.data.dto/HeimActionDto.Companion|null[0]
         final fun serializer(): kotlinx.serialization/KSerializer<io.heimui.core.data.dto/HeimActionDto> // io.heimui.core.data.dto/HeimActionDto.Companion.serializer|serializer(){}[0]
         final fun serializer(kotlin/Array<out kotlinx.serialization/KSerializer<*>>...): kotlinx.serialization/KSerializer<*> // io.heimui.core.data.dto/HeimActionDto.Companion.serializer|serializer(kotlin.Array<out|kotlinx.serialization.KSerializer<*>>...){}[0]
@@ -428,6 +439,8 @@ sealed interface io.heimui.core.data.dto/HeimComponentDto { // io.heimui.core.da
 sealed interface io.heimui.core.domain.model.action/HeimAction { // io.heimui.core.domain.model.action/HeimAction|null[0]
     abstract val telemetryName // io.heimui.core.domain.model.action/HeimAction.telemetryName|{}telemetryName[0]
         abstract fun <get-telemetryName>(): kotlin/String // io.heimui.core.domain.model.action/HeimAction.telemetryName.<get-telemetryName>|<get-telemetryName>(){}[0]
+    open val tracking // io.heimui.core.domain.model.action/HeimAction.tracking|{}tracking[0]
+        open fun <get-tracking>(): kotlin.collections/Map<kotlin/String, io.heimui.core.domain.model/HeimValue>? // io.heimui.core.domain.model.action/HeimAction.tracking.<get-tracking>|<get-tracking>(){}[0]
 }
 
 sealed interface io.heimui.core.domain.model.component/HeimComponent { // io.heimui.core.domain.model.component/HeimComponent|null[0]
@@ -1250,16 +1263,19 @@ final class io.heimui.core.data.dto/ContainerComponentDto : io.heimui.core.data.
 }
 
 final class io.heimui.core.data.dto/CustomActionDto : io.heimui.core.data.dto/HeimActionDto { // io.heimui.core.data.dto/CustomActionDto|null[0]
-    constructor <init>(kotlin/String = ..., kotlinx.serialization.json/JsonObject? = ...) // io.heimui.core.data.dto/CustomActionDto.<init>|<init>(kotlin.String;kotlinx.serialization.json.JsonObject?){}[0]
+    constructor <init>(kotlin/String = ..., kotlinx.serialization.json/JsonObject? = ..., kotlinx.serialization.json/JsonObject? = ...) // io.heimui.core.data.dto/CustomActionDto.<init>|<init>(kotlin.String;kotlinx.serialization.json.JsonObject?;kotlinx.serialization.json.JsonObject?){}[0]
 
     final val name // io.heimui.core.data.dto/CustomActionDto.name|{}name[0]
         final fun <get-name>(): kotlin/String // io.heimui.core.data.dto/CustomActionDto.name.<get-name>|<get-name>(){}[0]
     final val payload // io.heimui.core.data.dto/CustomActionDto.payload|{}payload[0]
         final fun <get-payload>(): kotlinx.serialization.json/JsonObject? // io.heimui.core.data.dto/CustomActionDto.payload.<get-payload>|<get-payload>(){}[0]
+    final val tracking // io.heimui.core.data.dto/CustomActionDto.tracking|{}tracking[0]
+        final fun <get-tracking>(): kotlinx.serialization.json/JsonObject? // io.heimui.core.data.dto/CustomActionDto.tracking.<get-tracking>|<get-tracking>(){}[0]
 
     final fun component1(): kotlin/String // io.heimui.core.data.dto/CustomActionDto.component1|component1(){}[0]
     final fun component2(): kotlinx.serialization.json/JsonObject? // io.heimui.core.data.dto/CustomActionDto.component2|component2(){}[0]
-    final fun copy(kotlin/String = ..., kotlinx.serialization.json/JsonObject? = ...): io.heimui.core.data.dto/CustomActionDto // io.heimui.core.data.dto/CustomActionDto.copy|copy(kotlin.String;kotlinx.serialization.json.JsonObject?){}[0]
+    final fun component3(): kotlinx.serialization.json/JsonObject? // io.heimui.core.data.dto/CustomActionDto.component3|component3(){}[0]
+    final fun copy(kotlin/String = ..., kotlinx.serialization.json/JsonObject? = ..., kotlinx.serialization.json/JsonObject? = ...): io.heimui.core.data.dto/CustomActionDto // io.heimui.core.data.dto/CustomActionDto.copy|copy(kotlin.String;kotlinx.serialization.json.JsonObject?;kotlinx.serialization.json.JsonObject?){}[0]
     final fun equals(kotlin/Any?): kotlin/Boolean // io.heimui.core.data.dto/CustomActionDto.equals|equals(kotlin.Any?){}[0]
     final fun hashCode(): kotlin/Int // io.heimui.core.data.dto/CustomActionDto.hashCode|hashCode(){}[0]
     final fun toString(): kotlin/String // io.heimui.core.data.dto/CustomActionDto.toString|toString(){}[0]
@@ -1674,16 +1690,19 @@ final class io.heimui.core.data.dto/LazyRowComponentDto : io.heimui.core.data.dt
 }
 
 final class io.heimui.core.data.dto/NavigateActionDto : io.heimui.core.data.dto/HeimActionDto { // io.heimui.core.data.dto/NavigateActionDto|null[0]
-    constructor <init>(kotlin/String = ..., kotlin.collections/Map<kotlin/String, kotlin/String> = ...) // io.heimui.core.data.dto/NavigateActionDto.<init>|<init>(kotlin.String;kotlin.collections.Map<kotlin.String,kotlin.String>){}[0]
+    constructor <init>(kotlin/String = ..., kotlin.collections/Map<kotlin/String, kotlin/String> = ..., kotlinx.serialization.json/JsonObject? = ...) // io.heimui.core.data.dto/NavigateActionDto.<init>|<init>(kotlin.String;kotlin.collections.Map<kotlin.String,kotlin.String>;kotlinx.serialization.json.JsonObject?){}[0]
 
     final val params // io.heimui.core.data.dto/NavigateActionDto.params|{}params[0]
         final fun <get-params>(): kotlin.collections/Map<kotlin/String, kotlin/String> // io.heimui.core.data.dto/NavigateActionDto.params.<get-params>|<get-params>(){}[0]
     final val screenId // io.heimui.core.data.dto/NavigateActionDto.screenId|{}screenId[0]
         final fun <get-screenId>(): kotlin/String // io.heimui.core.data.dto/NavigateActionDto.screenId.<get-screenId>|<get-screenId>(){}[0]
+    final val tracking // io.heimui.core.data.dto/NavigateActionDto.tracking|{}tracking[0]
+        final fun <get-tracking>(): kotlinx.serialization.json/JsonObject? // io.heimui.core.data.dto/NavigateActionDto.tracking.<get-tracking>|<get-tracking>(){}[0]
 
     final fun component1(): kotlin/String // io.heimui.core.data.dto/NavigateActionDto.component1|component1(){}[0]
     final fun component2(): kotlin.collections/Map<kotlin/String, kotlin/String> // io.heimui.core.data.dto/NavigateActionDto.component2|component2(){}[0]
-    final fun copy(kotlin/String = ..., kotlin.collections/Map<kotlin/String, kotlin/String> = ...): io.heimui.core.data.dto/NavigateActionDto // io.heimui.core.data.dto/NavigateActionDto.copy|copy(kotlin.String;kotlin.collections.Map<kotlin.String,kotlin.String>){}[0]
+    final fun component3(): kotlinx.serialization.json/JsonObject? // io.heimui.core.data.dto/NavigateActionDto.component3|component3(){}[0]
+    final fun copy(kotlin/String = ..., kotlin.collections/Map<kotlin/String, kotlin/String> = ..., kotlinx.serialization.json/JsonObject? = ...): io.heimui.core.data.dto/NavigateActionDto // io.heimui.core.data.dto/NavigateActionDto.copy|copy(kotlin.String;kotlin.collections.Map<kotlin.String,kotlin.String>;kotlinx.serialization.json.JsonObject?){}[0]
     final fun equals(kotlin/Any?): kotlin/Boolean // io.heimui.core.data.dto/NavigateActionDto.equals|equals(kotlin.Any?){}[0]
     final fun hashCode(): kotlin/Int // io.heimui.core.data.dto/NavigateActionDto.hashCode|hashCode(){}[0]
     final fun toString(): kotlin/String // io.heimui.core.data.dto/NavigateActionDto.toString|toString(){}[0]
@@ -1705,13 +1724,16 @@ final class io.heimui.core.data.dto/NavigateActionDto : io.heimui.core.data.dto/
 }
 
 final class io.heimui.core.data.dto/OpenUrlActionDto : io.heimui.core.data.dto/HeimActionDto { // io.heimui.core.data.dto/OpenUrlActionDto|null[0]
-    constructor <init>(kotlin/String = ...) // io.heimui.core.data.dto/OpenUrlActionDto.<init>|<init>(kotlin.String){}[0]
+    constructor <init>(kotlin/String = ..., kotlinx.serialization.json/JsonObject? = ...) // io.heimui.core.data.dto/OpenUrlActionDto.<init>|<init>(kotlin.String;kotlinx.serialization.json.JsonObject?){}[0]
 
+    final val tracking // io.heimui.core.data.dto/OpenUrlActionDto.tracking|{}tracking[0]
+        final fun <get-tracking>(): kotlinx.serialization.json/JsonObject? // io.heimui.core.data.dto/OpenUrlActionDto.tracking.<get-tracking>|<get-tracking>(){}[0]
     final val url // io.heimui.core.data.dto/OpenUrlActionDto.url|{}url[0]
         final fun <get-url>(): kotlin/String // io.heimui.core.data.dto/OpenUrlActionDto.url.<get-url>|<get-url>(){}[0]
 
     final fun component1(): kotlin/String // io.heimui.core.data.dto/OpenUrlActionDto.component1|component1(){}[0]
-    final fun copy(kotlin/String = ...): io.heimui.core.data.dto/OpenUrlActionDto // io.heimui.core.data.dto/OpenUrlActionDto.copy|copy(kotlin.String){}[0]
+    final fun component2(): kotlinx.serialization.json/JsonObject? // io.heimui.core.data.dto/OpenUrlActionDto.component2|component2(){}[0]
+    final fun copy(kotlin/String = ..., kotlinx.serialization.json/JsonObject? = ...): io.heimui.core.data.dto/OpenUrlActionDto // io.heimui.core.data.dto/OpenUrlActionDto.copy|copy(kotlin.String;kotlinx.serialization.json.JsonObject?){}[0]
     final fun equals(kotlin/Any?): kotlin/Boolean // io.heimui.core.data.dto/OpenUrlActionDto.equals|equals(kotlin.Any?){}[0]
     final fun hashCode(): kotlin/Int // io.heimui.core.data.dto/OpenUrlActionDto.hashCode|hashCode(){}[0]
     final fun toString(): kotlin/String // io.heimui.core.data.dto/OpenUrlActionDto.toString|toString(){}[0]
@@ -1767,8 +1789,40 @@ final class io.heimui.core.data.dto/PaginationConfigDto { // io.heimui.core.data
     }
 }
 
+final class io.heimui.core.data.dto/SetStateActionDto : io.heimui.core.data.dto/HeimActionDto { // io.heimui.core.data.dto/SetStateActionDto|null[0]
+    constructor <init>(kotlin/String = ..., kotlinx.serialization.json/JsonElement? = ..., kotlinx.serialization.json/JsonObject? = ...) // io.heimui.core.data.dto/SetStateActionDto.<init>|<init>(kotlin.String;kotlinx.serialization.json.JsonElement?;kotlinx.serialization.json.JsonObject?){}[0]
+
+    final val key // io.heimui.core.data.dto/SetStateActionDto.key|{}key[0]
+        final fun <get-key>(): kotlin/String // io.heimui.core.data.dto/SetStateActionDto.key.<get-key>|<get-key>(){}[0]
+    final val tracking // io.heimui.core.data.dto/SetStateActionDto.tracking|{}tracking[0]
+        final fun <get-tracking>(): kotlinx.serialization.json/JsonObject? // io.heimui.core.data.dto/SetStateActionDto.tracking.<get-tracking>|<get-tracking>(){}[0]
+    final val value // io.heimui.core.data.dto/SetStateActionDto.value|{}value[0]
+        final fun <get-value>(): kotlinx.serialization.json/JsonElement? // io.heimui.core.data.dto/SetStateActionDto.value.<get-value>|<get-value>(){}[0]
+
+    final fun component1(): kotlin/String // io.heimui.core.data.dto/SetStateActionDto.component1|component1(){}[0]
+    final fun component2(): kotlinx.serialization.json/JsonElement? // io.heimui.core.data.dto/SetStateActionDto.component2|component2(){}[0]
+    final fun component3(): kotlinx.serialization.json/JsonObject? // io.heimui.core.data.dto/SetStateActionDto.component3|component3(){}[0]
+    final fun copy(kotlin/String = ..., kotlinx.serialization.json/JsonElement? = ..., kotlinx.serialization.json/JsonObject? = ...): io.heimui.core.data.dto/SetStateActionDto // io.heimui.core.data.dto/SetStateActionDto.copy|copy(kotlin.String;kotlinx.serialization.json.JsonElement?;kotlinx.serialization.json.JsonObject?){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // io.heimui.core.data.dto/SetStateActionDto.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // io.heimui.core.data.dto/SetStateActionDto.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // io.heimui.core.data.dto/SetStateActionDto.toString|toString(){}[0]
+
+    final object $serializer : kotlinx.serialization.internal/GeneratedSerializer<io.heimui.core.data.dto/SetStateActionDto> { // io.heimui.core.data.dto/SetStateActionDto.$serializer|null[0]
+        final val descriptor // io.heimui.core.data.dto/SetStateActionDto.$serializer.descriptor|{}descriptor[0]
+            final fun <get-descriptor>(): kotlinx.serialization.descriptors/SerialDescriptor // io.heimui.core.data.dto/SetStateActionDto.$serializer.descriptor.<get-descriptor>|<get-descriptor>(){}[0]
+
+        final fun childSerializers(): kotlin/Array<kotlinx.serialization/KSerializer<*>> // io.heimui.core.data.dto/SetStateActionDto.$serializer.childSerializers|childSerializers(){}[0]
+        final fun deserialize(kotlinx.serialization.encoding/Decoder): io.heimui.core.data.dto/SetStateActionDto // io.heimui.core.data.dto/SetStateActionDto.$serializer.deserialize|deserialize(kotlinx.serialization.encoding.Decoder){}[0]
+        final fun serialize(kotlinx.serialization.encoding/Encoder, io.heimui.core.data.dto/SetStateActionDto) // io.heimui.core.data.dto/SetStateActionDto.$serializer.serialize|serialize(kotlinx.serialization.encoding.Encoder;io.heimui.core.data.dto.SetStateActionDto){}[0]
+    }
+
+    final object Companion { // io.heimui.core.data.dto/SetStateActionDto.Companion|null[0]
+        final fun serializer(): kotlinx.serialization/KSerializer<io.heimui.core.data.dto/SetStateActionDto> // io.heimui.core.data.dto/SetStateActionDto.Companion.serializer|serializer(){}[0]
+    }
+}
+
 final class io.heimui.core.data.dto/ShowBottomSheetActionDto : io.heimui.core.data.dto/HeimActionDto { // io.heimui.core.data.dto/ShowBottomSheetActionDto|null[0]
-    constructor <init>(kotlin/String? = ..., kotlin/Boolean = ..., io.heimui.core.data.dto/HeimComponentDto = ...) // io.heimui.core.data.dto/ShowBottomSheetActionDto.<init>|<init>(kotlin.String?;kotlin.Boolean;io.heimui.core.data.dto.HeimComponentDto){}[0]
+    constructor <init>(kotlin/String? = ..., kotlin/Boolean = ..., io.heimui.core.data.dto/HeimComponentDto = ..., kotlinx.serialization.json/JsonObject? = ...) // io.heimui.core.data.dto/ShowBottomSheetActionDto.<init>|<init>(kotlin.String?;kotlin.Boolean;io.heimui.core.data.dto.HeimComponentDto;kotlinx.serialization.json.JsonObject?){}[0]
 
     final val content // io.heimui.core.data.dto/ShowBottomSheetActionDto.content|{}content[0]
         final fun <get-content>(): io.heimui.core.data.dto/HeimComponentDto // io.heimui.core.data.dto/ShowBottomSheetActionDto.content.<get-content>|<get-content>(){}[0]
@@ -1776,11 +1830,14 @@ final class io.heimui.core.data.dto/ShowBottomSheetActionDto : io.heimui.core.da
         final fun <get-isDismissible>(): kotlin/Boolean // io.heimui.core.data.dto/ShowBottomSheetActionDto.isDismissible.<get-isDismissible>|<get-isDismissible>(){}[0]
     final val title // io.heimui.core.data.dto/ShowBottomSheetActionDto.title|{}title[0]
         final fun <get-title>(): kotlin/String? // io.heimui.core.data.dto/ShowBottomSheetActionDto.title.<get-title>|<get-title>(){}[0]
+    final val tracking // io.heimui.core.data.dto/ShowBottomSheetActionDto.tracking|{}tracking[0]
+        final fun <get-tracking>(): kotlinx.serialization.json/JsonObject? // io.heimui.core.data.dto/ShowBottomSheetActionDto.tracking.<get-tracking>|<get-tracking>(){}[0]
 
     final fun component1(): kotlin/String? // io.heimui.core.data.dto/ShowBottomSheetActionDto.component1|component1(){}[0]
     final fun component2(): kotlin/Boolean // io.heimui.core.data.dto/ShowBottomSheetActionDto.component2|component2(){}[0]
     final fun component3(): io.heimui.core.data.dto/HeimComponentDto // io.heimui.core.data.dto/ShowBottomSheetActionDto.component3|component3(){}[0]
-    final fun copy(kotlin/String? = ..., kotlin/Boolean = ..., io.heimui.core.data.dto/HeimComponentDto = ...): io.heimui.core.data.dto/ShowBottomSheetActionDto // io.heimui.core.data.dto/ShowBottomSheetActionDto.copy|copy(kotlin.String?;kotlin.Boolean;io.heimui.core.data.dto.HeimComponentDto){}[0]
+    final fun component4(): kotlinx.serialization.json/JsonObject? // io.heimui.core.data.dto/ShowBottomSheetActionDto.component4|component4(){}[0]
+    final fun copy(kotlin/String? = ..., kotlin/Boolean = ..., io.heimui.core.data.dto/HeimComponentDto = ..., kotlinx.serialization.json/JsonObject? = ...): io.heimui.core.data.dto/ShowBottomSheetActionDto // io.heimui.core.data.dto/ShowBottomSheetActionDto.copy|copy(kotlin.String?;kotlin.Boolean;io.heimui.core.data.dto.HeimComponentDto;kotlinx.serialization.json.JsonObject?){}[0]
     final fun equals(kotlin/Any?): kotlin/Boolean // io.heimui.core.data.dto/ShowBottomSheetActionDto.equals|equals(kotlin.Any?){}[0]
     final fun hashCode(): kotlin/Int // io.heimui.core.data.dto/ShowBottomSheetActionDto.hashCode|hashCode(){}[0]
     final fun toString(): kotlin/String // io.heimui.core.data.dto/ShowBottomSheetActionDto.toString|toString(){}[0]
@@ -1802,7 +1859,7 @@ final class io.heimui.core.data.dto/ShowBottomSheetActionDto : io.heimui.core.da
 }
 
 final class io.heimui.core.data.dto/ShowDialogActionDto : io.heimui.core.data.dto/HeimActionDto { // io.heimui.core.data.dto/ShowDialogActionDto|null[0]
-    constructor <init>(kotlin/String = ..., kotlin/String = ..., kotlin/String = ..., kotlin.collections/List<io.heimui.core.data.dto/HeimActionDto> = ..., kotlin/String? = ..., kotlin.collections/List<io.heimui.core.data.dto/HeimActionDto> = ...) // io.heimui.core.data.dto/ShowDialogActionDto.<init>|<init>(kotlin.String;kotlin.String;kotlin.String;kotlin.collections.List<io.heimui.core.data.dto.HeimActionDto>;kotlin.String?;kotlin.collections.List<io.heimui.core.data.dto.HeimActionDto>){}[0]
+    constructor <init>(kotlin/String = ..., kotlin/String = ..., kotlin/String = ..., kotlin.collections/List<io.heimui.core.data.dto/HeimActionDto> = ..., kotlin/String? = ..., kotlin.collections/List<io.heimui.core.data.dto/HeimActionDto> = ..., kotlinx.serialization.json/JsonObject? = ...) // io.heimui.core.data.dto/ShowDialogActionDto.<init>|<init>(kotlin.String;kotlin.String;kotlin.String;kotlin.collections.List<io.heimui.core.data.dto.HeimActionDto>;kotlin.String?;kotlin.collections.List<io.heimui.core.data.dto.HeimActionDto>;kotlinx.serialization.json.JsonObject?){}[0]
 
     final val confirmActions // io.heimui.core.data.dto/ShowDialogActionDto.confirmActions|{}confirmActions[0]
         final fun <get-confirmActions>(): kotlin.collections/List<io.heimui.core.data.dto/HeimActionDto> // io.heimui.core.data.dto/ShowDialogActionDto.confirmActions.<get-confirmActions>|<get-confirmActions>(){}[0]
@@ -1816,6 +1873,8 @@ final class io.heimui.core.data.dto/ShowDialogActionDto : io.heimui.core.data.dt
         final fun <get-message>(): kotlin/String // io.heimui.core.data.dto/ShowDialogActionDto.message.<get-message>|<get-message>(){}[0]
     final val title // io.heimui.core.data.dto/ShowDialogActionDto.title|{}title[0]
         final fun <get-title>(): kotlin/String // io.heimui.core.data.dto/ShowDialogActionDto.title.<get-title>|<get-title>(){}[0]
+    final val tracking // io.heimui.core.data.dto/ShowDialogActionDto.tracking|{}tracking[0]
+        final fun <get-tracking>(): kotlinx.serialization.json/JsonObject? // io.heimui.core.data.dto/ShowDialogActionDto.tracking.<get-tracking>|<get-tracking>(){}[0]
 
     final fun component1(): kotlin/String // io.heimui.core.data.dto/ShowDialogActionDto.component1|component1(){}[0]
     final fun component2(): kotlin/String // io.heimui.core.data.dto/ShowDialogActionDto.component2|component2(){}[0]
@@ -1823,7 +1882,8 @@ final class io.heimui.core.data.dto/ShowDialogActionDto : io.heimui.core.data.dt
     final fun component4(): kotlin.collections/List<io.heimui.core.data.dto/HeimActionDto> // io.heimui.core.data.dto/ShowDialogActionDto.component4|component4(){}[0]
     final fun component5(): kotlin/String? // io.heimui.core.data.dto/ShowDialogActionDto.component5|component5(){}[0]
     final fun component6(): kotlin.collections/List<io.heimui.core.data.dto/HeimActionDto> // io.heimui.core.data.dto/ShowDialogActionDto.component6|component6(){}[0]
-    final fun copy(kotlin/String = ..., kotlin/String = ..., kotlin/String = ..., kotlin.collections/List<io.heimui.core.data.dto/HeimActionDto> = ..., kotlin/String? = ..., kotlin.collections/List<io.heimui.core.data.dto/HeimActionDto> = ...): io.heimui.core.data.dto/ShowDialogActionDto // io.heimui.core.data.dto/ShowDialogActionDto.copy|copy(kotlin.String;kotlin.String;kotlin.String;kotlin.collections.List<io.heimui.core.data.dto.HeimActionDto>;kotlin.String?;kotlin.collections.List<io.heimui.core.data.dto.HeimActionDto>){}[0]
+    final fun component7(): kotlinx.serialization.json/JsonObject? // io.heimui.core.data.dto/ShowDialogActionDto.component7|component7(){}[0]
+    final fun copy(kotlin/String = ..., kotlin/String = ..., kotlin/String = ..., kotlin.collections/List<io.heimui.core.data.dto/HeimActionDto> = ..., kotlin/String? = ..., kotlin.collections/List<io.heimui.core.data.dto/HeimActionDto> = ..., kotlinx.serialization.json/JsonObject? = ...): io.heimui.core.data.dto/ShowDialogActionDto // io.heimui.core.data.dto/ShowDialogActionDto.copy|copy(kotlin.String;kotlin.String;kotlin.String;kotlin.collections.List<io.heimui.core.data.dto.HeimActionDto>;kotlin.String?;kotlin.collections.List<io.heimui.core.data.dto.HeimActionDto>;kotlinx.serialization.json.JsonObject?){}[0]
     final fun equals(kotlin/Any?): kotlin/Boolean // io.heimui.core.data.dto/ShowDialogActionDto.equals|equals(kotlin.Any?){}[0]
     final fun hashCode(): kotlin/Int // io.heimui.core.data.dto/ShowDialogActionDto.hashCode|hashCode(){}[0]
     final fun toString(): kotlin/String // io.heimui.core.data.dto/ShowDialogActionDto.toString|toString(){}[0]
@@ -1845,16 +1905,19 @@ final class io.heimui.core.data.dto/ShowDialogActionDto : io.heimui.core.data.dt
 }
 
 final class io.heimui.core.data.dto/ShowSnackbarActionDto : io.heimui.core.data.dto/HeimActionDto { // io.heimui.core.data.dto/ShowSnackbarActionDto|null[0]
-    constructor <init>(kotlin/String = ..., kotlin/String = ...) // io.heimui.core.data.dto/ShowSnackbarActionDto.<init>|<init>(kotlin.String;kotlin.String){}[0]
+    constructor <init>(kotlin/String = ..., kotlin/String = ..., kotlinx.serialization.json/JsonObject? = ...) // io.heimui.core.data.dto/ShowSnackbarActionDto.<init>|<init>(kotlin.String;kotlin.String;kotlinx.serialization.json.JsonObject?){}[0]
 
     final val duration // io.heimui.core.data.dto/ShowSnackbarActionDto.duration|{}duration[0]
         final fun <get-duration>(): kotlin/String // io.heimui.core.data.dto/ShowSnackbarActionDto.duration.<get-duration>|<get-duration>(){}[0]
     final val message // io.heimui.core.data.dto/ShowSnackbarActionDto.message|{}message[0]
         final fun <get-message>(): kotlin/String // io.heimui.core.data.dto/ShowSnackbarActionDto.message.<get-message>|<get-message>(){}[0]
+    final val tracking // io.heimui.core.data.dto/ShowSnackbarActionDto.tracking|{}tracking[0]
+        final fun <get-tracking>(): kotlinx.serialization.json/JsonObject? // io.heimui.core.data.dto/ShowSnackbarActionDto.tracking.<get-tracking>|<get-tracking>(){}[0]
 
     final fun component1(): kotlin/String // io.heimui.core.data.dto/ShowSnackbarActionDto.component1|component1(){}[0]
     final fun component2(): kotlin/String // io.heimui.core.data.dto/ShowSnackbarActionDto.component2|component2(){}[0]
-    final fun copy(kotlin/String = ..., kotlin/String = ...): io.heimui.core.data.dto/ShowSnackbarActionDto // io.heimui.core.data.dto/ShowSnackbarActionDto.copy|copy(kotlin.String;kotlin.String){}[0]
+    final fun component3(): kotlinx.serialization.json/JsonObject? // io.heimui.core.data.dto/ShowSnackbarActionDto.component3|component3(){}[0]
+    final fun copy(kotlin/String = ..., kotlin/String = ..., kotlinx.serialization.json/JsonObject? = ...): io.heimui.core.data.dto/ShowSnackbarActionDto // io.heimui.core.data.dto/ShowSnackbarActionDto.copy|copy(kotlin.String;kotlin.String;kotlinx.serialization.json.JsonObject?){}[0]
     final fun equals(kotlin/Any?): kotlin/Boolean // io.heimui.core.data.dto/ShowSnackbarActionDto.equals|equals(kotlin.Any?){}[0]
     final fun hashCode(): kotlin/Int // io.heimui.core.data.dto/ShowSnackbarActionDto.hashCode|hashCode(){}[0]
     final fun toString(): kotlin/String // io.heimui.core.data.dto/ShowSnackbarActionDto.toString|toString(){}[0]
@@ -1918,7 +1981,7 @@ final class io.heimui.core.data.dto/SpacerComponentDto : io.heimui.core.data.dto
 }
 
 final class io.heimui.core.data.dto/SubmitFormActionDto : io.heimui.core.data.dto/HeimActionDto { // io.heimui.core.data.dto/SubmitFormActionDto|null[0]
-    constructor <init>(kotlin/String = ..., kotlin/String = ..., kotlinx.serialization.json/JsonObject? = ...) // io.heimui.core.data.dto/SubmitFormActionDto.<init>|<init>(kotlin.String;kotlin.String;kotlinx.serialization.json.JsonObject?){}[0]
+    constructor <init>(kotlin/String = ..., kotlin/String = ..., kotlinx.serialization.json/JsonObject? = ..., kotlinx.serialization.json/JsonObject? = ...) // io.heimui.core.data.dto/SubmitFormActionDto.<init>|<init>(kotlin.String;kotlin.String;kotlinx.serialization.json.JsonObject?;kotlinx.serialization.json.JsonObject?){}[0]
 
     final val endpoint // io.heimui.core.data.dto/SubmitFormActionDto.endpoint|{}endpoint[0]
         final fun <get-endpoint>(): kotlin/String // io.heimui.core.data.dto/SubmitFormActionDto.endpoint.<get-endpoint>|<get-endpoint>(){}[0]
@@ -1926,11 +1989,14 @@ final class io.heimui.core.data.dto/SubmitFormActionDto : io.heimui.core.data.dt
         final fun <get-method>(): kotlin/String // io.heimui.core.data.dto/SubmitFormActionDto.method.<get-method>|<get-method>(){}[0]
     final val payload // io.heimui.core.data.dto/SubmitFormActionDto.payload|{}payload[0]
         final fun <get-payload>(): kotlinx.serialization.json/JsonObject? // io.heimui.core.data.dto/SubmitFormActionDto.payload.<get-payload>|<get-payload>(){}[0]
+    final val tracking // io.heimui.core.data.dto/SubmitFormActionDto.tracking|{}tracking[0]
+        final fun <get-tracking>(): kotlinx.serialization.json/JsonObject? // io.heimui.core.data.dto/SubmitFormActionDto.tracking.<get-tracking>|<get-tracking>(){}[0]
 
     final fun component1(): kotlin/String // io.heimui.core.data.dto/SubmitFormActionDto.component1|component1(){}[0]
     final fun component2(): kotlin/String // io.heimui.core.data.dto/SubmitFormActionDto.component2|component2(){}[0]
     final fun component3(): kotlinx.serialization.json/JsonObject? // io.heimui.core.data.dto/SubmitFormActionDto.component3|component3(){}[0]
-    final fun copy(kotlin/String = ..., kotlin/String = ..., kotlinx.serialization.json/JsonObject? = ...): io.heimui.core.data.dto/SubmitFormActionDto // io.heimui.core.data.dto/SubmitFormActionDto.copy|copy(kotlin.String;kotlin.String;kotlinx.serialization.json.JsonObject?){}[0]
+    final fun component4(): kotlinx.serialization.json/JsonObject? // io.heimui.core.data.dto/SubmitFormActionDto.component4|component4(){}[0]
+    final fun copy(kotlin/String = ..., kotlin/String = ..., kotlinx.serialization.json/JsonObject? = ..., kotlinx.serialization.json/JsonObject? = ...): io.heimui.core.data.dto/SubmitFormActionDto // io.heimui.core.data.dto/SubmitFormActionDto.copy|copy(kotlin.String;kotlin.String;kotlinx.serialization.json.JsonObject?;kotlinx.serialization.json.JsonObject?){}[0]
     final fun equals(kotlin/Any?): kotlin/Boolean // io.heimui.core.data.dto/SubmitFormActionDto.equals|equals(kotlin.Any?){}[0]
     final fun hashCode(): kotlin/Int // io.heimui.core.data.dto/SubmitFormActionDto.hashCode|hashCode(){}[0]
     final fun toString(): kotlin/String // io.heimui.core.data.dto/SubmitFormActionDto.toString|toString(){}[0]
@@ -2118,13 +2184,16 @@ final class io.heimui.core.data.dto/TextFieldComponentDto : io.heimui.core.data.
 }
 
 final class io.heimui.core.data.dto/UnknownActionDto : io.heimui.core.data.dto/HeimActionDto { // io.heimui.core.data.dto/UnknownActionDto|null[0]
-    constructor <init>(kotlin/String? = ...) // io.heimui.core.data.dto/UnknownActionDto.<init>|<init>(kotlin.String?){}[0]
+    constructor <init>(kotlin/String? = ..., kotlinx.serialization.json/JsonObject? = ...) // io.heimui.core.data.dto/UnknownActionDto.<init>|<init>(kotlin.String?;kotlinx.serialization.json.JsonObject?){}[0]
 
     final val originalType // io.heimui.core.data.dto/UnknownActionDto.originalType|{}originalType[0]
         final fun <get-originalType>(): kotlin/String? // io.heimui.core.data.dto/UnknownActionDto.originalType.<get-originalType>|<get-originalType>(){}[0]
+    final val tracking // io.heimui.core.data.dto/UnknownActionDto.tracking|{}tracking[0]
+        final fun <get-tracking>(): kotlinx.serialization.json/JsonObject? // io.heimui.core.data.dto/UnknownActionDto.tracking.<get-tracking>|<get-tracking>(){}[0]
 
     final fun component1(): kotlin/String? // io.heimui.core.data.dto/UnknownActionDto.component1|component1(){}[0]
-    final fun copy(kotlin/String? = ...): io.heimui.core.data.dto/UnknownActionDto // io.heimui.core.data.dto/UnknownActionDto.copy|copy(kotlin.String?){}[0]
+    final fun component2(): kotlinx.serialization.json/JsonObject? // io.heimui.core.data.dto/UnknownActionDto.component2|component2(){}[0]
+    final fun copy(kotlin/String? = ..., kotlinx.serialization.json/JsonObject? = ...): io.heimui.core.data.dto/UnknownActionDto // io.heimui.core.data.dto/UnknownActionDto.copy|copy(kotlin.String?;kotlinx.serialization.json.JsonObject?){}[0]
     final fun equals(kotlin/Any?): kotlin/Boolean // io.heimui.core.data.dto/UnknownActionDto.equals|equals(kotlin.Any?){}[0]
     final fun hashCode(): kotlin/Int // io.heimui.core.data.dto/UnknownActionDto.hashCode|hashCode(){}[0]
     final fun toString(): kotlin/String // io.heimui.core.data.dto/UnknownActionDto.toString|toString(){}[0]
@@ -2336,7 +2405,7 @@ final class io.heimui.core.domain.model.accessibility/HeimAccessibility { // io.
 }
 
 final class io.heimui.core.domain.model.action/CustomAction : io.heimui.core.domain.model.action/HeimAction { // io.heimui.core.domain.model.action/CustomAction|null[0]
-    constructor <init>(kotlin/String, kotlin.collections/Map<kotlin/String, io.heimui.core.domain.model/HeimValue>? = ...) // io.heimui.core.domain.model.action/CustomAction.<init>|<init>(kotlin.String;kotlin.collections.Map<kotlin.String,io.heimui.core.domain.model.HeimValue>?){}[0]
+    constructor <init>(kotlin/String, kotlin.collections/Map<kotlin/String, io.heimui.core.domain.model/HeimValue>? = ..., kotlin.collections/Map<kotlin/String, io.heimui.core.domain.model/HeimValue>? = ...) // io.heimui.core.domain.model.action/CustomAction.<init>|<init>(kotlin.String;kotlin.collections.Map<kotlin.String,io.heimui.core.domain.model.HeimValue>?;kotlin.collections.Map<kotlin.String,io.heimui.core.domain.model.HeimValue>?){}[0]
 
     final val name // io.heimui.core.domain.model.action/CustomAction.name|{}name[0]
         final fun <get-name>(): kotlin/String // io.heimui.core.domain.model.action/CustomAction.name.<get-name>|<get-name>(){}[0]
@@ -2344,17 +2413,20 @@ final class io.heimui.core.domain.model.action/CustomAction : io.heimui.core.dom
         final fun <get-payload>(): kotlin.collections/Map<kotlin/String, io.heimui.core.domain.model/HeimValue>? // io.heimui.core.domain.model.action/CustomAction.payload.<get-payload>|<get-payload>(){}[0]
     final val telemetryName // io.heimui.core.domain.model.action/CustomAction.telemetryName|{}telemetryName[0]
         final fun <get-telemetryName>(): kotlin/String // io.heimui.core.domain.model.action/CustomAction.telemetryName.<get-telemetryName>|<get-telemetryName>(){}[0]
+    final val tracking // io.heimui.core.domain.model.action/CustomAction.tracking|{}tracking[0]
+        final fun <get-tracking>(): kotlin.collections/Map<kotlin/String, io.heimui.core.domain.model/HeimValue>? // io.heimui.core.domain.model.action/CustomAction.tracking.<get-tracking>|<get-tracking>(){}[0]
 
     final fun component1(): kotlin/String // io.heimui.core.domain.model.action/CustomAction.component1|component1(){}[0]
     final fun component2(): kotlin.collections/Map<kotlin/String, io.heimui.core.domain.model/HeimValue>? // io.heimui.core.domain.model.action/CustomAction.component2|component2(){}[0]
-    final fun copy(kotlin/String = ..., kotlin.collections/Map<kotlin/String, io.heimui.core.domain.model/HeimValue>? = ...): io.heimui.core.domain.model.action/CustomAction // io.heimui.core.domain.model.action/CustomAction.copy|copy(kotlin.String;kotlin.collections.Map<kotlin.String,io.heimui.core.domain.model.HeimValue>?){}[0]
+    final fun component3(): kotlin.collections/Map<kotlin/String, io.heimui.core.domain.model/HeimValue>? // io.heimui.core.domain.model.action/CustomAction.component3|component3(){}[0]
+    final fun copy(kotlin/String = ..., kotlin.collections/Map<kotlin/String, io.heimui.core.domain.model/HeimValue>? = ..., kotlin.collections/Map<kotlin/String, io.heimui.core.domain.model/HeimValue>? = ...): io.heimui.core.domain.model.action/CustomAction // io.heimui.core.domain.model.action/CustomAction.copy|copy(kotlin.String;kotlin.collections.Map<kotlin.String,io.heimui.core.domain.model.HeimValue>?;kotlin.collections.Map<kotlin.String,io.heimui.core.domain.model.HeimValue>?){}[0]
     final fun equals(kotlin/Any?): kotlin/Boolean // io.heimui.core.domain.model.action/CustomAction.equals|equals(kotlin.Any?){}[0]
     final fun hashCode(): kotlin/Int // io.heimui.core.domain.model.action/CustomAction.hashCode|hashCode(){}[0]
     final fun toString(): kotlin/String // io.heimui.core.domain.model.action/CustomAction.toString|toString(){}[0]
 }
 
 final class io.heimui.core.domain.model.action/NavigateAction : io.heimui.core.domain.model.action/HeimAction { // io.heimui.core.domain.model.action/NavigateAction|null[0]
-    constructor <init>(kotlin/String, kotlin.collections/Map<kotlin/String, kotlin/String> = ...) // io.heimui.core.domain.model.action/NavigateAction.<init>|<init>(kotlin.String;kotlin.collections.Map<kotlin.String,kotlin.String>){}[0]
+    constructor <init>(kotlin/String, kotlin.collections/Map<kotlin/String, kotlin/String> = ..., kotlin.collections/Map<kotlin/String, io.heimui.core.domain.model/HeimValue>? = ...) // io.heimui.core.domain.model.action/NavigateAction.<init>|<init>(kotlin.String;kotlin.collections.Map<kotlin.String,kotlin.String>;kotlin.collections.Map<kotlin.String,io.heimui.core.domain.model.HeimValue>?){}[0]
 
     final val params // io.heimui.core.domain.model.action/NavigateAction.params|{}params[0]
         final fun <get-params>(): kotlin.collections/Map<kotlin/String, kotlin/String> // io.heimui.core.domain.model.action/NavigateAction.params.<get-params>|<get-params>(){}[0]
@@ -2362,32 +2434,59 @@ final class io.heimui.core.domain.model.action/NavigateAction : io.heimui.core.d
         final fun <get-screenId>(): kotlin/String // io.heimui.core.domain.model.action/NavigateAction.screenId.<get-screenId>|<get-screenId>(){}[0]
     final val telemetryName // io.heimui.core.domain.model.action/NavigateAction.telemetryName|{}telemetryName[0]
         final fun <get-telemetryName>(): kotlin/String // io.heimui.core.domain.model.action/NavigateAction.telemetryName.<get-telemetryName>|<get-telemetryName>(){}[0]
+    final val tracking // io.heimui.core.domain.model.action/NavigateAction.tracking|{}tracking[0]
+        final fun <get-tracking>(): kotlin.collections/Map<kotlin/String, io.heimui.core.domain.model/HeimValue>? // io.heimui.core.domain.model.action/NavigateAction.tracking.<get-tracking>|<get-tracking>(){}[0]
 
     final fun component1(): kotlin/String // io.heimui.core.domain.model.action/NavigateAction.component1|component1(){}[0]
     final fun component2(): kotlin.collections/Map<kotlin/String, kotlin/String> // io.heimui.core.domain.model.action/NavigateAction.component2|component2(){}[0]
-    final fun copy(kotlin/String = ..., kotlin.collections/Map<kotlin/String, kotlin/String> = ...): io.heimui.core.domain.model.action/NavigateAction // io.heimui.core.domain.model.action/NavigateAction.copy|copy(kotlin.String;kotlin.collections.Map<kotlin.String,kotlin.String>){}[0]
+    final fun component3(): kotlin.collections/Map<kotlin/String, io.heimui.core.domain.model/HeimValue>? // io.heimui.core.domain.model.action/NavigateAction.component3|component3(){}[0]
+    final fun copy(kotlin/String = ..., kotlin.collections/Map<kotlin/String, kotlin/String> = ..., kotlin.collections/Map<kotlin/String, io.heimui.core.domain.model/HeimValue>? = ...): io.heimui.core.domain.model.action/NavigateAction // io.heimui.core.domain.model.action/NavigateAction.copy|copy(kotlin.String;kotlin.collections.Map<kotlin.String,kotlin.String>;kotlin.collections.Map<kotlin.String,io.heimui.core.domain.model.HeimValue>?){}[0]
     final fun equals(kotlin/Any?): kotlin/Boolean // io.heimui.core.domain.model.action/NavigateAction.equals|equals(kotlin.Any?){}[0]
     final fun hashCode(): kotlin/Int // io.heimui.core.domain.model.action/NavigateAction.hashCode|hashCode(){}[0]
     final fun toString(): kotlin/String // io.heimui.core.domain.model.action/NavigateAction.toString|toString(){}[0]
 }
 
 final class io.heimui.core.domain.model.action/OpenUrlAction : io.heimui.core.domain.model.action/HeimAction { // io.heimui.core.domain.model.action/OpenUrlAction|null[0]
-    constructor <init>(kotlin/String) // io.heimui.core.domain.model.action/OpenUrlAction.<init>|<init>(kotlin.String){}[0]
+    constructor <init>(kotlin/String, kotlin.collections/Map<kotlin/String, io.heimui.core.domain.model/HeimValue>? = ...) // io.heimui.core.domain.model.action/OpenUrlAction.<init>|<init>(kotlin.String;kotlin.collections.Map<kotlin.String,io.heimui.core.domain.model.HeimValue>?){}[0]
 
     final val telemetryName // io.heimui.core.domain.model.action/OpenUrlAction.telemetryName|{}telemetryName[0]
         final fun <get-telemetryName>(): kotlin/String // io.heimui.core.domain.model.action/OpenUrlAction.telemetryName.<get-telemetryName>|<get-telemetryName>(){}[0]
+    final val tracking // io.heimui.core.domain.model.action/OpenUrlAction.tracking|{}tracking[0]
+        final fun <get-tracking>(): kotlin.collections/Map<kotlin/String, io.heimui.core.domain.model/HeimValue>? // io.heimui.core.domain.model.action/OpenUrlAction.tracking.<get-tracking>|<get-tracking>(){}[0]
     final val url // io.heimui.core.domain.model.action/OpenUrlAction.url|{}url[0]
         final fun <get-url>(): kotlin/String // io.heimui.core.domain.model.action/OpenUrlAction.url.<get-url>|<get-url>(){}[0]
 
     final fun component1(): kotlin/String // io.heimui.core.domain.model.action/OpenUrlAction.component1|component1(){}[0]
-    final fun copy(kotlin/String = ...): io.heimui.core.domain.model.action/OpenUrlAction // io.heimui.core.domain.model.action/OpenUrlAction.copy|copy(kotlin.String){}[0]
+    final fun component2(): kotlin.collections/Map<kotlin/String, io.heimui.core.domain.model/HeimValue>? // io.heimui.core.domain.model.action/OpenUrlAction.component2|component2(){}[0]
+    final fun copy(kotlin/String = ..., kotlin.collections/Map<kotlin/String, io.heimui.core.domain.model/HeimValue>? = ...): io.heimui.core.domain.model.action/OpenUrlAction // io.heimui.core.domain.model.action/OpenUrlAction.copy|copy(kotlin.String;kotlin.collections.Map<kotlin.String,io.heimui.core.domain.model.HeimValue>?){}[0]
     final fun equals(kotlin/Any?): kotlin/Boolean // io.heimui.core.domain.model.action/OpenUrlAction.equals|equals(kotlin.Any?){}[0]
     final fun hashCode(): kotlin/Int // io.heimui.core.domain.model.action/OpenUrlAction.hashCode|hashCode(){}[0]
     final fun toString(): kotlin/String // io.heimui.core.domain.model.action/OpenUrlAction.toString|toString(){}[0]
 }
 
+final class io.heimui.core.domain.model.action/SetStateAction : io.heimui.core.domain.model.action/HeimAction { // io.heimui.core.domain.model.action/SetStateAction|null[0]
+    constructor <init>(kotlin/String, io.heimui.core.domain.model/HeimValue, kotlin.collections/Map<kotlin/String, io.heimui.core.domain.model/HeimValue>? = ...) // io.heimui.core.domain.model.action/SetStateAction.<init>|<init>(kotlin.String;io.heimui.core.domain.model.HeimValue;kotlin.collections.Map<kotlin.String,io.heimui.core.domain.model.HeimValue>?){}[0]
+
+    final val key // io.heimui.core.domain.model.action/SetStateAction.key|{}key[0]
+        final fun <get-key>(): kotlin/String // io.heimui.core.domain.model.action/SetStateAction.key.<get-key>|<get-key>(){}[0]
+    final val telemetryName // io.heimui.core.domain.model.action/SetStateAction.telemetryName|{}telemetryName[0]
+        final fun <get-telemetryName>(): kotlin/String // io.heimui.core.domain.model.action/SetStateAction.telemetryName.<get-telemetryName>|<get-telemetryName>(){}[0]
+    final val tracking // io.heimui.core.domain.model.action/SetStateAction.tracking|{}tracking[0]
+        final fun <get-tracking>(): kotlin.collections/Map<kotlin/String, io.heimui.core.domain.model/HeimValue>? // io.heimui.core.domain.model.action/SetStateAction.tracking.<get-tracking>|<get-tracking>(){}[0]
+    final val value // io.heimui.core.domain.model.action/SetStateAction.value|{}value[0]
+        final fun <get-value>(): io.heimui.core.domain.model/HeimValue // io.heimui.core.domain.model.action/SetStateAction.value.<get-value>|<get-value>(){}[0]
+
+    final fun component1(): kotlin/String // io.heimui.core.domain.model.action/SetStateAction.component1|component1(){}[0]
+    final fun component2(): io.heimui.core.domain.model/HeimValue // io.heimui.core.domain.model.action/SetStateAction.component2|component2(){}[0]
+    final fun component3(): kotlin.collections/Map<kotlin/String, io.heimui.core.domain.model/HeimValue>? // io.heimui.core.domain.model.action/SetStateAction.component3|component3(){}[0]
+    final fun copy(kotlin/String = ..., io.heimui.core.domain.model/HeimValue = ..., kotlin.collections/Map<kotlin/String, io.heimui.core.domain.model/HeimValue>? = ...): io.heimui.core.domain.model.action/SetStateAction // io.heimui.core.domain.model.action/SetStateAction.copy|copy(kotlin.String;io.heimui.core.domain.model.HeimValue;kotlin.collections.Map<kotlin.String,io.heimui.core.domain.model.HeimValue>?){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // io.heimui.core.domain.model.action/SetStateAction.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // io.heimui.core.domain.model.action/SetStateAction.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // io.heimui.core.domain.model.action/SetStateAction.toString|toString(){}[0]
+}
+
 final class io.heimui.core.domain.model.action/ShowBottomSheetAction : io.heimui.core.domain.model.action/HeimAction { // io.heimui.core.domain.model.action/ShowBottomSheetAction|null[0]
-    constructor <init>(kotlin/String? = ..., kotlin/Boolean = ..., io.heimui.core.domain.model.component/HeimComponent) // io.heimui.core.domain.model.action/ShowBottomSheetAction.<init>|<init>(kotlin.String?;kotlin.Boolean;io.heimui.core.domain.model.component.HeimComponent){}[0]
+    constructor <init>(kotlin/String? = ..., kotlin/Boolean = ..., io.heimui.core.domain.model.component/HeimComponent, kotlin.collections/Map<kotlin/String, io.heimui.core.domain.model/HeimValue>? = ...) // io.heimui.core.domain.model.action/ShowBottomSheetAction.<init>|<init>(kotlin.String?;kotlin.Boolean;io.heimui.core.domain.model.component.HeimComponent;kotlin.collections.Map<kotlin.String,io.heimui.core.domain.model.HeimValue>?){}[0]
 
     final val content // io.heimui.core.domain.model.action/ShowBottomSheetAction.content|{}content[0]
         final fun <get-content>(): io.heimui.core.domain.model.component/HeimComponent // io.heimui.core.domain.model.action/ShowBottomSheetAction.content.<get-content>|<get-content>(){}[0]
@@ -2397,18 +2496,21 @@ final class io.heimui.core.domain.model.action/ShowBottomSheetAction : io.heimui
         final fun <get-telemetryName>(): kotlin/String // io.heimui.core.domain.model.action/ShowBottomSheetAction.telemetryName.<get-telemetryName>|<get-telemetryName>(){}[0]
     final val title // io.heimui.core.domain.model.action/ShowBottomSheetAction.title|{}title[0]
         final fun <get-title>(): kotlin/String? // io.heimui.core.domain.model.action/ShowBottomSheetAction.title.<get-title>|<get-title>(){}[0]
+    final val tracking // io.heimui.core.domain.model.action/ShowBottomSheetAction.tracking|{}tracking[0]
+        final fun <get-tracking>(): kotlin.collections/Map<kotlin/String, io.heimui.core.domain.model/HeimValue>? // io.heimui.core.domain.model.action/ShowBottomSheetAction.tracking.<get-tracking>|<get-tracking>(){}[0]
 
     final fun component1(): kotlin/String? // io.heimui.core.domain.model.action/ShowBottomSheetAction.component1|component1(){}[0]
     final fun component2(): kotlin/Boolean // io.heimui.core.domain.model.action/ShowBottomSheetAction.component2|component2(){}[0]
     final fun component3(): io.heimui.core.domain.model.component/HeimComponent // io.heimui.core.domain.model.action/ShowBottomSheetAction.component3|component3(){}[0]
-    final fun copy(kotlin/String? = ..., kotlin/Boolean = ..., io.heimui.core.domain.model.component/HeimComponent = ...): io.heimui.core.domain.model.action/ShowBottomSheetAction // io.heimui.core.domain.model.action/ShowBottomSheetAction.copy|copy(kotlin.String?;kotlin.Boolean;io.heimui.core.domain.model.component.HeimComponent){}[0]
+    final fun component4(): kotlin.collections/Map<kotlin/String, io.heimui.core.domain.model/HeimValue>? // io.heimui.core.domain.model.action/ShowBottomSheetAction.component4|component4(){}[0]
+    final fun copy(kotlin/String? = ..., kotlin/Boolean = ..., io.heimui.core.domain.model.component/HeimComponent = ..., kotlin.collections/Map<kotlin/String, io.heimui.core.domain.model/HeimValue>? = ...): io.heimui.core.domain.model.action/ShowBottomSheetAction // io.heimui.core.domain.model.action/ShowBottomSheetAction.copy|copy(kotlin.String?;kotlin.Boolean;io.heimui.core.domain.model.component.HeimComponent;kotlin.collections.Map<kotlin.String,io.heimui.core.domain.model.HeimValue>?){}[0]
     final fun equals(kotlin/Any?): kotlin/Boolean // io.heimui.core.domain.model.action/ShowBottomSheetAction.equals|equals(kotlin.Any?){}[0]
     final fun hashCode(): kotlin/Int // io.heimui.core.domain.model.action/ShowBottomSheetAction.hashCode|hashCode(){}[0]
     final fun toString(): kotlin/String // io.heimui.core.domain.model.action/ShowBottomSheetAction.toString|toString(){}[0]
 }
 
 final class io.heimui.core.domain.model.action/ShowDialogAction : io.heimui.core.domain.model.action/HeimAction { // io.heimui.core.domain.model.action/ShowDialogAction|null[0]
-    constructor <init>(kotlin/String, kotlin/String, kotlin/String = ..., kotlin.collections/List<io.heimui.core.domain.model.action/HeimAction> = ..., kotlin/String? = ..., kotlin.collections/List<io.heimui.core.domain.model.action/HeimAction> = ...) // io.heimui.core.domain.model.action/ShowDialogAction.<init>|<init>(kotlin.String;kotlin.String;kotlin.String;kotlin.collections.List<io.heimui.core.domain.model.action.HeimAction>;kotlin.String?;kotlin.collections.List<io.heimui.core.domain.model.action.HeimAction>){}[0]
+    constructor <init>(kotlin/String, kotlin/String, kotlin/String = ..., kotlin.collections/List<io.heimui.core.domain.model.action/HeimAction> = ..., kotlin/String? = ..., kotlin.collections/List<io.heimui.core.domain.model.action/HeimAction> = ..., kotlin.collections/Map<kotlin/String, io.heimui.core.domain.model/HeimValue>? = ...) // io.heimui.core.domain.model.action/ShowDialogAction.<init>|<init>(kotlin.String;kotlin.String;kotlin.String;kotlin.collections.List<io.heimui.core.domain.model.action.HeimAction>;kotlin.String?;kotlin.collections.List<io.heimui.core.domain.model.action.HeimAction>;kotlin.collections.Map<kotlin.String,io.heimui.core.domain.model.HeimValue>?){}[0]
 
     final val confirmActions // io.heimui.core.domain.model.action/ShowDialogAction.confirmActions|{}confirmActions[0]
         final fun <get-confirmActions>(): kotlin.collections/List<io.heimui.core.domain.model.action/HeimAction> // io.heimui.core.domain.model.action/ShowDialogAction.confirmActions.<get-confirmActions>|<get-confirmActions>(){}[0]
@@ -2424,6 +2526,8 @@ final class io.heimui.core.domain.model.action/ShowDialogAction : io.heimui.core
         final fun <get-telemetryName>(): kotlin/String // io.heimui.core.domain.model.action/ShowDialogAction.telemetryName.<get-telemetryName>|<get-telemetryName>(){}[0]
     final val title // io.heimui.core.domain.model.action/ShowDialogAction.title|{}title[0]
         final fun <get-title>(): kotlin/String // io.heimui.core.domain.model.action/ShowDialogAction.title.<get-title>|<get-title>(){}[0]
+    final val tracking // io.heimui.core.domain.model.action/ShowDialogAction.tracking|{}tracking[0]
+        final fun <get-tracking>(): kotlin.collections/Map<kotlin/String, io.heimui.core.domain.model/HeimValue>? // io.heimui.core.domain.model.action/ShowDialogAction.tracking.<get-tracking>|<get-tracking>(){}[0]
 
     final fun component1(): kotlin/String // io.heimui.core.domain.model.action/ShowDialogAction.component1|component1(){}[0]
     final fun component2(): kotlin/String // io.heimui.core.domain.model.action/ShowDialogAction.component2|component2(){}[0]
@@ -2431,14 +2535,15 @@ final class io.heimui.core.domain.model.action/ShowDialogAction : io.heimui.core
     final fun component4(): kotlin.collections/List<io.heimui.core.domain.model.action/HeimAction> // io.heimui.core.domain.model.action/ShowDialogAction.component4|component4(){}[0]
     final fun component5(): kotlin/String? // io.heimui.core.domain.model.action/ShowDialogAction.component5|component5(){}[0]
     final fun component6(): kotlin.collections/List<io.heimui.core.domain.model.action/HeimAction> // io.heimui.core.domain.model.action/ShowDialogAction.component6|component6(){}[0]
-    final fun copy(kotlin/String = ..., kotlin/String = ..., kotlin/String = ..., kotlin.collections/List<io.heimui.core.domain.model.action/HeimAction> = ..., kotlin/String? = ..., kotlin.collections/List<io.heimui.core.domain.model.action/HeimAction> = ...): io.heimui.core.domain.model.action/ShowDialogAction // io.heimui.core.domain.model.action/ShowDialogAction.copy|copy(kotlin.String;kotlin.String;kotlin.String;kotlin.collections.List<io.heimui.core.domain.model.action.HeimAction>;kotlin.String?;kotlin.collections.List<io.heimui.core.domain.model.action.HeimAction>){}[0]
+    final fun component7(): kotlin.collections/Map<kotlin/String, io.heimui.core.domain.model/HeimValue>? // io.heimui.core.domain.model.action/ShowDialogAction.component7|component7(){}[0]
+    final fun copy(kotlin/String = ..., kotlin/String = ..., kotlin/String = ..., kotlin.collections/List<io.heimui.core.domain.model.action/HeimAction> = ..., kotlin/String? = ..., kotlin.collections/List<io.heimui.core.domain.model.action/HeimAction> = ..., kotlin.collections/Map<kotlin/String, io.heimui.core.domain.model/HeimValue>? = ...): io.heimui.core.domain.model.action/ShowDialogAction // io.heimui.core.domain.model.action/ShowDialogAction.copy|copy(kotlin.String;kotlin.String;kotlin.String;kotlin.collections.List<io.heimui.core.domain.model.action.HeimAction>;kotlin.String?;kotlin.collections.List<io.heimui.core.domain.model.action.HeimAction>;kotlin.collections.Map<kotlin.String,io.heimui.core.domain.model.HeimValue>?){}[0]
     final fun equals(kotlin/Any?): kotlin/Boolean // io.heimui.core.domain.model.action/ShowDialogAction.equals|equals(kotlin.Any?){}[0]
     final fun hashCode(): kotlin/Int // io.heimui.core.domain.model.action/ShowDialogAction.hashCode|hashCode(){}[0]
     final fun toString(): kotlin/String // io.heimui.core.domain.model.action/ShowDialogAction.toString|toString(){}[0]
 }
 
 final class io.heimui.core.domain.model.action/ShowSnackbarAction : io.heimui.core.domain.model.action/HeimAction { // io.heimui.core.domain.model.action/ShowSnackbarAction|null[0]
-    constructor <init>(kotlin/String, kotlin/String = ...) // io.heimui.core.domain.model.action/ShowSnackbarAction.<init>|<init>(kotlin.String;kotlin.String){}[0]
+    constructor <init>(kotlin/String, kotlin/String = ..., kotlin.collections/Map<kotlin/String, io.heimui.core.domain.model/HeimValue>? = ...) // io.heimui.core.domain.model.action/ShowSnackbarAction.<init>|<init>(kotlin.String;kotlin.String;kotlin.collections.Map<kotlin.String,io.heimui.core.domain.model.HeimValue>?){}[0]
 
     final val duration // io.heimui.core.domain.model.action/ShowSnackbarAction.duration|{}duration[0]
         final fun <get-duration>(): kotlin/String // io.heimui.core.domain.model.action/ShowSnackbarAction.duration.<get-duration>|<get-duration>(){}[0]
@@ -2446,17 +2551,20 @@ final class io.heimui.core.domain.model.action/ShowSnackbarAction : io.heimui.co
         final fun <get-message>(): kotlin/String // io.heimui.core.domain.model.action/ShowSnackbarAction.message.<get-message>|<get-message>(){}[0]
     final val telemetryName // io.heimui.core.domain.model.action/ShowSnackbarAction.telemetryName|{}telemetryName[0]
         final fun <get-telemetryName>(): kotlin/String // io.heimui.core.domain.model.action/ShowSnackbarAction.telemetryName.<get-telemetryName>|<get-telemetryName>(){}[0]
+    final val tracking // io.heimui.core.domain.model.action/ShowSnackbarAction.tracking|{}tracking[0]
+        final fun <get-tracking>(): kotlin.collections/Map<kotlin/String, io.heimui.core.domain.model/HeimValue>? // io.heimui.core.domain.model.action/ShowSnackbarAction.tracking.<get-tracking>|<get-tracking>(){}[0]
 
     final fun component1(): kotlin/String // io.heimui.core.domain.model.action/ShowSnackbarAction.component1|component1(){}[0]
     final fun component2(): kotlin/String // io.heimui.core.domain.model.action/ShowSnackbarAction.component2|component2(){}[0]
-    final fun copy(kotlin/String = ..., kotlin/String = ...): io.heimui.core.domain.model.action/ShowSnackbarAction // io.heimui.core.domain.model.action/ShowSnackbarAction.copy|copy(kotlin.String;kotlin.String){}[0]
+    final fun component3(): kotlin.collections/Map<kotlin/String, io.heimui.core.domain.model/HeimValue>? // io.heimui.core.domain.model.action/ShowSnackbarAction.component3|component3(){}[0]
+    final fun copy(kotlin/String = ..., kotlin/String = ..., kotlin.collections/Map<kotlin/String, io.heimui.core.domain.model/HeimValue>? = ...): io.heimui.core.domain.model.action/ShowSnackbarAction // io.heimui.core.domain.model.action/ShowSnackbarAction.copy|copy(kotlin.String;kotlin.String;kotlin.collections.Map<kotlin.String,io.heimui.core.domain.model.HeimValue>?){}[0]
     final fun equals(kotlin/Any?): kotlin/Boolean // io.heimui.core.domain.model.action/ShowSnackbarAction.equals|equals(kotlin.Any?){}[0]
     final fun hashCode(): kotlin/Int // io.heimui.core.domain.model.action/ShowSnackbarAction.hashCode|hashCode(){}[0]
     final fun toString(): kotlin/String // io.heimui.core.domain.model.action/ShowSnackbarAction.toString|toString(){}[0]
 }
 
 final class io.heimui.core.domain.model.action/SubmitFormAction : io.heimui.core.domain.model.action/HeimAction { // io.heimui.core.domain.model.action/SubmitFormAction|null[0]
-    constructor <init>(kotlin/String, kotlin/String = ..., kotlin.collections/Map<kotlin/String, io.heimui.core.domain.model/HeimValue>? = ...) // io.heimui.core.domain.model.action/SubmitFormAction.<init>|<init>(kotlin.String;kotlin.String;kotlin.collections.Map<kotlin.String,io.heimui.core.domain.model.HeimValue>?){}[0]
+    constructor <init>(kotlin/String, kotlin/String = ..., kotlin.collections/Map<kotlin/String, io.heimui.core.domain.model/HeimValue>? = ..., kotlin.collections/Map<kotlin/String, io.heimui.core.domain.model/HeimValue>? = ...) // io.heimui.core.domain.model.action/SubmitFormAction.<init>|<init>(kotlin.String;kotlin.String;kotlin.collections.Map<kotlin.String,io.heimui.core.domain.model.HeimValue>?;kotlin.collections.Map<kotlin.String,io.heimui.core.domain.model.HeimValue>?){}[0]
 
     final val endpoint // io.heimui.core.domain.model.action/SubmitFormAction.endpoint|{}endpoint[0]
         final fun <get-endpoint>(): kotlin/String // io.heimui.core.domain.model.action/SubmitFormAction.endpoint.<get-endpoint>|<get-endpoint>(){}[0]
@@ -2466,26 +2574,32 @@ final class io.heimui.core.domain.model.action/SubmitFormAction : io.heimui.core
         final fun <get-payload>(): kotlin.collections/Map<kotlin/String, io.heimui.core.domain.model/HeimValue>? // io.heimui.core.domain.model.action/SubmitFormAction.payload.<get-payload>|<get-payload>(){}[0]
     final val telemetryName // io.heimui.core.domain.model.action/SubmitFormAction.telemetryName|{}telemetryName[0]
         final fun <get-telemetryName>(): kotlin/String // io.heimui.core.domain.model.action/SubmitFormAction.telemetryName.<get-telemetryName>|<get-telemetryName>(){}[0]
+    final val tracking // io.heimui.core.domain.model.action/SubmitFormAction.tracking|{}tracking[0]
+        final fun <get-tracking>(): kotlin.collections/Map<kotlin/String, io.heimui.core.domain.model/HeimValue>? // io.heimui.core.domain.model.action/SubmitFormAction.tracking.<get-tracking>|<get-tracking>(){}[0]
 
     final fun component1(): kotlin/String // io.heimui.core.domain.model.action/SubmitFormAction.component1|component1(){}[0]
     final fun component2(): kotlin/String // io.heimui.core.domain.model.action/SubmitFormAction.component2|component2(){}[0]
     final fun component3(): kotlin.collections/Map<kotlin/String, io.heimui.core.domain.model/HeimValue>? // io.heimui.core.domain.model.action/SubmitFormAction.component3|component3(){}[0]
-    final fun copy(kotlin/String = ..., kotlin/String = ..., kotlin.collections/Map<kotlin/String, io.heimui.core.domain.model/HeimValue>? = ...): io.heimui.core.domain.model.action/SubmitFormAction // io.heimui.core.domain.model.action/SubmitFormAction.copy|copy(kotlin.String;kotlin.String;kotlin.collections.Map<kotlin.String,io.heimui.core.domain.model.HeimValue>?){}[0]
+    final fun component4(): kotlin.collections/Map<kotlin/String, io.heimui.core.domain.model/HeimValue>? // io.heimui.core.domain.model.action/SubmitFormAction.component4|component4(){}[0]
+    final fun copy(kotlin/String = ..., kotlin/String = ..., kotlin.collections/Map<kotlin/String, io.heimui.core.domain.model/HeimValue>? = ..., kotlin.collections/Map<kotlin/String, io.heimui.core.domain.model/HeimValue>? = ...): io.heimui.core.domain.model.action/SubmitFormAction // io.heimui.core.domain.model.action/SubmitFormAction.copy|copy(kotlin.String;kotlin.String;kotlin.collections.Map<kotlin.String,io.heimui.core.domain.model.HeimValue>?;kotlin.collections.Map<kotlin.String,io.heimui.core.domain.model.HeimValue>?){}[0]
     final fun equals(kotlin/Any?): kotlin/Boolean // io.heimui.core.domain.model.action/SubmitFormAction.equals|equals(kotlin.Any?){}[0]
     final fun hashCode(): kotlin/Int // io.heimui.core.domain.model.action/SubmitFormAction.hashCode|hashCode(){}[0]
     final fun toString(): kotlin/String // io.heimui.core.domain.model.action/SubmitFormAction.toString|toString(){}[0]
 }
 
 final class io.heimui.core.domain.model.action/UnknownAction : io.heimui.core.domain.model.action/HeimAction { // io.heimui.core.domain.model.action/UnknownAction|null[0]
-    constructor <init>(kotlin/String? = ...) // io.heimui.core.domain.model.action/UnknownAction.<init>|<init>(kotlin.String?){}[0]
+    constructor <init>(kotlin/String? = ..., kotlin.collections/Map<kotlin/String, io.heimui.core.domain.model/HeimValue>? = ...) // io.heimui.core.domain.model.action/UnknownAction.<init>|<init>(kotlin.String?;kotlin.collections.Map<kotlin.String,io.heimui.core.domain.model.HeimValue>?){}[0]
 
     final val originalType // io.heimui.core.domain.model.action/UnknownAction.originalType|{}originalType[0]
         final fun <get-originalType>(): kotlin/String? // io.heimui.core.domain.model.action/UnknownAction.originalType.<get-originalType>|<get-originalType>(){}[0]
     final val telemetryName // io.heimui.core.domain.model.action/UnknownAction.telemetryName|{}telemetryName[0]
         final fun <get-telemetryName>(): kotlin/String // io.heimui.core.domain.model.action/UnknownAction.telemetryName.<get-telemetryName>|<get-telemetryName>(){}[0]
+    final val tracking // io.heimui.core.domain.model.action/UnknownAction.tracking|{}tracking[0]
+        final fun <get-tracking>(): kotlin.collections/Map<kotlin/String, io.heimui.core.domain.model/HeimValue>? // io.heimui.core.domain.model.action/UnknownAction.tracking.<get-tracking>|<get-tracking>(){}[0]
 
     final fun component1(): kotlin/String? // io.heimui.core.domain.model.action/UnknownAction.component1|component1(){}[0]
-    final fun copy(kotlin/String? = ...): io.heimui.core.domain.model.action/UnknownAction // io.heimui.core.domain.model.action/UnknownAction.copy|copy(kotlin.String?){}[0]
+    final fun component2(): kotlin.collections/Map<kotlin/String, io.heimui.core.domain.model/HeimValue>? // io.heimui.core.domain.model.action/UnknownAction.component2|component2(){}[0]
+    final fun copy(kotlin/String? = ..., kotlin.collections/Map<kotlin/String, io.heimui.core.domain.model/HeimValue>? = ...): io.heimui.core.domain.model.action/UnknownAction // io.heimui.core.domain.model.action/UnknownAction.copy|copy(kotlin.String?;kotlin.collections.Map<kotlin.String,io.heimui.core.domain.model.HeimValue>?){}[0]
     final fun equals(kotlin/Any?): kotlin/Boolean // io.heimui.core.domain.model.action/UnknownAction.equals|equals(kotlin.Any?){}[0]
     final fun hashCode(): kotlin/Int // io.heimui.core.domain.model.action/UnknownAction.hashCode|hashCode(){}[0]
     final fun toString(): kotlin/String // io.heimui.core.domain.model.action/UnknownAction.toString|toString(){}[0]
@@ -3502,6 +3616,10 @@ final object io.heimui.core.presentation.telemetry/NoOpHeimTelemetryObserver : i
     final fun onEvent(io.heimui.core.presentation.telemetry/HeimTelemetryEvent) // io.heimui.core.presentation.telemetry/NoOpHeimTelemetryObserver.onEvent|onEvent(io.heimui.core.presentation.telemetry.HeimTelemetryEvent){}[0]
 }
 
+final object io.heimui.core.presentation.tracking/NoOpHeimTrackingDispatcher : io.heimui.core.presentation.tracking/HeimTrackingDispatcher { // io.heimui.core.presentation.tracking/NoOpHeimTrackingDispatcher|null[0]
+    final fun track(io.heimui.core.domain.model.action/HeimAction, kotlin.collections/Map<kotlin/String, io.heimui.core.domain.model/HeimValue>) // io.heimui.core.presentation.tracking/NoOpHeimTrackingDispatcher.track|track(io.heimui.core.domain.model.action.HeimAction;kotlin.collections.Map<kotlin.String,io.heimui.core.domain.model.HeimValue>){}[0]
+}
+
 final object io.heimui.core/HeimUI { // io.heimui.core/HeimUI|null[0]
     final val config // io.heimui.core/HeimUI.config|{}config[0]
         final fun <get-config>(): io.heimui.core.di/HeimConfig // io.heimui.core/HeimUI.config.<get-config>|<get-config>(){}[0]
@@ -3570,6 +3688,8 @@ final val io.heimui.core.data.dto/io_heimui_core_data_dto_OpenUrlActionDto$stabl
 final val io.heimui.core.data.dto/io_heimui_core_data_dto_OpenUrlActionDto_$serializer$stableprop // io.heimui.core.data.dto/io_heimui_core_data_dto_OpenUrlActionDto_$serializer$stableprop|#static{}io_heimui_core_data_dto_OpenUrlActionDto_$serializer$stableprop[0]
 final val io.heimui.core.data.dto/io_heimui_core_data_dto_PaginationConfigDto$stableprop // io.heimui.core.data.dto/io_heimui_core_data_dto_PaginationConfigDto$stableprop|#static{}io_heimui_core_data_dto_PaginationConfigDto$stableprop[0]
 final val io.heimui.core.data.dto/io_heimui_core_data_dto_PaginationConfigDto_$serializer$stableprop // io.heimui.core.data.dto/io_heimui_core_data_dto_PaginationConfigDto_$serializer$stableprop|#static{}io_heimui_core_data_dto_PaginationConfigDto_$serializer$stableprop[0]
+final val io.heimui.core.data.dto/io_heimui_core_data_dto_SetStateActionDto$stableprop // io.heimui.core.data.dto/io_heimui_core_data_dto_SetStateActionDto$stableprop|#static{}io_heimui_core_data_dto_SetStateActionDto$stableprop[0]
+final val io.heimui.core.data.dto/io_heimui_core_data_dto_SetStateActionDto_$serializer$stableprop // io.heimui.core.data.dto/io_heimui_core_data_dto_SetStateActionDto_$serializer$stableprop|#static{}io_heimui_core_data_dto_SetStateActionDto_$serializer$stableprop[0]
 final val io.heimui.core.data.dto/io_heimui_core_data_dto_ShowBottomSheetActionDto$stableprop // io.heimui.core.data.dto/io_heimui_core_data_dto_ShowBottomSheetActionDto$stableprop|#static{}io_heimui_core_data_dto_ShowBottomSheetActionDto$stableprop[0]
 final val io.heimui.core.data.dto/io_heimui_core_data_dto_ShowBottomSheetActionDto_$serializer$stableprop // io.heimui.core.data.dto/io_heimui_core_data_dto_ShowBottomSheetActionDto_$serializer$stableprop|#static{}io_heimui_core_data_dto_ShowBottomSheetActionDto_$serializer$stableprop[0]
 final val io.heimui.core.data.dto/io_heimui_core_data_dto_ShowDialogActionDto$stableprop // io.heimui.core.data.dto/io_heimui_core_data_dto_ShowDialogActionDto$stableprop|#static{}io_heimui_core_data_dto_ShowDialogActionDto$stableprop[0]
@@ -3610,6 +3730,7 @@ final val io.heimui.core.domain.model.action/io_heimui_core_domain_model_action_
 final val io.heimui.core.domain.model.action/io_heimui_core_domain_model_action_DismissModalAction$stableprop // io.heimui.core.domain.model.action/io_heimui_core_domain_model_action_DismissModalAction$stableprop|#static{}io_heimui_core_domain_model_action_DismissModalAction$stableprop[0]
 final val io.heimui.core.domain.model.action/io_heimui_core_domain_model_action_NavigateAction$stableprop // io.heimui.core.domain.model.action/io_heimui_core_domain_model_action_NavigateAction$stableprop|#static{}io_heimui_core_domain_model_action_NavigateAction$stableprop[0]
 final val io.heimui.core.domain.model.action/io_heimui_core_domain_model_action_OpenUrlAction$stableprop // io.heimui.core.domain.model.action/io_heimui_core_domain_model_action_OpenUrlAction$stableprop|#static{}io_heimui_core_domain_model_action_OpenUrlAction$stableprop[0]
+final val io.heimui.core.domain.model.action/io_heimui_core_domain_model_action_SetStateAction$stableprop // io.heimui.core.domain.model.action/io_heimui_core_domain_model_action_SetStateAction$stableprop|#static{}io_heimui_core_domain_model_action_SetStateAction$stableprop[0]
 final val io.heimui.core.domain.model.action/io_heimui_core_domain_model_action_ShowBottomSheetAction$stableprop // io.heimui.core.domain.model.action/io_heimui_core_domain_model_action_ShowBottomSheetAction$stableprop|#static{}io_heimui_core_domain_model_action_ShowBottomSheetAction$stableprop[0]
 final val io.heimui.core.domain.model.action/io_heimui_core_domain_model_action_ShowDialogAction$stableprop // io.heimui.core.domain.model.action/io_heimui_core_domain_model_action_ShowDialogAction$stableprop|#static{}io_heimui_core_domain_model_action_ShowDialogAction$stableprop[0]
 final val io.heimui.core.domain.model.action/io_heimui_core_domain_model_action_ShowSnackbarAction$stableprop // io.heimui.core.domain.model.action/io_heimui_core_domain_model_action_ShowSnackbarAction$stableprop|#static{}io_heimui_core_domain_model_action_ShowSnackbarAction$stableprop[0]
@@ -3700,6 +3821,9 @@ final val io.heimui.core.presentation.telemetry/io_heimui_core_presentation_tele
 final val io.heimui.core.presentation.telemetry/io_heimui_core_presentation_telemetry_HeimTelemetryEvent_UrlBlocked$stableprop // io.heimui.core.presentation.telemetry/io_heimui_core_presentation_telemetry_HeimTelemetryEvent_UrlBlocked$stableprop|#static{}io_heimui_core_presentation_telemetry_HeimTelemetryEvent_UrlBlocked$stableprop[0]
 final val io.heimui.core.presentation.telemetry/io_heimui_core_presentation_telemetry_HeimTelemetryEvent_ValidatorMissing$stableprop // io.heimui.core.presentation.telemetry/io_heimui_core_presentation_telemetry_HeimTelemetryEvent_ValidatorMissing$stableprop|#static{}io_heimui_core_presentation_telemetry_HeimTelemetryEvent_ValidatorMissing$stableprop[0]
 final val io.heimui.core.presentation.telemetry/io_heimui_core_presentation_telemetry_NoOpHeimTelemetryObserver$stableprop // io.heimui.core.presentation.telemetry/io_heimui_core_presentation_telemetry_NoOpHeimTelemetryObserver$stableprop|#static{}io_heimui_core_presentation_telemetry_NoOpHeimTelemetryObserver$stableprop[0]
+final val io.heimui.core.presentation.tracking/LocalHeimTrackingDispatcher // io.heimui.core.presentation.tracking/LocalHeimTrackingDispatcher|{}LocalHeimTrackingDispatcher[0]
+    final fun <get-LocalHeimTrackingDispatcher>(): androidx.compose.runtime/ProvidableCompositionLocal<io.heimui.core.presentation.tracking/HeimTrackingDispatcher> // io.heimui.core.presentation.tracking/LocalHeimTrackingDispatcher.<get-LocalHeimTrackingDispatcher>|<get-LocalHeimTrackingDispatcher>(){}[0]
+final val io.heimui.core.presentation.tracking/io_heimui_core_presentation_tracking_NoOpHeimTrackingDispatcher$stableprop // io.heimui.core.presentation.tracking/io_heimui_core_presentation_tracking_NoOpHeimTrackingDispatcher$stableprop|#static{}io_heimui_core_presentation_tracking_NoOpHeimTrackingDispatcher$stableprop[0]
 final val io.heimui.core.presentation.validation/LocalHeimValidatorRegistry // io.heimui.core.presentation.validation/LocalHeimValidatorRegistry|{}LocalHeimValidatorRegistry[0]
     final fun <get-LocalHeimValidatorRegistry>(): androidx.compose.runtime/ProvidableCompositionLocal<io.heimui.core.domain.evaluator/HeimValidatorRegistry> // io.heimui.core.presentation.validation/LocalHeimValidatorRegistry.<get-LocalHeimValidatorRegistry>|<get-LocalHeimValidatorRegistry>(){}[0]
 final val io.heimui.core/io_heimui_core_HeimUI$stableprop // io.heimui.core/io_heimui_core_HeimUI$stableprop|#static{}io_heimui_core_HeimUI$stableprop[0]
@@ -3764,6 +3888,8 @@ final fun io.heimui.core.data.dto/io_heimui_core_data_dto_OpenUrlActionDto$stabl
 final fun io.heimui.core.data.dto/io_heimui_core_data_dto_OpenUrlActionDto_$serializer$stableprop_getter(): kotlin/Int // io.heimui.core.data.dto/io_heimui_core_data_dto_OpenUrlActionDto_$serializer$stableprop_getter|io_heimui_core_data_dto_OpenUrlActionDto_$serializer$stableprop_getter(){}[0]
 final fun io.heimui.core.data.dto/io_heimui_core_data_dto_PaginationConfigDto$stableprop_getter(): kotlin/Int // io.heimui.core.data.dto/io_heimui_core_data_dto_PaginationConfigDto$stableprop_getter|io_heimui_core_data_dto_PaginationConfigDto$stableprop_getter(){}[0]
 final fun io.heimui.core.data.dto/io_heimui_core_data_dto_PaginationConfigDto_$serializer$stableprop_getter(): kotlin/Int // io.heimui.core.data.dto/io_heimui_core_data_dto_PaginationConfigDto_$serializer$stableprop_getter|io_heimui_core_data_dto_PaginationConfigDto_$serializer$stableprop_getter(){}[0]
+final fun io.heimui.core.data.dto/io_heimui_core_data_dto_SetStateActionDto$stableprop_getter(): kotlin/Int // io.heimui.core.data.dto/io_heimui_core_data_dto_SetStateActionDto$stableprop_getter|io_heimui_core_data_dto_SetStateActionDto$stableprop_getter(){}[0]
+final fun io.heimui.core.data.dto/io_heimui_core_data_dto_SetStateActionDto_$serializer$stableprop_getter(): kotlin/Int // io.heimui.core.data.dto/io_heimui_core_data_dto_SetStateActionDto_$serializer$stableprop_getter|io_heimui_core_data_dto_SetStateActionDto_$serializer$stableprop_getter(){}[0]
 final fun io.heimui.core.data.dto/io_heimui_core_data_dto_ShowBottomSheetActionDto$stableprop_getter(): kotlin/Int // io.heimui.core.data.dto/io_heimui_core_data_dto_ShowBottomSheetActionDto$stableprop_getter|io_heimui_core_data_dto_ShowBottomSheetActionDto$stableprop_getter(){}[0]
 final fun io.heimui.core.data.dto/io_heimui_core_data_dto_ShowBottomSheetActionDto_$serializer$stableprop_getter(): kotlin/Int // io.heimui.core.data.dto/io_heimui_core_data_dto_ShowBottomSheetActionDto_$serializer$stableprop_getter|io_heimui_core_data_dto_ShowBottomSheetActionDto_$serializer$stableprop_getter(){}[0]
 final fun io.heimui.core.data.dto/io_heimui_core_data_dto_ShowDialogActionDto$stableprop_getter(): kotlin/Int // io.heimui.core.data.dto/io_heimui_core_data_dto_ShowDialogActionDto$stableprop_getter|io_heimui_core_data_dto_ShowDialogActionDto$stableprop_getter(){}[0]
@@ -3806,6 +3932,7 @@ final fun io.heimui.core.domain.model.action/io_heimui_core_domain_model_action_
 final fun io.heimui.core.domain.model.action/io_heimui_core_domain_model_action_DismissModalAction$stableprop_getter(): kotlin/Int // io.heimui.core.domain.model.action/io_heimui_core_domain_model_action_DismissModalAction$stableprop_getter|io_heimui_core_domain_model_action_DismissModalAction$stableprop_getter(){}[0]
 final fun io.heimui.core.domain.model.action/io_heimui_core_domain_model_action_NavigateAction$stableprop_getter(): kotlin/Int // io.heimui.core.domain.model.action/io_heimui_core_domain_model_action_NavigateAction$stableprop_getter|io_heimui_core_domain_model_action_NavigateAction$stableprop_getter(){}[0]
 final fun io.heimui.core.domain.model.action/io_heimui_core_domain_model_action_OpenUrlAction$stableprop_getter(): kotlin/Int // io.heimui.core.domain.model.action/io_heimui_core_domain_model_action_OpenUrlAction$stableprop_getter|io_heimui_core_domain_model_action_OpenUrlAction$stableprop_getter(){}[0]
+final fun io.heimui.core.domain.model.action/io_heimui_core_domain_model_action_SetStateAction$stableprop_getter(): kotlin/Int // io.heimui.core.domain.model.action/io_heimui_core_domain_model_action_SetStateAction$stableprop_getter|io_heimui_core_domain_model_action_SetStateAction$stableprop_getter(){}[0]
 final fun io.heimui.core.domain.model.action/io_heimui_core_domain_model_action_ShowBottomSheetAction$stableprop_getter(): kotlin/Int // io.heimui.core.domain.model.action/io_heimui_core_domain_model_action_ShowBottomSheetAction$stableprop_getter|io_heimui_core_domain_model_action_ShowBottomSheetAction$stableprop_getter(){}[0]
 final fun io.heimui.core.domain.model.action/io_heimui_core_domain_model_action_ShowDialogAction$stableprop_getter(): kotlin/Int // io.heimui.core.domain.model.action/io_heimui_core_domain_model_action_ShowDialogAction$stableprop_getter|io_heimui_core_domain_model_action_ShowDialogAction$stableprop_getter(){}[0]
 final fun io.heimui.core.domain.model.action/io_heimui_core_domain_model_action_ShowSnackbarAction$stableprop_getter(): kotlin/Int // io.heimui.core.domain.model.action/io_heimui_core_domain_model_action_ShowSnackbarAction$stableprop_getter|io_heimui_core_domain_model_action_ShowSnackbarAction$stableprop_getter(){}[0]
@@ -3849,7 +3976,7 @@ final fun io.heimui.core.domain.repository/io_heimui_core_domain_repository_Heim
 final fun io.heimui.core.domain.repository/io_heimui_core_domain_repository_HeimSubmitResult_Success$stableprop_getter(): kotlin/Int // io.heimui.core.domain.repository/io_heimui_core_domain_repository_HeimSubmitResult_Success$stableprop_getter|io_heimui_core_domain_repository_HeimSubmitResult_Success$stableprop_getter(){}[0]
 final fun io.heimui.core.presentation.action/io_heimui_core_presentation_action_HeimActionDispatcher$stableprop_getter(): kotlin/Int // io.heimui.core.presentation.action/io_heimui_core_presentation_action_HeimActionDispatcher$stableprop_getter|io_heimui_core_presentation_action_HeimActionDispatcher$stableprop_getter(){}[0]
 final fun io.heimui.core.presentation.action/io_heimui_core_presentation_action_HeimActionDispatcher_Builder$stableprop_getter(): kotlin/Int // io.heimui.core.presentation.action/io_heimui_core_presentation_action_HeimActionDispatcher_Builder$stableprop_getter|io_heimui_core_presentation_action_HeimActionDispatcher_Builder$stableprop_getter(){}[0]
-final fun io.heimui.core.presentation.designsystem/HeimTheme(kotlin/Boolean, androidx.compose.material3/ColorScheme?, androidx.compose.material3/Typography?, androidx.compose.material3/Shapes?, io.heimui.core.presentation.designsystem/HeimIconProvider?, io.heimui.core.presentation.designsystem/HeimBrandTokens?, io.heimui.core.presentation.imageloader/HeimImageLoader?, io.heimui.core.presentation.modal/HeimModalPresenter?, io.heimui.core.presentation.launcher/HeimUrlLauncher?, io.heimui.core.presentation.launcher/HeimUrlPolicy?, io.heimui.core.presentation.state/HeimFormDraftStorage?, io.heimui.core.presentation.action/HeimActionDispatcher?, io.heimui.core.domain.evaluator/HeimValidatorRegistry?, io.heimui.core.presentation.telemetry/HeimTelemetryObserver?, io.heimui.core.presentation.registry/HeimCustomComponentRegistry?, kotlin/Function2<androidx.compose.runtime/Composer, kotlin/Int, kotlin/Unit>, androidx.compose.runtime/Composer?, kotlin/Int, kotlin/Int, kotlin/Int) // io.heimui.core.presentation.designsystem/HeimTheme|HeimTheme(kotlin.Boolean;androidx.compose.material3.ColorScheme?;androidx.compose.material3.Typography?;androidx.compose.material3.Shapes?;io.heimui.core.presentation.designsystem.HeimIconProvider?;io.heimui.core.presentation.designsystem.HeimBrandTokens?;io.heimui.core.presentation.imageloader.HeimImageLoader?;io.heimui.core.presentation.modal.HeimModalPresenter?;io.heimui.core.presentation.launcher.HeimUrlLauncher?;io.heimui.core.presentation.launcher.HeimUrlPolicy?;io.heimui.core.presentation.state.HeimFormDraftStorage?;io.heimui.core.presentation.action.HeimActionDispatcher?;io.heimui.core.domain.evaluator.HeimValidatorRegistry?;io.heimui.core.presentation.telemetry.HeimTelemetryObserver?;io.heimui.core.presentation.registry.HeimCustomComponentRegistry?;kotlin.Function2<androidx.compose.runtime.Composer,kotlin.Int,kotlin.Unit>;androidx.compose.runtime.Composer?;kotlin.Int;kotlin.Int;kotlin.Int){}[0]
+final fun io.heimui.core.presentation.designsystem/HeimTheme(kotlin/Boolean, androidx.compose.material3/ColorScheme?, androidx.compose.material3/Typography?, androidx.compose.material3/Shapes?, io.heimui.core.presentation.designsystem/HeimIconProvider?, io.heimui.core.presentation.designsystem/HeimBrandTokens?, io.heimui.core.presentation.imageloader/HeimImageLoader?, io.heimui.core.presentation.modal/HeimModalPresenter?, io.heimui.core.presentation.launcher/HeimUrlLauncher?, io.heimui.core.presentation.launcher/HeimUrlPolicy?, io.heimui.core.presentation.state/HeimFormDraftStorage?, io.heimui.core.presentation.action/HeimActionDispatcher?, io.heimui.core.domain.evaluator/HeimValidatorRegistry?, io.heimui.core.presentation.telemetry/HeimTelemetryObserver?, io.heimui.core.presentation.tracking/HeimTrackingDispatcher?, io.heimui.core.presentation.registry/HeimCustomComponentRegistry?, kotlin/Function2<androidx.compose.runtime/Composer, kotlin/Int, kotlin/Unit>, androidx.compose.runtime/Composer?, kotlin/Int, kotlin/Int, kotlin/Int) // io.heimui.core.presentation.designsystem/HeimTheme|HeimTheme(kotlin.Boolean;androidx.compose.material3.ColorScheme?;androidx.compose.material3.Typography?;androidx.compose.material3.Shapes?;io.heimui.core.presentation.designsystem.HeimIconProvider?;io.heimui.core.presentation.designsystem.HeimBrandTokens?;io.heimui.core.presentation.imageloader.HeimImageLoader?;io.heimui.core.presentation.modal.HeimModalPresenter?;io.heimui.core.presentation.launcher.HeimUrlLauncher?;io.heimui.core.presentation.launcher.HeimUrlPolicy?;io.heimui.core.presentation.state.HeimFormDraftStorage?;io.heimui.core.presentation.action.HeimActionDispatcher?;io.heimui.core.domain.evaluator.HeimValidatorRegistry?;io.heimui.core.presentation.telemetry.HeimTelemetryObserver?;io.heimui.core.presentation.tracking.HeimTrackingDispatcher?;io.heimui.core.presentation.registry.HeimCustomComponentRegistry?;kotlin.Function2<androidx.compose.runtime.Composer,kotlin.Int,kotlin.Unit>;androidx.compose.runtime.Composer?;kotlin.Int;kotlin.Int;kotlin.Int){}[0]
 final fun io.heimui.core.presentation.designsystem/heimColor(kotlin/String?, androidx.compose.ui.graphics/Color, androidx.compose.runtime/Composer?, kotlin/Int): androidx.compose.ui.graphics/Color // io.heimui.core.presentation.designsystem/heimColor|heimColor(kotlin.String?;androidx.compose.ui.graphics.Color;androidx.compose.runtime.Composer?;kotlin.Int){}[0]
 final fun io.heimui.core.presentation.designsystem/heimTextStyle(kotlin/String?, androidx.compose.runtime/Composer?, kotlin/Int): androidx.compose.ui.text/TextStyle // io.heimui.core.presentation.designsystem/heimTextStyle|heimTextStyle(kotlin.String?;androidx.compose.runtime.Composer?;kotlin.Int){}[0]
 final fun io.heimui.core.presentation.designsystem/io_heimui_core_presentation_designsystem_DefaultHeimIconProvider$stableprop_getter(): kotlin/Int // io.heimui.core.presentation.designsystem/io_heimui_core_presentation_designsystem_DefaultHeimIconProvider$stableprop_getter|io_heimui_core_presentation_designsystem_DefaultHeimIconProvider$stableprop_getter(){}[0]
@@ -3883,6 +4010,7 @@ final fun io.heimui.core.presentation.telemetry/io_heimui_core_presentation_tele
 final fun io.heimui.core.presentation.telemetry/io_heimui_core_presentation_telemetry_HeimTelemetryEvent_UrlBlocked$stableprop_getter(): kotlin/Int // io.heimui.core.presentation.telemetry/io_heimui_core_presentation_telemetry_HeimTelemetryEvent_UrlBlocked$stableprop_getter|io_heimui_core_presentation_telemetry_HeimTelemetryEvent_UrlBlocked$stableprop_getter(){}[0]
 final fun io.heimui.core.presentation.telemetry/io_heimui_core_presentation_telemetry_HeimTelemetryEvent_ValidatorMissing$stableprop_getter(): kotlin/Int // io.heimui.core.presentation.telemetry/io_heimui_core_presentation_telemetry_HeimTelemetryEvent_ValidatorMissing$stableprop_getter|io_heimui_core_presentation_telemetry_HeimTelemetryEvent_ValidatorMissing$stableprop_getter(){}[0]
 final fun io.heimui.core.presentation.telemetry/io_heimui_core_presentation_telemetry_NoOpHeimTelemetryObserver$stableprop_getter(): kotlin/Int // io.heimui.core.presentation.telemetry/io_heimui_core_presentation_telemetry_NoOpHeimTelemetryObserver$stableprop_getter|io_heimui_core_presentation_telemetry_NoOpHeimTelemetryObserver$stableprop_getter(){}[0]
+final fun io.heimui.core.presentation.tracking/io_heimui_core_presentation_tracking_NoOpHeimTrackingDispatcher$stableprop_getter(): kotlin/Int // io.heimui.core.presentation.tracking/io_heimui_core_presentation_tracking_NoOpHeimTrackingDispatcher$stableprop_getter|io_heimui_core_presentation_tracking_NoOpHeimTrackingDispatcher$stableprop_getter(){}[0]
 final fun io.heimui.core.presentation/HeimRenderer(io.heimui.core.domain.model.component/HeimComponent, io.heimui.core.presentation.state/HeimStateManager, kotlin/Function1<io.heimui.core.domain.model.action/HeimAction, kotlin/Unit>, androidx.compose.ui/Modifier?, kotlin/Function3<io.heimui.core.domain.model.component/CustomComponent, androidx.compose.runtime/Composer, kotlin/Int, kotlin/Unit>?, androidx.compose.runtime/Composer?, kotlin/Int, kotlin/Int) // io.heimui.core.presentation/HeimRenderer|HeimRenderer(io.heimui.core.domain.model.component.HeimComponent;io.heimui.core.presentation.state.HeimStateManager;kotlin.Function1<io.heimui.core.domain.model.action.HeimAction,kotlin.Unit>;androidx.compose.ui.Modifier?;kotlin.Function3<io.heimui.core.domain.model.component.CustomComponent,androidx.compose.runtime.Composer,kotlin.Int,kotlin.Unit>?;androidx.compose.runtime.Composer?;kotlin.Int;kotlin.Int){}[0]
 final fun io.heimui.core.presentation/HeimScreen(kotlin/String, kotlin/Function1<io.heimui.core.domain.model.action/HeimAction, kotlin/Unit>, androidx.compose.ui/Modifier?, io.heimui.core.domain.repository/HeimScreenRepository?, kotlin.collections/Map<kotlin/String, kotlin/String>?, kotlin/Boolean, io.heimui.core.presentation.state/HeimStateManager?, kotlin/Function3<io.heimui.core.domain.model.component/CustomComponent, androidx.compose.runtime/Composer, kotlin/Int, kotlin/Unit>?, androidx.compose.runtime/Composer?, kotlin/Int, kotlin/Int) // io.heimui.core.presentation/HeimScreen|HeimScreen(kotlin.String;kotlin.Function1<io.heimui.core.domain.model.action.HeimAction,kotlin.Unit>;androidx.compose.ui.Modifier?;io.heimui.core.domain.repository.HeimScreenRepository?;kotlin.collections.Map<kotlin.String,kotlin.String>?;kotlin.Boolean;io.heimui.core.presentation.state.HeimStateManager?;kotlin.Function3<io.heimui.core.domain.model.component.CustomComponent,androidx.compose.runtime.Composer,kotlin.Int,kotlin.Unit>?;androidx.compose.runtime.Composer?;kotlin.Int;kotlin.Int){}[0]
 final fun io.heimui.core.presentation/HeimScreenRenderer(io.heimui.core.domain.model/HeimScreenResponse, io.heimui.core.presentation.state/HeimStateManager, kotlin/Function1<io.heimui.core.domain.model.action/HeimAction, kotlin/Unit>, androidx.compose.ui/Modifier?, kotlin/Function3<io.heimui.core.domain.model.component/CustomComponent, androidx.compose.runtime/Composer, kotlin/Int, kotlin/Unit>?, androidx.compose.runtime/Composer?, kotlin/Int, kotlin/Int) // io.heimui.core.presentation/HeimScreenRenderer|HeimScreenRenderer(io.heimui.core.domain.model.HeimScreenResponse;io.heimui.core.presentation.state.HeimStateManager;kotlin.Function1<io.heimui.core.domain.model.action.HeimAction,kotlin.Unit>;androidx.compose.ui.Modifier?;kotlin.Function3<io.heimui.core.domain.model.component.CustomComponent,androidx.compose.runtime.Composer,kotlin.Int,kotlin.Unit>?;androidx.compose.runtime.Composer?;kotlin.Int;kotlin.Int){}[0]

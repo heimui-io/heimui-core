@@ -46,6 +46,7 @@ import io.heimui.core.domain.model.component.TextFieldComponent
 import androidx.compose.material3.LocalContentColor
 import io.heimui.core.presentation.accessibility.heimAccessibility
 import io.heimui.core.presentation.designsystem.LocalHeimIconProvider
+import io.heimui.core.presentation.action.LocalHeimActionRunner
 import io.heimui.core.presentation.state.HeimStateManager
 import io.heimui.core.presentation.telemetry.HeimTelemetryEvent
 import io.heimui.core.presentation.telemetry.LocalHeimTelemetryObserver
@@ -64,11 +65,10 @@ internal fun HeimButtonRenderer(
         buttonModifier = buttonModifier.fillMaxWidth()
     }
 
+    val actionRunner = LocalHeimActionRunner.current
     val onClick = {
         if (!component.isLoading && component.isEnabled) {
-            component.actions.forEach { action ->
-                onAction(action)
-            }
+            actionRunner.run(component.actions)
         }
     }
 
@@ -259,6 +259,7 @@ internal fun HeimSwitchRenderer(
     onAction: (HeimAction) -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val actionRunner = LocalHeimActionRunner.current
     val formState by stateManager.formState.collectAsState()
     val isChecked = (formState[component.stateKey] ?: component.initialChecked.toString()).toBooleanStrictOrNull()
         ?: component.initialChecked
@@ -291,9 +292,7 @@ internal fun HeimSwitchRenderer(
             checked = isChecked,
             onCheckedChange = { checked ->
                 stateManager.updateValue(component.stateKey, checked.toString())
-                component.onCheckActions.forEach { action ->
-                    onAction(action)
-                }
+                actionRunner.run(component.onCheckActions)
             }
         )
     }

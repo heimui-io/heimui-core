@@ -15,6 +15,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -36,7 +37,12 @@ import io.heimui.core.domain.repository.HeimScreenRepository
 import io.heimui.core.presentation.action.LocalHeimActionDispatcher
 import io.heimui.core.presentation.component.HeimSkeletonRenderer
 import io.heimui.core.presentation.designsystem.LocalHeimIconProvider
+import io.heimui.core.domain.model.action.SetStateAction
+import io.heimui.core.presentation.action.HeimActionRunner
+import io.heimui.core.presentation.action.LocalHeimActionRunner
+import io.heimui.core.presentation.action.runHeimActionSequence
 import io.heimui.core.presentation.launcher.LocalHeimUrlLauncher
+import io.heimui.core.presentation.tracking.LocalHeimTrackingDispatcher
 import io.heimui.core.presentation.modal.LocalHeimModalPresenter
 import io.heimui.core.presentation.state.HeimScreenState
 import io.heimui.core.presentation.state.HeimStateManager
@@ -149,40 +155,82 @@ public fun HeimScreen(
 
     // `screenId` is keyed explicitly. The lambda closes over it for telemetry, and relying on
     // `stateManager` changing alongside it was an indirect dependency waiting to break.
-    val handleAction: (HeimAction) -> Unit = remember(
-        screenId, actionDispatcher, urlLauncher, telemetryObserver,
-        stateManager, validatorRegistry, controller
+    val trackingDispatcher = LocalHeimTrackingDispatcher.current
+
+    // Executes one action and reports whether the ones after it may run. Only submission can
+    // fail in a way the sequence must respect; everything else either happens or is a no-op.
+    val executeAction: suspend (HeimAction) -> Boolean = remember(
+        screenId, urlLauncher, telemetryObserver, stateManager,
+        validatorRegistry, controller, trackingDispatcher
     ) {
         { action ->
-            coroutineScope.launch {
-                actionDispatcher.dispatch(action, stateManager) { dispatched ->
-                    when (dispatched) {
-                        is ShowBottomSheetAction -> controller.showBottomSheet(dispatched)
-                        is ShowDialogAction -> controller.showDialog(dispatched)
-                        is DismissModalAction -> controller.dismissModals()
-                        is OpenUrlAction -> urlLauncher.openUrl(dispatched.url)
-                        is SubmitFormAction -> coroutineScope.launch {
-                            controller.submitForm(
-                                action = dispatched,
-                                stateManager = stateManager,
-                                validatorRegistry = validatorRegistry
-                            )
-                        }
-                        else -> Unit
-                    }
-                    telemetryObserver.onEvent(
-                        HeimTelemetryEvent.ActionExecuted(
-                            screenId = screenId,
-                            actionType = dispatched.telemetryName
-                        )
+            var mayContinue = true
+            when (action) {
+                is ShowBottomSheetAction -> controller.showBottomSheet(action)
+                is ShowDialogAction -> controller.showDialog(action)
+                is DismissModalAction -> controller.dismissModals()
+                is OpenUrlAction -> urlLauncher.openUrl(action.url)
+                is SetStateAction -> stateManager.updateValue(
+                    action.key,
+                    // A null writes an empty string rather than removing the key: `visible_if`
+                    // distinguishes "empty" from "never set", and a payload clearing a field means
+                    // the first.
+                    action.value.asString.orEmpty()
+                )
+                is SubmitFormAction -> {
+                    // Awaited, not launched. This is the whole point of the runner: an action
+                    // listed after a submission must see whether it succeeded.
+                    mayContinue = controller.submitForm(
+                        action = action,
+                        stateManager = stateManager,
+                        validatorRegistry = validatorRegistry
                     )
-                    currentOnAction(dispatched)
                 }
+                else -> Unit
+            }
+            action.tracking?.let { trackingDispatcher.track(action, it) }
+            telemetryObserver.onEvent(
+                HeimTelemetryEvent.ActionExecuted(
+                    screenId = screenId,
+                    actionType = action.telemetryName
+                )
+            )
+            currentOnAction(action)
+            mayContinue
+        }
+    }
+
+    // Kept for the single-action call sites and for anything the host dispatches itself.
+    val handleAction: (HeimAction) -> Unit = remember(actionDispatcher, executeAction, stateManager) {
+        { action ->
+            coroutineScope.launch {
+                // `dispatch` hands the result to a plain callback, so the action is recorded here
+                // and executed after it returns. Executing inside the callback would launch a
+                // second coroutine and lose the ordering the caller is relying on.
+                var resolved: HeimAction? = null
+                actionDispatcher.dispatch(action, stateManager) { resolved = it }
+                resolved?.let { executeAction(it) }
+            }
+        }
+    }
+
+    // One coroutine for the whole list, so the order the payload wrote is the order that happens.
+    val actionRunner = remember(actionDispatcher, executeAction, stateManager) {
+        HeimActionRunner { actions ->
+            coroutineScope.launch {
+                runHeimActionSequence(
+                    actions = actions,
+                    dispatch = { action, onResolved ->
+                        actionDispatcher.dispatch(action, stateManager, onResolved)
+                    },
+                    execute = executeAction,
+                )
             }
         }
     }
 
     val content: @Composable () -> Unit = {
+        CompositionLocalProvider(LocalHeimActionRunner provides actionRunner) {
         Box(modifier = Modifier.fillMaxSize()) {
             when (val state = screenState) {
                 is HeimScreenState.Loading -> HeimSkeletonRenderer()
@@ -214,6 +262,7 @@ public fun HeimScreen(
                     )
                 }
             }
+        }
         }
     }
 
