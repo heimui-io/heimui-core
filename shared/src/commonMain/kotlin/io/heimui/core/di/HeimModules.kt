@@ -3,6 +3,7 @@ package io.heimui.core.di
 import io.heimui.core.data.datasource.local.HeimCacheDataSource
 import io.heimui.core.data.datasource.local.HeimEmergencyBundleProvider
 import io.heimui.core.data.datasource.local.InMemoryHeimCacheDataSource
+import io.heimui.core.data.datasource.remote.HeimAuthTokenProvider
 import io.heimui.core.data.datasource.remote.HeimRemoteDataSource
 import io.heimui.core.data.repository.HeimScreenRepositoryImpl
 import io.heimui.core.data.security.DefaultHeimSignatureVerifier
@@ -30,9 +31,20 @@ import org.koin.dsl.module
  * @property baseUrl Origin the SDK fetches screens from. Screens resolve to `$baseUrl/screens/{id}`.
  *   Also defines the trust boundary for form submissions: a payload cannot submit to another host
  *   unless it is listed in [allowedSubmitHosts].
- * @property authTokenProvider Supplies the `Authorization` header value, including its scheme
- *   (`"Bearer eyJ..."`). Invoked per request, so a rotating token needs no reconfiguration.
- *   Return `null` to send the request unauthenticated.
+ * @property authTokenProvider Supplies the `Authorization` header, per request.
+ *
+ *   Receives a [io.heimui.core.data.datasource.remote.HeimAuthContext] naming what is about to be
+ *   requested, so screens and submissions can be authenticated differently — which matters when
+ *   payloads come from a CDN and forms go to your API:
+ *
+ *   ```kotlin
+ *   authTokenProvider = HeimAuthTokenProvider { context ->
+ *       when (context) {
+ *           is HeimAuthContext.ScreenFetch -> null            // public CDN
+ *           is HeimAuthContext.FormSubmit -> session.bearer()  // your API
+ *       }
+ *   }
+ *   ```
  * @property allowedSubmitHosts Extra hosts permitted to receive authenticated form submissions.
  *   Empty by default: only [baseUrl]'s own origin is allowed, which is what prevents a malicious
  *   payload from exfiltrating the session token to a third party.
@@ -49,14 +61,21 @@ import org.koin.dsl.module
  *   hardware-backed key store or an asymmetric algorithm.
  * @property emergencyBundleProvider Screens bundled with the app, served when the network fails
  *   and no cache exists. The last line of defence before the user sees an error.
- * @property customCacheDataSource Replaces the in-memory cache. Supply a disk-backed
- *   implementation to make screens survive process death.
+ * @property customCacheDataSource Replaces the default in-memory cache.
+ *
+ *   - `DriverBackedHeimCacheDataSource(driver)` — disk-backed, so screens survive process death
+ *     and the app opens instantly offline.
+ *   - `NoHeimCacheDataSource()` — disables caching entirely: every open hits the network. Costs
+ *     you stale-while-revalidate, offline, and ETag savings, so use it only for content that
+ *     must never be shown a moment out of date.
+ *
+ *   Left null, screens are cached in memory for the life of the process.
  *
  * @see io.heimui.core.HeimUI.initialize
  */
 public data class HeimConfig(
     val baseUrl: String,
-    val authTokenProvider: (() -> String?)? = null,
+    val authTokenProvider: HeimAuthTokenProvider? = null,
     val allowedSubmitHosts: Set<String> = emptySet(),
     val customHttpClient: HttpClient? = null,
     val verifySignatures: Boolean = false,

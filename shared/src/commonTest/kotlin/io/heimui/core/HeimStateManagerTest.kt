@@ -126,4 +126,34 @@ class HeimStateManagerTest {
         // ... and the key is known to be excluded from persistence.
         assertTrue(stateManager.getAllValues().containsKey("password"))
     }
+
+    @Test
+    fun `a declared default submits as its value rather than null`() {
+        val manager = HeimStateManager(screenId = "fintech_kyc")
+
+        // What a switch and a text field each do on first composition: seed the default the
+        // payload declared. Before this, only the text field did, so `{{state.is_business}}`
+        // interpolated to null on a switch the user had simply not touched.
+        manager.updateValue("is_business", "true")
+        manager.updateValue("plan", "pro")
+
+        val unresolved = mutableListOf<String>()
+        val payload = manager.interpolatePayload(
+            mapOf(
+                "is_business" to HeimValue.Str("{{state.is_business}}"),
+                "plan" to HeimValue.Str("{{state.plan}}"),
+                "never_composed" to HeimValue.Str("{{state.hidden_field}}"),
+            )
+        ) { unresolved += it }
+
+        // Booleans survive as booleans rather than arriving as the string "true".
+        assertEquals(HeimValue.Bool(true), payload?.get("is_business"))
+        assertEquals(HeimValue.Str("pro"), payload?.get("plan"))
+
+        // A field that never composed stays null and is reported, rather than reaching the
+        // backend as the literal text "{{state.hidden_field}}".
+        assertEquals(HeimValue.Null, payload?.get("never_composed"))
+        assertEquals(listOf("hidden_field"), unresolved)
+    }
+
 }

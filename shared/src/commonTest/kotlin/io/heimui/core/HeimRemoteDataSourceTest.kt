@@ -1,5 +1,6 @@
 package io.heimui.core
 
+import io.heimui.core.data.datasource.remote.HeimAuthContext
 import io.heimui.core.data.datasource.remote.HeimRemoteDataSource
 import io.heimui.core.data.datasource.remote.RemoteScreenResponse
 import io.heimui.core.data.datasource.remote.RemoteSubmitResponse
@@ -13,6 +14,7 @@ import kotlinx.serialization.json.Json
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertIs
+import kotlin.test.assertNull
 
 class HeimRemoteDataSourceTest {
 
@@ -103,4 +105,71 @@ class HeimRemoteDataSourceTest {
         assertIs<RemoteSubmitResponse.Success>(response)
         assertEquals("success_screen", response.responseScreen?.id)
     }
+
+    @Test
+    fun `auth header follows the context and not the request`() = runTest {
+        val seen = mutableMapOf<String, String?>()
+        val mockEngine = MockEngine { request ->
+            seen[request.url.encodedPath] = request.headers[HttpHeaders.Authorization]
+            respond(
+                content = """{"id":"home_screen","root":{"type":"container","id":"c1"}}""",
+                status = HttpStatusCode.OK,
+                headers = headersOf(
+                    HttpHeaders.ContentType to listOf(ContentType.Application.Json.toString())
+                )
+            )
+        }
+        val client = HttpClient(mockEngine) {
+            install(ContentNegotiation) { json(Json { ignoreUnknownKeys = true }) }
+        }
+
+        val dataSource = HeimRemoteDataSource(
+            httpClient = client,
+            baseUrl = "https://api.heimui.io",
+            allowedSubmitHosts = setOf("api.heimui.io"),
+            // The whole point of handing the provider a context: screens live on a CDN that has no
+            // business seeing a credential, while writes go to our own API and must carry it.
+            authTokenProvider = { context ->
+                when (context) {
+                    is HeimAuthContext.ScreenFetch -> null
+                    is HeimAuthContext.FormSubmit -> "Bearer submit-only"
+                }
+            }
+        )
+
+        dataSource.fetchScreen("home_screen")
+        dataSource.submitForm("https://api.heimui.io/kyc", "POST", emptyMap())
+
+        assertNull(seen["/screens/home_screen"])
+        assertEquals("Bearer submit-only", seen["/kyc"])
+    }
+
+    @Test
+    fun `a blank token is treated as no token`() = runTest {
+        var header: String? = "unset"
+        val mockEngine = MockEngine { request ->
+            header = request.headers[HttpHeaders.Authorization]
+            respond(
+                content = """{"id":"s","root":{"type":"container","id":"c1"}}""",
+                status = HttpStatusCode.OK,
+                headers = headersOf(
+                    HttpHeaders.ContentType to listOf(ContentType.Application.Json.toString())
+                )
+            )
+        }
+        val client = HttpClient(mockEngine) {
+            install(ContentNegotiation) { json(Json { ignoreUnknownKeys = true }) }
+        }
+
+        // A provider that returns "" while the user is signed out must not send `Authorization: `,
+        // which some gateways reject outright rather than ignoring.
+        HeimRemoteDataSource(
+            httpClient = client,
+            baseUrl = "https://api.heimui.io",
+            authTokenProvider = { "   " }
+        ).fetchScreen("s")
+
+        assertNull(header)
+    }
+
 }

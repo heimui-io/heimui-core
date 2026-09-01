@@ -243,6 +243,7 @@ internal fun HeimComponentDto.toDomain(
             isFullWidth = isFullWidth,
             isEnabled = isEnabled,
             isLoading = isLoading,
+            icon = icon?.trim()?.takeIf { it.isNotBlank() },
             actions = actions.map { it.toDomain() }
         )
         is TextFieldComponentDto -> TextFieldComponent(

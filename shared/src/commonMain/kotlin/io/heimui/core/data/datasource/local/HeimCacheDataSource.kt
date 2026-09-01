@@ -103,6 +103,35 @@ internal fun CachedScreenEntry.isExpired(nowMillis: Long, ttlMillis: Long?): Boo
     return age > ttlMillis
 }
 
+/**
+ * A cache that never stores anything: every screen open goes to the network.
+ *
+ * Pass it as `HeimConfig(customCacheDataSource = NoHeimCacheDataSource())` when content must
+ * always be fresh — a live price, a regulatory disclosure, a screen whose staleness would be
+ * misleading.
+ *
+ * Understand what you give up. Without a cache there is no stale-while-revalidate, so the user
+ * waits on the network before seeing anything; there is no offline behaviour at all; and ETag
+ * revalidation stops working, because a 304 has no cached copy to serve — so every open
+ * re-downloads the full payload instead of exchanging a few hundred bytes.
+ *
+ * For most screens the default cache with ETag revalidation is both fresher-feeling and cheaper:
+ * the client still asks the server on every open, it just avoids re-downloading an unchanged
+ * answer. Reach for this only when you truly cannot show a previous version for an instant.
+ */
+public class NoHeimCacheDataSource : HeimCacheDataSource {
+    override suspend fun getScreen(screenId: String): CachedScreenEntry? = null
+    override suspend fun saveScreen(
+        screenId: String,
+        screen: HeimScreenResponseDto,
+        etag: String?,
+        signature: String?,
+        rawBytes: ByteArray?,
+    ): Unit = Unit
+    override suspend fun clear(screenId: String): Unit = Unit
+    override suspend fun clearAll(): Unit = Unit
+}
+
 public class InMemoryHeimCacheDataSource(
     private val clock: HeimClock = HeimClock.System
 ) : HeimCacheDataSource {

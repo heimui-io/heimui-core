@@ -823,6 +823,10 @@
           "default": false,
           "description": "Replaces the label with a spinner and blocks interaction."
         },
+        "icon": {
+          "type": "string",
+          "description": "Optional leading icon, given by name. The app's HeimIconProvider decides what the name draws, so the same payload can render Material Symbols in one app and brand assets in another. Prefer this to an emoji in the title: an emoji is announced by screen readers, renders differently on every OS version, and cannot take the button's content colour."
+        },
         "actions": {
           "type": "array",
           "items": {

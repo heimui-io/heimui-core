@@ -262,6 +262,10 @@ final enum class io.heimui.core.domain.model.validation/ValidationType : kotlin/
     final fun values(): kotlin/Array<io.heimui.core.domain.model.validation/ValidationType> // io.heimui.core.domain.model.validation/ValidationType.values|values#static(){}[0]
 }
 
+abstract fun interface io.heimui.core.data.datasource.remote/HeimAuthTokenProvider { // io.heimui.core.data.datasource.remote/HeimAuthTokenProvider|null[0]
+    abstract fun authHeaderFor(io.heimui.core.data.datasource.remote/HeimAuthContext): kotlin/String? // io.heimui.core.data.datasource.remote/HeimAuthTokenProvider.authHeaderFor|authHeaderFor(io.heimui.core.data.datasource.remote.HeimAuthContext){}[0]
+}
+
 abstract fun interface io.heimui.core.domain.port/HeimClock { // io.heimui.core.domain.port/HeimClock|null[0]
     abstract fun nowMillis(): kotlin/Long // io.heimui.core.domain.port/HeimClock.nowMillis|nowMillis(){}[0]
 
@@ -328,6 +332,37 @@ abstract interface io.heimui.core.presentation.state/HeimFormDraftStorage { // i
     abstract suspend fun clearDraft(kotlin/String) // io.heimui.core.presentation.state/HeimFormDraftStorage.clearDraft|clearDraft(kotlin.String){}[0]
     abstract suspend fun getDraft(kotlin/String): kotlin.collections/Map<kotlin/String, kotlin/String>? // io.heimui.core.presentation.state/HeimFormDraftStorage.getDraft|getDraft(kotlin.String){}[0]
     abstract suspend fun saveDraft(kotlin/String, kotlin.collections/Map<kotlin/String, kotlin/String>) // io.heimui.core.presentation.state/HeimFormDraftStorage.saveDraft|saveDraft(kotlin.String;kotlin.collections.Map<kotlin.String,kotlin.String>){}[0]
+}
+
+sealed interface io.heimui.core.data.datasource.remote/HeimAuthContext { // io.heimui.core.data.datasource.remote/HeimAuthContext|null[0]
+    abstract val url // io.heimui.core.data.datasource.remote/HeimAuthContext.url|{}url[0]
+        abstract fun <get-url>(): kotlin/String // io.heimui.core.data.datasource.remote/HeimAuthContext.url.<get-url>|<get-url>(){}[0]
+
+    final class FormSubmit : io.heimui.core.data.datasource.remote/HeimAuthContext { // io.heimui.core.data.datasource.remote/HeimAuthContext.FormSubmit|null[0]
+        constructor <init>(kotlin/String) // io.heimui.core.data.datasource.remote/HeimAuthContext.FormSubmit.<init>|<init>(kotlin.String){}[0]
+
+        final val url // io.heimui.core.data.datasource.remote/HeimAuthContext.FormSubmit.url|{}url[0]
+            final fun <get-url>(): kotlin/String // io.heimui.core.data.datasource.remote/HeimAuthContext.FormSubmit.url.<get-url>|<get-url>(){}[0]
+
+        final fun component1(): kotlin/String // io.heimui.core.data.datasource.remote/HeimAuthContext.FormSubmit.component1|component1(){}[0]
+        final fun copy(kotlin/String = ...): io.heimui.core.data.datasource.remote/HeimAuthContext.FormSubmit // io.heimui.core.data.datasource.remote/HeimAuthContext.FormSubmit.copy|copy(kotlin.String){}[0]
+        final fun equals(kotlin/Any?): kotlin/Boolean // io.heimui.core.data.datasource.remote/HeimAuthContext.FormSubmit.equals|equals(kotlin.Any?){}[0]
+        final fun hashCode(): kotlin/Int // io.heimui.core.data.datasource.remote/HeimAuthContext.FormSubmit.hashCode|hashCode(){}[0]
+        final fun toString(): kotlin/String // io.heimui.core.data.datasource.remote/HeimAuthContext.FormSubmit.toString|toString(){}[0]
+    }
+
+    final class ScreenFetch : io.heimui.core.data.datasource.remote/HeimAuthContext { // io.heimui.core.data.datasource.remote/HeimAuthContext.ScreenFetch|null[0]
+        constructor <init>(kotlin/String) // io.heimui.core.data.datasource.remote/HeimAuthContext.ScreenFetch.<init>|<init>(kotlin.String){}[0]
+
+        final val url // io.heimui.core.data.datasource.remote/HeimAuthContext.ScreenFetch.url|{}url[0]
+            final fun <get-url>(): kotlin/String // io.heimui.core.data.datasource.remote/HeimAuthContext.ScreenFetch.url.<get-url>|<get-url>(){}[0]
+
+        final fun component1(): kotlin/String // io.heimui.core.data.datasource.remote/HeimAuthContext.ScreenFetch.component1|component1(){}[0]
+        final fun copy(kotlin/String = ...): io.heimui.core.data.datasource.remote/HeimAuthContext.ScreenFetch // io.heimui.core.data.datasource.remote/HeimAuthContext.ScreenFetch.copy|copy(kotlin.String){}[0]
+        final fun equals(kotlin/Any?): kotlin/Boolean // io.heimui.core.data.datasource.remote/HeimAuthContext.ScreenFetch.equals|equals(kotlin.Any?){}[0]
+        final fun hashCode(): kotlin/Int // io.heimui.core.data.datasource.remote/HeimAuthContext.ScreenFetch.hashCode|hashCode(){}[0]
+        final fun toString(): kotlin/String // io.heimui.core.data.datasource.remote/HeimAuthContext.ScreenFetch.toString|toString(){}[0]
+    }
 }
 
 sealed interface io.heimui.core.data.dto/HeimActionDto { // io.heimui.core.data.dto/HeimActionDto|null[0]
@@ -874,6 +909,15 @@ final class io.heimui.core.data.datasource.local/InMemoryHeimCacheDataSource : i
     final suspend fun saveScreen(kotlin/String, io.heimui.core.data.dto/HeimScreenResponseDto, kotlin/String?, kotlin/String?, kotlin/ByteArray?) // io.heimui.core.data.datasource.local/InMemoryHeimCacheDataSource.saveScreen|saveScreen(kotlin.String;io.heimui.core.data.dto.HeimScreenResponseDto;kotlin.String?;kotlin.String?;kotlin.ByteArray?){}[0]
 }
 
+final class io.heimui.core.data.datasource.local/NoHeimCacheDataSource : io.heimui.core.data.datasource.local/HeimCacheDataSource { // io.heimui.core.data.datasource.local/NoHeimCacheDataSource|null[0]
+    constructor <init>() // io.heimui.core.data.datasource.local/NoHeimCacheDataSource.<init>|<init>(){}[0]
+
+    final suspend fun clear(kotlin/String) // io.heimui.core.data.datasource.local/NoHeimCacheDataSource.clear|clear(kotlin.String){}[0]
+    final suspend fun clearAll() // io.heimui.core.data.datasource.local/NoHeimCacheDataSource.clearAll|clearAll(){}[0]
+    final suspend fun getScreen(kotlin/String): io.heimui.core.data.datasource.local/CachedScreenEntry? // io.heimui.core.data.datasource.local/NoHeimCacheDataSource.getScreen|getScreen(kotlin.String){}[0]
+    final suspend fun saveScreen(kotlin/String, io.heimui.core.data.dto/HeimScreenResponseDto, kotlin/String?, kotlin/String?, kotlin/ByteArray?) // io.heimui.core.data.datasource.local/NoHeimCacheDataSource.saveScreen|saveScreen(kotlin.String;io.heimui.core.data.dto.HeimScreenResponseDto;kotlin.String?;kotlin.String?;kotlin.ByteArray?){}[0]
+}
+
 final class io.heimui.core.data.dto/BadgeComponentDto : io.heimui.core.data.dto/HeimComponentDto { // io.heimui.core.data.dto/BadgeComponentDto|null[0]
     constructor <init>(kotlin/String = ..., kotlin/String? = ..., io.heimui.core.data.dto/HeimAccessibilityDto? = ..., kotlin/String = ..., kotlin/String = ..., kotlin/String = ..., kotlin/String? = ...) // io.heimui.core.data.dto/BadgeComponentDto.<init>|<init>(kotlin.String;kotlin.String?;io.heimui.core.data.dto.HeimAccessibilityDto?;kotlin.String;kotlin.String;kotlin.String;kotlin.String?){}[0]
 
@@ -959,12 +1003,14 @@ final class io.heimui.core.data.dto/BoxComponentDto : io.heimui.core.data.dto/He
 }
 
 final class io.heimui.core.data.dto/ButtonComponentDto : io.heimui.core.data.dto/HeimComponentDto { // io.heimui.core.data.dto/ButtonComponentDto|null[0]
-    constructor <init>(kotlin/String = ..., kotlin/String? = ..., io.heimui.core.data.dto/HeimAccessibilityDto? = ..., kotlin/String = ..., io.heimui.core.data.dto/ButtonVariantDto = ..., kotlin/Boolean = ..., kotlin/Boolean = ..., kotlin/Boolean = ..., kotlin.collections/List<io.heimui.core.data.dto/HeimActionDto> = ...) // io.heimui.core.data.dto/ButtonComponentDto.<init>|<init>(kotlin.String;kotlin.String?;io.heimui.core.data.dto.HeimAccessibilityDto?;kotlin.String;io.heimui.core.data.dto.ButtonVariantDto;kotlin.Boolean;kotlin.Boolean;kotlin.Boolean;kotlin.collections.List<io.heimui.core.data.dto.HeimActionDto>){}[0]
+    constructor <init>(kotlin/String = ..., kotlin/String? = ..., io.heimui.core.data.dto/HeimAccessibilityDto? = ..., kotlin/String = ..., io.heimui.core.data.dto/ButtonVariantDto = ..., kotlin/Boolean = ..., kotlin/Boolean = ..., kotlin/Boolean = ..., kotlin/String? = ..., kotlin.collections/List<io.heimui.core.data.dto/HeimActionDto> = ...) // io.heimui.core.data.dto/ButtonComponentDto.<init>|<init>(kotlin.String;kotlin.String?;io.heimui.core.data.dto.HeimAccessibilityDto?;kotlin.String;io.heimui.core.data.dto.ButtonVariantDto;kotlin.Boolean;kotlin.Boolean;kotlin.Boolean;kotlin.String?;kotlin.collections.List<io.heimui.core.data.dto.HeimActionDto>){}[0]
 
     final val a11y // io.heimui.core.data.dto/ButtonComponentDto.a11y|{}a11y[0]
         final fun <get-a11y>(): io.heimui.core.data.dto/HeimAccessibilityDto? // io.heimui.core.data.dto/ButtonComponentDto.a11y.<get-a11y>|<get-a11y>(){}[0]
     final val actions // io.heimui.core.data.dto/ButtonComponentDto.actions|{}actions[0]
         final fun <get-actions>(): kotlin.collections/List<io.heimui.core.data.dto/HeimActionDto> // io.heimui.core.data.dto/ButtonComponentDto.actions.<get-actions>|<get-actions>(){}[0]
+    final val icon // io.heimui.core.data.dto/ButtonComponentDto.icon|{}icon[0]
+        final fun <get-icon>(): kotlin/String? // io.heimui.core.data.dto/ButtonComponentDto.icon.<get-icon>|<get-icon>(){}[0]
     final val id // io.heimui.core.data.dto/ButtonComponentDto.id|{}id[0]
         final fun <get-id>(): kotlin/String // io.heimui.core.data.dto/ButtonComponentDto.id.<get-id>|<get-id>(){}[0]
     final val isEnabled // io.heimui.core.data.dto/ButtonComponentDto.isEnabled|{}isEnabled[0]
@@ -981,6 +1027,7 @@ final class io.heimui.core.data.dto/ButtonComponentDto : io.heimui.core.data.dto
         final fun <get-visibleIf>(): kotlin/String? // io.heimui.core.data.dto/ButtonComponentDto.visibleIf.<get-visibleIf>|<get-visibleIf>(){}[0]
 
     final fun component1(): kotlin/String // io.heimui.core.data.dto/ButtonComponentDto.component1|component1(){}[0]
+    final fun component10(): kotlin.collections/List<io.heimui.core.data.dto/HeimActionDto> // io.heimui.core.data.dto/ButtonComponentDto.component10|component10(){}[0]
     final fun component2(): kotlin/String? // io.heimui.core.data.dto/ButtonComponentDto.component2|component2(){}[0]
     final fun component3(): io.heimui.core.data.dto/HeimAccessibilityDto? // io.heimui.core.data.dto/ButtonComponentDto.component3|component3(){}[0]
     final fun component4(): kotlin/String // io.heimui.core.data.dto/ButtonComponentDto.component4|component4(){}[0]
@@ -988,8 +1035,8 @@ final class io.heimui.core.data.dto/ButtonComponentDto : io.heimui.core.data.dto
     final fun component6(): kotlin/Boolean // io.heimui.core.data.dto/ButtonComponentDto.component6|component6(){}[0]
     final fun component7(): kotlin/Boolean // io.heimui.core.data.dto/ButtonComponentDto.component7|component7(){}[0]
     final fun component8(): kotlin/Boolean // io.heimui.core.data.dto/ButtonComponentDto.component8|component8(){}[0]
-    final fun component9(): kotlin.collections/List<io.heimui.core.data.dto/HeimActionDto> // io.heimui.core.data.dto/ButtonComponentDto.component9|component9(){}[0]
-    final fun copy(kotlin/String = ..., kotlin/String? = ..., io.heimui.core.data.dto/HeimAccessibilityDto? = ..., kotlin/String = ..., io.heimui.core.data.dto/ButtonVariantDto = ..., kotlin/Boolean = ..., kotlin/Boolean = ..., kotlin/Boolean = ..., kotlin.collections/List<io.heimui.core.data.dto/HeimActionDto> = ...): io.heimui.core.data.dto/ButtonComponentDto // io.heimui.core.data.dto/ButtonComponentDto.copy|copy(kotlin.String;kotlin.String?;io.heimui.core.data.dto.HeimAccessibilityDto?;kotlin.String;io.heimui.core.data.dto.ButtonVariantDto;kotlin.Boolean;kotlin.Boolean;kotlin.Boolean;kotlin.collections.List<io.heimui.core.data.dto.HeimActionDto>){}[0]
+    final fun component9(): kotlin/String? // io.heimui.core.data.dto/ButtonComponentDto.component9|component9(){}[0]
+    final fun copy(kotlin/String = ..., kotlin/String? = ..., io.heimui.core.data.dto/HeimAccessibilityDto? = ..., kotlin/String = ..., io.heimui.core.data.dto/ButtonVariantDto = ..., kotlin/Boolean = ..., kotlin/Boolean = ..., kotlin/Boolean = ..., kotlin/String? = ..., kotlin.collections/List<io.heimui.core.data.dto/HeimActionDto> = ...): io.heimui.core.data.dto/ButtonComponentDto // io.heimui.core.data.dto/ButtonComponentDto.copy|copy(kotlin.String;kotlin.String?;io.heimui.core.data.dto.HeimAccessibilityDto?;kotlin.String;io.heimui.core.data.dto.ButtonVariantDto;kotlin.Boolean;kotlin.Boolean;kotlin.Boolean;kotlin.String?;kotlin.collections.List<io.heimui.core.data.dto.HeimActionDto>){}[0]
     final fun equals(kotlin/Any?): kotlin/Boolean // io.heimui.core.data.dto/ButtonComponentDto.equals|equals(kotlin.Any?){}[0]
     final fun hashCode(): kotlin/Int // io.heimui.core.data.dto/ButtonComponentDto.hashCode|hashCode(){}[0]
     final fun toString(): kotlin/String // io.heimui.core.data.dto/ButtonComponentDto.toString|toString(){}[0]
@@ -2054,12 +2101,12 @@ final class io.heimui.core.data.security/HmacSha256SignatureVerifier : io.heimui
 }
 
 final class io.heimui.core.di/HeimConfig { // io.heimui.core.di/HeimConfig|null[0]
-    constructor <init>(kotlin/String, kotlin/Function0<kotlin/String?>? = ..., kotlin.collections/Set<kotlin/String> = ..., io.ktor.client/HttpClient? = ..., kotlin/Boolean = ..., kotlin/String? = ..., io.heimui.core.data.security/HeimSignatureVerifier? = ..., io.heimui.core.data.datasource.local/HeimEmergencyBundleProvider? = ..., io.heimui.core.data.datasource.local/HeimCacheDataSource? = ...) // io.heimui.core.di/HeimConfig.<init>|<init>(kotlin.String;kotlin.Function0<kotlin.String?>?;kotlin.collections.Set<kotlin.String>;io.ktor.client.HttpClient?;kotlin.Boolean;kotlin.String?;io.heimui.core.data.security.HeimSignatureVerifier?;io.heimui.core.data.datasource.local.HeimEmergencyBundleProvider?;io.heimui.core.data.datasource.local.HeimCacheDataSource?){}[0]
+    constructor <init>(kotlin/String, io.heimui.core.data.datasource.remote/HeimAuthTokenProvider? = ..., kotlin.collections/Set<kotlin/String> = ..., io.ktor.client/HttpClient? = ..., kotlin/Boolean = ..., kotlin/String? = ..., io.heimui.core.data.security/HeimSignatureVerifier? = ..., io.heimui.core.data.datasource.local/HeimEmergencyBundleProvider? = ..., io.heimui.core.data.datasource.local/HeimCacheDataSource? = ...) // io.heimui.core.di/HeimConfig.<init>|<init>(kotlin.String;io.heimui.core.data.datasource.remote.HeimAuthTokenProvider?;kotlin.collections.Set<kotlin.String>;io.ktor.client.HttpClient?;kotlin.Boolean;kotlin.String?;io.heimui.core.data.security.HeimSignatureVerifier?;io.heimui.core.data.datasource.local.HeimEmergencyBundleProvider?;io.heimui.core.data.datasource.local.HeimCacheDataSource?){}[0]
 
     final val allowedSubmitHosts // io.heimui.core.di/HeimConfig.allowedSubmitHosts|{}allowedSubmitHosts[0]
         final fun <get-allowedSubmitHosts>(): kotlin.collections/Set<kotlin/String> // io.heimui.core.di/HeimConfig.allowedSubmitHosts.<get-allowedSubmitHosts>|<get-allowedSubmitHosts>(){}[0]
     final val authTokenProvider // io.heimui.core.di/HeimConfig.authTokenProvider|{}authTokenProvider[0]
-        final fun <get-authTokenProvider>(): kotlin/Function0<kotlin/String?>? // io.heimui.core.di/HeimConfig.authTokenProvider.<get-authTokenProvider>|<get-authTokenProvider>(){}[0]
+        final fun <get-authTokenProvider>(): io.heimui.core.data.datasource.remote/HeimAuthTokenProvider? // io.heimui.core.di/HeimConfig.authTokenProvider.<get-authTokenProvider>|<get-authTokenProvider>(){}[0]
     final val baseUrl // io.heimui.core.di/HeimConfig.baseUrl|{}baseUrl[0]
         final fun <get-baseUrl>(): kotlin/String // io.heimui.core.di/HeimConfig.baseUrl.<get-baseUrl>|<get-baseUrl>(){}[0]
     final val customCacheDataSource // io.heimui.core.di/HeimConfig.customCacheDataSource|{}customCacheDataSource[0]
@@ -2076,7 +2123,7 @@ final class io.heimui.core.di/HeimConfig { // io.heimui.core.di/HeimConfig|null[
         final fun <get-verifySignatures>(): kotlin/Boolean // io.heimui.core.di/HeimConfig.verifySignatures.<get-verifySignatures>|<get-verifySignatures>(){}[0]
 
     final fun component1(): kotlin/String // io.heimui.core.di/HeimConfig.component1|component1(){}[0]
-    final fun component2(): kotlin/Function0<kotlin/String?>? // io.heimui.core.di/HeimConfig.component2|component2(){}[0]
+    final fun component2(): io.heimui.core.data.datasource.remote/HeimAuthTokenProvider? // io.heimui.core.di/HeimConfig.component2|component2(){}[0]
     final fun component3(): kotlin.collections/Set<kotlin/String> // io.heimui.core.di/HeimConfig.component3|component3(){}[0]
     final fun component4(): io.ktor.client/HttpClient? // io.heimui.core.di/HeimConfig.component4|component4(){}[0]
     final fun component5(): kotlin/Boolean // io.heimui.core.di/HeimConfig.component5|component5(){}[0]
@@ -2084,7 +2131,7 @@ final class io.heimui.core.di/HeimConfig { // io.heimui.core.di/HeimConfig|null[
     final fun component7(): io.heimui.core.data.security/HeimSignatureVerifier? // io.heimui.core.di/HeimConfig.component7|component7(){}[0]
     final fun component8(): io.heimui.core.data.datasource.local/HeimEmergencyBundleProvider? // io.heimui.core.di/HeimConfig.component8|component8(){}[0]
     final fun component9(): io.heimui.core.data.datasource.local/HeimCacheDataSource? // io.heimui.core.di/HeimConfig.component9|component9(){}[0]
-    final fun copy(kotlin/String = ..., kotlin/Function0<kotlin/String?>? = ..., kotlin.collections/Set<kotlin/String> = ..., io.ktor.client/HttpClient? = ..., kotlin/Boolean = ..., kotlin/String? = ..., io.heimui.core.data.security/HeimSignatureVerifier? = ..., io.heimui.core.data.datasource.local/HeimEmergencyBundleProvider? = ..., io.heimui.core.data.datasource.local/HeimCacheDataSource? = ...): io.heimui.core.di/HeimConfig // io.heimui.core.di/HeimConfig.copy|copy(kotlin.String;kotlin.Function0<kotlin.String?>?;kotlin.collections.Set<kotlin.String>;io.ktor.client.HttpClient?;kotlin.Boolean;kotlin.String?;io.heimui.core.data.security.HeimSignatureVerifier?;io.heimui.core.data.datasource.local.HeimEmergencyBundleProvider?;io.heimui.core.data.datasource.local.HeimCacheDataSource?){}[0]
+    final fun copy(kotlin/String = ..., io.heimui.core.data.datasource.remote/HeimAuthTokenProvider? = ..., kotlin.collections/Set<kotlin/String> = ..., io.ktor.client/HttpClient? = ..., kotlin/Boolean = ..., kotlin/String? = ..., io.heimui.core.data.security/HeimSignatureVerifier? = ..., io.heimui.core.data.datasource.local/HeimEmergencyBundleProvider? = ..., io.heimui.core.data.datasource.local/HeimCacheDataSource? = ...): io.heimui.core.di/HeimConfig // io.heimui.core.di/HeimConfig.copy|copy(kotlin.String;io.heimui.core.data.datasource.remote.HeimAuthTokenProvider?;kotlin.collections.Set<kotlin.String>;io.ktor.client.HttpClient?;kotlin.Boolean;kotlin.String?;io.heimui.core.data.security.HeimSignatureVerifier?;io.heimui.core.data.datasource.local.HeimEmergencyBundleProvider?;io.heimui.core.data.datasource.local.HeimCacheDataSource?){}[0]
     final fun equals(kotlin/Any?): kotlin/Boolean // io.heimui.core.di/HeimConfig.equals|equals(kotlin.Any?){}[0]
     final fun hashCode(): kotlin/Int // io.heimui.core.di/HeimConfig.hashCode|hashCode(){}[0]
     final fun toString(): kotlin/String // io.heimui.core.di/HeimConfig.toString|toString(){}[0]
@@ -2341,12 +2388,14 @@ final class io.heimui.core.domain.model.component/BoxComponent : io.heimui.core.
 }
 
 final class io.heimui.core.domain.model.component/ButtonComponent : io.heimui.core.domain.model.component/HeimComponent { // io.heimui.core.domain.model.component/ButtonComponent|null[0]
-    constructor <init>(kotlin/String, kotlin/String? = ..., io.heimui.core.domain.model.accessibility/HeimAccessibility? = ..., kotlin/String, io.heimui.core.domain.model.component/ButtonVariant = ..., kotlin/Boolean = ..., kotlin/Boolean = ..., kotlin/Boolean = ..., kotlin.collections/List<io.heimui.core.domain.model.action/HeimAction> = ...) // io.heimui.core.domain.model.component/ButtonComponent.<init>|<init>(kotlin.String;kotlin.String?;io.heimui.core.domain.model.accessibility.HeimAccessibility?;kotlin.String;io.heimui.core.domain.model.component.ButtonVariant;kotlin.Boolean;kotlin.Boolean;kotlin.Boolean;kotlin.collections.List<io.heimui.core.domain.model.action.HeimAction>){}[0]
+    constructor <init>(kotlin/String, kotlin/String? = ..., io.heimui.core.domain.model.accessibility/HeimAccessibility? = ..., kotlin/String, io.heimui.core.domain.model.component/ButtonVariant = ..., kotlin/Boolean = ..., kotlin/Boolean = ..., kotlin/Boolean = ..., kotlin/String? = ..., kotlin.collections/List<io.heimui.core.domain.model.action/HeimAction> = ...) // io.heimui.core.domain.model.component/ButtonComponent.<init>|<init>(kotlin.String;kotlin.String?;io.heimui.core.domain.model.accessibility.HeimAccessibility?;kotlin.String;io.heimui.core.domain.model.component.ButtonVariant;kotlin.Boolean;kotlin.Boolean;kotlin.Boolean;kotlin.String?;kotlin.collections.List<io.heimui.core.domain.model.action.HeimAction>){}[0]
 
     final val a11y // io.heimui.core.domain.model.component/ButtonComponent.a11y|{}a11y[0]
         final fun <get-a11y>(): io.heimui.core.domain.model.accessibility/HeimAccessibility? // io.heimui.core.domain.model.component/ButtonComponent.a11y.<get-a11y>|<get-a11y>(){}[0]
     final val actions // io.heimui.core.domain.model.component/ButtonComponent.actions|{}actions[0]
         final fun <get-actions>(): kotlin.collections/List<io.heimui.core.domain.model.action/HeimAction> // io.heimui.core.domain.model.component/ButtonComponent.actions.<get-actions>|<get-actions>(){}[0]
+    final val icon // io.heimui.core.domain.model.component/ButtonComponent.icon|{}icon[0]
+        final fun <get-icon>(): kotlin/String? // io.heimui.core.domain.model.component/ButtonComponent.icon.<get-icon>|<get-icon>(){}[0]
     final val id // io.heimui.core.domain.model.component/ButtonComponent.id|{}id[0]
         final fun <get-id>(): kotlin/String // io.heimui.core.domain.model.component/ButtonComponent.id.<get-id>|<get-id>(){}[0]
     final val isEnabled // io.heimui.core.domain.model.component/ButtonComponent.isEnabled|{}isEnabled[0]
@@ -2363,6 +2412,7 @@ final class io.heimui.core.domain.model.component/ButtonComponent : io.heimui.co
         final fun <get-visibleIf>(): kotlin/String? // io.heimui.core.domain.model.component/ButtonComponent.visibleIf.<get-visibleIf>|<get-visibleIf>(){}[0]
 
     final fun component1(): kotlin/String // io.heimui.core.domain.model.component/ButtonComponent.component1|component1(){}[0]
+    final fun component10(): kotlin.collections/List<io.heimui.core.domain.model.action/HeimAction> // io.heimui.core.domain.model.component/ButtonComponent.component10|component10(){}[0]
     final fun component2(): kotlin/String? // io.heimui.core.domain.model.component/ButtonComponent.component2|component2(){}[0]
     final fun component3(): io.heimui.core.domain.model.accessibility/HeimAccessibility? // io.heimui.core.domain.model.component/ButtonComponent.component3|component3(){}[0]
     final fun component4(): kotlin/String // io.heimui.core.domain.model.component/ButtonComponent.component4|component4(){}[0]
@@ -2370,8 +2420,8 @@ final class io.heimui.core.domain.model.component/ButtonComponent : io.heimui.co
     final fun component6(): kotlin/Boolean // io.heimui.core.domain.model.component/ButtonComponent.component6|component6(){}[0]
     final fun component7(): kotlin/Boolean // io.heimui.core.domain.model.component/ButtonComponent.component7|component7(){}[0]
     final fun component8(): kotlin/Boolean // io.heimui.core.domain.model.component/ButtonComponent.component8|component8(){}[0]
-    final fun component9(): kotlin.collections/List<io.heimui.core.domain.model.action/HeimAction> // io.heimui.core.domain.model.component/ButtonComponent.component9|component9(){}[0]
-    final fun copy(kotlin/String = ..., kotlin/String? = ..., io.heimui.core.domain.model.accessibility/HeimAccessibility? = ..., kotlin/String = ..., io.heimui.core.domain.model.component/ButtonVariant = ..., kotlin/Boolean = ..., kotlin/Boolean = ..., kotlin/Boolean = ..., kotlin.collections/List<io.heimui.core.domain.model.action/HeimAction> = ...): io.heimui.core.domain.model.component/ButtonComponent // io.heimui.core.domain.model.component/ButtonComponent.copy|copy(kotlin.String;kotlin.String?;io.heimui.core.domain.model.accessibility.HeimAccessibility?;kotlin.String;io.heimui.core.domain.model.component.ButtonVariant;kotlin.Boolean;kotlin.Boolean;kotlin.Boolean;kotlin.collections.List<io.heimui.core.domain.model.action.HeimAction>){}[0]
+    final fun component9(): kotlin/String? // io.heimui.core.domain.model.component/ButtonComponent.component9|component9(){}[0]
+    final fun copy(kotlin/String = ..., kotlin/String? = ..., io.heimui.core.domain.model.accessibility/HeimAccessibility? = ..., kotlin/String = ..., io.heimui.core.domain.model.component/ButtonVariant = ..., kotlin/Boolean = ..., kotlin/Boolean = ..., kotlin/Boolean = ..., kotlin/String? = ..., kotlin.collections/List<io.heimui.core.domain.model.action/HeimAction> = ...): io.heimui.core.domain.model.component/ButtonComponent // io.heimui.core.domain.model.component/ButtonComponent.copy|copy(kotlin.String;kotlin.String?;io.heimui.core.domain.model.accessibility.HeimAccessibility?;kotlin.String;io.heimui.core.domain.model.component.ButtonVariant;kotlin.Boolean;kotlin.Boolean;kotlin.Boolean;kotlin.String?;kotlin.collections.List<io.heimui.core.domain.model.action.HeimAction>){}[0]
     final fun equals(kotlin/Any?): kotlin/Boolean // io.heimui.core.domain.model.component/ButtonComponent.equals|equals(kotlin.Any?){}[0]
     final fun hashCode(): kotlin/Int // io.heimui.core.domain.model.component/ButtonComponent.hashCode|hashCode(){}[0]
     final fun toString(): kotlin/String // io.heimui.core.domain.model.component/ButtonComponent.toString|toString(){}[0]
@@ -3132,6 +3182,9 @@ final val io.heimui.core.data.datasource.local/io_heimui_core_data_datasource_lo
 final val io.heimui.core.data.datasource.local/io_heimui_core_data_datasource_local_DefaultHeimEmergencyBundleProvider$stableprop // io.heimui.core.data.datasource.local/io_heimui_core_data_datasource_local_DefaultHeimEmergencyBundleProvider$stableprop|#static{}io_heimui_core_data_datasource_local_DefaultHeimEmergencyBundleProvider$stableprop[0]
 final val io.heimui.core.data.datasource.local/io_heimui_core_data_datasource_local_DriverBackedHeimCacheDataSource$stableprop // io.heimui.core.data.datasource.local/io_heimui_core_data_datasource_local_DriverBackedHeimCacheDataSource$stableprop|#static{}io_heimui_core_data_datasource_local_DriverBackedHeimCacheDataSource$stableprop[0]
 final val io.heimui.core.data.datasource.local/io_heimui_core_data_datasource_local_InMemoryHeimCacheDataSource$stableprop // io.heimui.core.data.datasource.local/io_heimui_core_data_datasource_local_InMemoryHeimCacheDataSource$stableprop|#static{}io_heimui_core_data_datasource_local_InMemoryHeimCacheDataSource$stableprop[0]
+final val io.heimui.core.data.datasource.local/io_heimui_core_data_datasource_local_NoHeimCacheDataSource$stableprop // io.heimui.core.data.datasource.local/io_heimui_core_data_datasource_local_NoHeimCacheDataSource$stableprop|#static{}io_heimui_core_data_datasource_local_NoHeimCacheDataSource$stableprop[0]
+final val io.heimui.core.data.datasource.remote/io_heimui_core_data_datasource_remote_HeimAuthContext_FormSubmit$stableprop // io.heimui.core.data.datasource.remote/io_heimui_core_data_datasource_remote_HeimAuthContext_FormSubmit$stableprop|#static{}io_heimui_core_data_datasource_remote_HeimAuthContext_FormSubmit$stableprop[0]
+final val io.heimui.core.data.datasource.remote/io_heimui_core_data_datasource_remote_HeimAuthContext_ScreenFetch$stableprop // io.heimui.core.data.datasource.remote/io_heimui_core_data_datasource_remote_HeimAuthContext_ScreenFetch$stableprop|#static{}io_heimui_core_data_datasource_remote_HeimAuthContext_ScreenFetch$stableprop[0]
 final val io.heimui.core.data.datasource.remote/io_heimui_core_data_datasource_remote_RemoteScreenResponse_CircuitOpen$stableprop // io.heimui.core.data.datasource.remote/io_heimui_core_data_datasource_remote_RemoteScreenResponse_CircuitOpen$stableprop|#static{}io_heimui_core_data_datasource_remote_RemoteScreenResponse_CircuitOpen$stableprop[0]
 final val io.heimui.core.data.datasource.remote/io_heimui_core_data_datasource_remote_RemoteScreenResponse_Error$stableprop // io.heimui.core.data.datasource.remote/io_heimui_core_data_datasource_remote_RemoteScreenResponse_Error$stableprop|#static{}io_heimui_core_data_datasource_remote_RemoteScreenResponse_Error$stableprop[0]
 final val io.heimui.core.data.datasource.remote/io_heimui_core_data_datasource_remote_RemoteScreenResponse_NotModified$stableprop // io.heimui.core.data.datasource.remote/io_heimui_core_data_datasource_remote_RemoteScreenResponse_NotModified$stableprop|#static{}io_heimui_core_data_datasource_remote_RemoteScreenResponse_NotModified$stableprop[0]
@@ -3320,7 +3373,10 @@ final fun io.heimui.core.data.datasource.local/io_heimui_core_data_datasource_lo
 final fun io.heimui.core.data.datasource.local/io_heimui_core_data_datasource_local_DefaultHeimEmergencyBundleProvider$stableprop_getter(): kotlin/Int // io.heimui.core.data.datasource.local/io_heimui_core_data_datasource_local_DefaultHeimEmergencyBundleProvider$stableprop_getter|io_heimui_core_data_datasource_local_DefaultHeimEmergencyBundleProvider$stableprop_getter(){}[0]
 final fun io.heimui.core.data.datasource.local/io_heimui_core_data_datasource_local_DriverBackedHeimCacheDataSource$stableprop_getter(): kotlin/Int // io.heimui.core.data.datasource.local/io_heimui_core_data_datasource_local_DriverBackedHeimCacheDataSource$stableprop_getter|io_heimui_core_data_datasource_local_DriverBackedHeimCacheDataSource$stableprop_getter(){}[0]
 final fun io.heimui.core.data.datasource.local/io_heimui_core_data_datasource_local_InMemoryHeimCacheDataSource$stableprop_getter(): kotlin/Int // io.heimui.core.data.datasource.local/io_heimui_core_data_datasource_local_InMemoryHeimCacheDataSource$stableprop_getter|io_heimui_core_data_datasource_local_InMemoryHeimCacheDataSource$stableprop_getter(){}[0]
+final fun io.heimui.core.data.datasource.local/io_heimui_core_data_datasource_local_NoHeimCacheDataSource$stableprop_getter(): kotlin/Int // io.heimui.core.data.datasource.local/io_heimui_core_data_datasource_local_NoHeimCacheDataSource$stableprop_getter|io_heimui_core_data_datasource_local_NoHeimCacheDataSource$stableprop_getter(){}[0]
 final fun io.heimui.core.data.datasource.remote/createPlatformHttpClientEngine(): io.ktor.client.engine/HttpClientEngine // io.heimui.core.data.datasource.remote/createPlatformHttpClientEngine|createPlatformHttpClientEngine(){}[0]
+final fun io.heimui.core.data.datasource.remote/io_heimui_core_data_datasource_remote_HeimAuthContext_FormSubmit$stableprop_getter(): kotlin/Int // io.heimui.core.data.datasource.remote/io_heimui_core_data_datasource_remote_HeimAuthContext_FormSubmit$stableprop_getter|io_heimui_core_data_datasource_remote_HeimAuthContext_FormSubmit$stableprop_getter(){}[0]
+final fun io.heimui.core.data.datasource.remote/io_heimui_core_data_datasource_remote_HeimAuthContext_ScreenFetch$stableprop_getter(): kotlin/Int // io.heimui.core.data.datasource.remote/io_heimui_core_data_datasource_remote_HeimAuthContext_ScreenFetch$stableprop_getter|io_heimui_core_data_datasource_remote_HeimAuthContext_ScreenFetch$stableprop_getter(){}[0]
 final fun io.heimui.core.data.datasource.remote/io_heimui_core_data_datasource_remote_RemoteScreenResponse_CircuitOpen$stableprop_getter(): kotlin/Int // io.heimui.core.data.datasource.remote/io_heimui_core_data_datasource_remote_RemoteScreenResponse_CircuitOpen$stableprop_getter|io_heimui_core_data_datasource_remote_RemoteScreenResponse_CircuitOpen$stableprop_getter(){}[0]
 final fun io.heimui.core.data.datasource.remote/io_heimui_core_data_datasource_remote_RemoteScreenResponse_Error$stableprop_getter(): kotlin/Int // io.heimui.core.data.datasource.remote/io_heimui_core_data_datasource_remote_RemoteScreenResponse_Error$stableprop_getter|io_heimui_core_data_datasource_remote_RemoteScreenResponse_Error$stableprop_getter(){}[0]
 final fun io.heimui.core.data.datasource.remote/io_heimui_core_data_datasource_remote_RemoteScreenResponse_NotModified$stableprop_getter(): kotlin/Int // io.heimui.core.data.datasource.remote/io_heimui_core_data_datasource_remote_RemoteScreenResponse_NotModified$stableprop_getter|io_heimui_core_data_datasource_remote_RemoteScreenResponse_NotModified$stableprop_getter(){}[0]
@@ -3447,7 +3503,7 @@ final fun io.heimui.core.domain.repository/io_heimui_core_domain_repository_Heim
 final fun io.heimui.core.domain.repository/io_heimui_core_domain_repository_HeimSubmitResult_Success$stableprop_getter(): kotlin/Int // io.heimui.core.domain.repository/io_heimui_core_domain_repository_HeimSubmitResult_Success$stableprop_getter|io_heimui_core_domain_repository_HeimSubmitResult_Success$stableprop_getter(){}[0]
 final fun io.heimui.core.presentation.action/io_heimui_core_presentation_action_HeimActionDispatcher$stableprop_getter(): kotlin/Int // io.heimui.core.presentation.action/io_heimui_core_presentation_action_HeimActionDispatcher$stableprop_getter|io_heimui_core_presentation_action_HeimActionDispatcher$stableprop_getter(){}[0]
 final fun io.heimui.core.presentation.action/io_heimui_core_presentation_action_HeimActionDispatcher_Builder$stableprop_getter(): kotlin/Int // io.heimui.core.presentation.action/io_heimui_core_presentation_action_HeimActionDispatcher_Builder$stableprop_getter|io_heimui_core_presentation_action_HeimActionDispatcher_Builder$stableprop_getter(){}[0]
-final fun io.heimui.core.presentation.designsystem/HeimTheme(kotlin/Boolean, androidx.compose.material3/ColorScheme?, androidx.compose.material3/Typography?, io.heimui.core.presentation.designsystem/HeimIconProvider?, io.heimui.core.presentation.designsystem/HeimBrandTokens?, io.heimui.core.presentation.imageloader/HeimImageLoader?, io.heimui.core.presentation.modal/HeimModalPresenter?, io.heimui.core.presentation.launcher/HeimUrlLauncher?, io.heimui.core.presentation.launcher/HeimUrlPolicy?, io.heimui.core.presentation.state/HeimFormDraftStorage?, io.heimui.core.presentation.action/HeimActionDispatcher?, io.heimui.core.domain.evaluator/HeimValidatorRegistry?, io.heimui.core.presentation.telemetry/HeimTelemetryObserver?, io.heimui.core.presentation.registry/HeimCustomComponentRegistry?, kotlin/Function2<androidx.compose.runtime/Composer, kotlin/Int, kotlin/Unit>, androidx.compose.runtime/Composer?, kotlin/Int, kotlin/Int, kotlin/Int) // io.heimui.core.presentation.designsystem/HeimTheme|HeimTheme(kotlin.Boolean;androidx.compose.material3.ColorScheme?;androidx.compose.material3.Typography?;io.heimui.core.presentation.designsystem.HeimIconProvider?;io.heimui.core.presentation.designsystem.HeimBrandTokens?;io.heimui.core.presentation.imageloader.HeimImageLoader?;io.heimui.core.presentation.modal.HeimModalPresenter?;io.heimui.core.presentation.launcher.HeimUrlLauncher?;io.heimui.core.presentation.launcher.HeimUrlPolicy?;io.heimui.core.presentation.state.HeimFormDraftStorage?;io.heimui.core.presentation.action.HeimActionDispatcher?;io.heimui.core.domain.evaluator.HeimValidatorRegistry?;io.heimui.core.presentation.telemetry.HeimTelemetryObserver?;io.heimui.core.presentation.registry.HeimCustomComponentRegistry?;kotlin.Function2<androidx.compose.runtime.Composer,kotlin.Int,kotlin.Unit>;androidx.compose.runtime.Composer?;kotlin.Int;kotlin.Int;kotlin.Int){}[0]
+final fun io.heimui.core.presentation.designsystem/HeimTheme(kotlin/Boolean, androidx.compose.material3/ColorScheme?, androidx.compose.material3/Typography?, androidx.compose.material3/Shapes?, io.heimui.core.presentation.designsystem/HeimIconProvider?, io.heimui.core.presentation.designsystem/HeimBrandTokens?, io.heimui.core.presentation.imageloader/HeimImageLoader?, io.heimui.core.presentation.modal/HeimModalPresenter?, io.heimui.core.presentation.launcher/HeimUrlLauncher?, io.heimui.core.presentation.launcher/HeimUrlPolicy?, io.heimui.core.presentation.state/HeimFormDraftStorage?, io.heimui.core.presentation.action/HeimActionDispatcher?, io.heimui.core.domain.evaluator/HeimValidatorRegistry?, io.heimui.core.presentation.telemetry/HeimTelemetryObserver?, io.heimui.core.presentation.registry/HeimCustomComponentRegistry?, kotlin/Function2<androidx.compose.runtime/Composer, kotlin/Int, kotlin/Unit>, androidx.compose.runtime/Composer?, kotlin/Int, kotlin/Int, kotlin/Int) // io.heimui.core.presentation.designsystem/HeimTheme|HeimTheme(kotlin.Boolean;androidx.compose.material3.ColorScheme?;androidx.compose.material3.Typography?;androidx.compose.material3.Shapes?;io.heimui.core.presentation.designsystem.HeimIconProvider?;io.heimui.core.presentation.designsystem.HeimBrandTokens?;io.heimui.core.presentation.imageloader.HeimImageLoader?;io.heimui.core.presentation.modal.HeimModalPresenter?;io.heimui.core.presentation.launcher.HeimUrlLauncher?;io.heimui.core.presentation.launcher.HeimUrlPolicy?;io.heimui.core.presentation.state.HeimFormDraftStorage?;io.heimui.core.presentation.action.HeimActionDispatcher?;io.heimui.core.domain.evaluator.HeimValidatorRegistry?;io.heimui.core.presentation.telemetry.HeimTelemetryObserver?;io.heimui.core.presentation.registry.HeimCustomComponentRegistry?;kotlin.Function2<androidx.compose.runtime.Composer,kotlin.Int,kotlin.Unit>;androidx.compose.runtime.Composer?;kotlin.Int;kotlin.Int;kotlin.Int){}[0]
 final fun io.heimui.core.presentation.designsystem/heimColor(kotlin/String?, androidx.compose.ui.graphics/Color, androidx.compose.runtime/Composer?, kotlin/Int): androidx.compose.ui.graphics/Color // io.heimui.core.presentation.designsystem/heimColor|heimColor(kotlin.String?;androidx.compose.ui.graphics.Color;androidx.compose.runtime.Composer?;kotlin.Int){}[0]
 final fun io.heimui.core.presentation.designsystem/heimTextStyle(kotlin/String?, androidx.compose.runtime/Composer?, kotlin/Int): androidx.compose.ui.text/TextStyle // io.heimui.core.presentation.designsystem/heimTextStyle|heimTextStyle(kotlin.String?;androidx.compose.runtime.Composer?;kotlin.Int){}[0]
 final fun io.heimui.core.presentation.designsystem/io_heimui_core_presentation_designsystem_DefaultHeimIconProvider$stableprop_getter(): kotlin/Int // io.heimui.core.presentation.designsystem/io_heimui_core_presentation_designsystem_DefaultHeimIconProvider$stableprop_getter|io_heimui_core_presentation_designsystem_DefaultHeimIconProvider$stableprop_getter(){}[0]

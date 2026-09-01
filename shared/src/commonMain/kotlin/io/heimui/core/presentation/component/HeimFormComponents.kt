@@ -43,7 +43,9 @@ import io.heimui.core.domain.model.component.ButtonVariant
 import io.heimui.core.domain.model.component.InputType
 import io.heimui.core.domain.model.component.SwitchComponent
 import io.heimui.core.domain.model.component.TextFieldComponent
+import androidx.compose.material3.LocalContentColor
 import io.heimui.core.presentation.accessibility.heimAccessibility
+import io.heimui.core.presentation.designsystem.LocalHeimIconProvider
 import io.heimui.core.presentation.state.HeimStateManager
 import io.heimui.core.presentation.telemetry.HeimTelemetryEvent
 import io.heimui.core.presentation.telemetry.LocalHeimTelemetryObserver
@@ -70,14 +72,28 @@ internal fun HeimButtonRenderer(
         }
     }
 
+    val iconProvider = LocalHeimIconProvider.current
     val content: @Composable RowScope.() -> Unit = {
-        if (component.isLoading) {
-            CircularProgressIndicator(
-                modifier = Modifier.size(18.dp),
-                strokeWidth = 2.dp,
-                color = MaterialTheme.colorScheme.onPrimary
-            )
-            Spacer(modifier = Modifier.width(8.dp))
+        when {
+            // The spinner takes the icon's place rather than sitting beside it, so the button
+            // does not change width the moment it starts working.
+            component.isLoading -> {
+                CircularProgressIndicator(
+                    modifier = Modifier.size(18.dp),
+                    strokeWidth = 2.dp,
+                    color = LocalContentColor.current
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+            }
+            component.icon != null -> {
+                iconProvider.RenderIcon(
+                    name = component.icon,
+                    tint = LocalContentColor.current,
+                    size = 18.dp,
+                    modifier = Modifier
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+            }
         }
         Text(text = component.title)
     }
@@ -246,6 +262,17 @@ internal fun HeimSwitchRenderer(
     val formState by stateManager.formState.collectAsState()
     val isChecked = (formState[component.stateKey] ?: component.initialChecked.toString()).toBooleanStrictOrNull()
         ?: component.initialChecked
+
+    // Seed the declared default into form state, the way a text field seeds `initial_value`.
+    // Rendering from `initialChecked` alone was not enough: the switch *looked* on while the form
+    // held no value for it, so a payload interpolating `{{state.key}}` submitted null until the
+    // user toggled it twice. Two components implementing the same payload concept differently is
+    // the kind of thing a backend team discovers from bad data, not from a stack trace.
+    LaunchedEffect(component.stateKey, component.initialChecked) {
+        if (!stateManager.hasValue(component.stateKey)) {
+            stateManager.updateValue(component.stateKey, component.initialChecked.toString())
+        }
+    }
 
     Row(
         modifier = modifier

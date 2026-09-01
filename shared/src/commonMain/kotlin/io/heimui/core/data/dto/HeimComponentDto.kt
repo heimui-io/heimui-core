@@ -197,6 +197,7 @@ public data class ButtonComponentDto(
     @SerialName("is_full_width") @Serializable(with = LenientBooleanSerializer::class) val isFullWidth: Boolean = false,
     @SerialName("is_enabled") @Serializable(with = LenientBooleanSerializer::class) val isEnabled: Boolean = true,
     @SerialName("is_loading") @Serializable(with = LenientBooleanSerializer::class) val isLoading: Boolean = false,
+    val icon: String? = null,
     val actions: List<HeimActionDto> = emptyList()
 ) : HeimComponentDto
 

@@ -1,6 +1,9 @@
 package io.heimui.core
 
+import io.heimui.core.data.dto.ButtonComponentDto
+import io.heimui.core.data.dto.HeimComponentDto
 import io.heimui.core.data.dto.HeimScreenResponseDto
+import io.heimui.core.data.serialization.HeimJson
 import io.heimui.core.data.mapper.toDomain
 import io.heimui.core.domain.model.accessibility.AccessibilityRole
 import io.heimui.core.domain.model.component.*
@@ -8,6 +11,7 @@ import kotlinx.serialization.json.Json
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertIs
+import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
 class HeimComponentSerializationTest {
@@ -130,4 +134,31 @@ class HeimComponentSerializationTest {
         // Integers stay exact: routing them through Double corrupted anything above 2^53.
         assertEquals(io.heimui.core.domain.model.HeimValue.Int64(15000), custom.data["volume"])
     }
+
+    @Test
+    fun `button icon is optional and survives the round trip`() {
+        val withIcon = HeimJson.instance.decodeFromString(
+            HeimComponentDto.serializer(),
+            """{"type":"button","id":"send","title":"Send","icon":"  Send_Money  "}"""
+        )
+        val domain = (withIcon as ButtonComponentDto).toDomain() as ButtonComponent
+        assertEquals("  Send_Money  ", withIcon.icon)
+        // Trimmed and normalised on the way in, so a payload typo does not silently miss the
+        // provider's lookup table.
+        assertEquals("Send_Money", domain.icon)
+
+        // Absent and blank both mean "no icon" — a `"icon": ""` must not draw a missing glyph.
+        val blank = HeimJson.instance.decodeFromString(
+            HeimComponentDto.serializer(),
+            """{"type":"button","id":"plain","title":"Plain","icon":""}"""
+        )
+        assertNull(((blank as ButtonComponentDto).toDomain() as ButtonComponent).icon)
+
+        val absent = HeimJson.instance.decodeFromString(
+            HeimComponentDto.serializer(),
+            """{"type":"button","id":"plain","title":"Plain"}"""
+        )
+        assertNull(((absent as ButtonComponentDto).toDomain() as ButtonComponent).icon)
+    }
+
 }

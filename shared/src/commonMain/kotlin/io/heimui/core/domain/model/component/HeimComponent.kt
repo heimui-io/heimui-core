@@ -202,6 +202,10 @@ public data class BadgeComponent(
  * Tappable button that dispatches [actions] when pressed.
  *
  * @property isLoading replaces the label with a spinner and blocks interaction.
+ * @property icon optional leading icon, named rather than drawn — the host's
+ *   [io.heimui.core.presentation.designsystem.HeimIconProvider] decides what it looks like. Prefer
+ *   this to an emoji in [title]: an emoji is read aloud by screen readers, renders differently on
+ *   every OS version, and cannot be tinted with the button's content colour.
  */
 public data class ButtonComponent(
     override val id: String,
@@ -212,6 +216,7 @@ public data class ButtonComponent(
     val isFullWidth: Boolean = false,
     val isEnabled: Boolean = true,
     val isLoading: Boolean = false,
+    val icon: String? = null,
     val actions: List<HeimAction> = emptyList()
 ) : HeimComponent
 
