@@ -18,8 +18,8 @@ import io.heimui.core.presentation.accessibility.heimAccessibility
 import io.heimui.core.presentation.registry.LocalHeimCustomComponentRegistry
 import io.heimui.core.presentation.state.HeimStateManager
 
-internal @Composable
-fun HeimCustomRenderer(
+@Composable
+internal fun HeimCustomRenderer(
     component: CustomComponent,
     stateManager: HeimStateManager,
     onAction: (HeimAction) -> Unit,
@@ -60,8 +60,8 @@ fun HeimCustomRenderer(
     }
 }
 
-internal @Composable
-fun HeimUnknownRenderer(
+@Composable
+internal fun HeimUnknownRenderer(
     component: UnknownComponent,
     modifier: Modifier = Modifier
 ) {

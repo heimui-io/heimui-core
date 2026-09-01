@@ -27,14 +27,14 @@ public sealed interface HeimComponentDto {
     public val a11y: HeimAccessibilityDto? get() = null
 }
 
-public @Serializable
-enum class DirectionDto {
+@Serializable
+public enum class DirectionDto {
     @SerialName("VERTICAL") VERTICAL,
     @SerialName("HORIZONTAL") HORIZONTAL
 }
 
-public @Serializable
-enum class AlignmentDto {
+@Serializable
+public enum class AlignmentDto {
     @SerialName("START") START,
     @SerialName("CENTER") CENTER,
     @SerialName("END") END,
@@ -42,32 +42,32 @@ enum class AlignmentDto {
     @SerialName("BOTTOM") BOTTOM
 }
 
-public @Serializable
-enum class TextAlignDto {
+@Serializable
+public enum class TextAlignDto {
     @SerialName("START") START,
     @SerialName("CENTER") CENTER,
     @SerialName("END") END,
     @SerialName("JUSTIFY") JUSTIFY
 }
 
-public @Serializable
-enum class ContentScaleDto {
+@Serializable
+public enum class ContentScaleDto {
     @SerialName("CROP") CROP,
     @SerialName("FIT") FIT,
     @SerialName("FILL_BOUNDS") FILL_BOUNDS,
     @SerialName("INSIDE") INSIDE
 }
 
-public @Serializable
-enum class ButtonVariantDto {
+@Serializable
+public enum class ButtonVariantDto {
     @SerialName("FILLED") FILLED,
     @SerialName("OUTLINED") OUTLINED,
     @SerialName("TEXT") TEXT,
     @SerialName("TONAL") TONAL
 }
 
-public @Serializable
-enum class InputTypeDto {
+@Serializable
+public enum class InputTypeDto {
     @SerialName("TEXT") TEXT,
     @SerialName("NUMBER") NUMBER,
     @SerialName("EMAIL") EMAIL,
@@ -75,9 +75,9 @@ enum class InputTypeDto {
     @SerialName("PHONE") PHONE
 }
 
-public @Serializable
+@Serializable
 @SerialName("container")
-data class ContainerComponentDto(
+public data class ContainerComponentDto(
     override val id: String = "",
     @SerialName("visible_if") override val visibleIf: String? = null,
     override val a11y: HeimAccessibilityDto? = null,
@@ -90,9 +90,9 @@ data class ContainerComponentDto(
     val children: List<HeimComponentDto> = emptyList()
 ) : HeimComponentDto
 
-public @Serializable
+@Serializable
 @SerialName("box")
-data class BoxComponentDto(
+public data class BoxComponentDto(
     override val id: String = "",
     @SerialName("visible_if") override val visibleIf: String? = null,
     override val a11y: HeimAccessibilityDto? = null,
@@ -100,9 +100,9 @@ data class BoxComponentDto(
     val children: List<HeimComponentDto> = emptyList()
 ) : HeimComponentDto
 
-public @Serializable
+@Serializable
 @SerialName("lazy_column")
-data class LazyColumnComponentDto(
+public data class LazyColumnComponentDto(
     override val id: String = "",
     @SerialName("visible_if") override val visibleIf: String? = null,
     override val a11y: HeimAccessibilityDto? = null,
@@ -112,9 +112,9 @@ data class LazyColumnComponentDto(
     val pagination: PaginationConfigDto? = null
 ) : HeimComponentDto
 
-public @Serializable
+@Serializable
 @SerialName("lazy_row")
-data class LazyRowComponentDto(
+public data class LazyRowComponentDto(
     override val id: String = "",
     @SerialName("visible_if") override val visibleIf: String? = null,
     override val a11y: HeimAccessibilityDto? = null,
@@ -124,17 +124,17 @@ data class LazyRowComponentDto(
     val pagination: PaginationConfigDto? = null
 ) : HeimComponentDto
 
-public @Serializable
-data class PaginationConfigDto(
+@Serializable
+public data class PaginationConfigDto(
     @SerialName("next_cursor") val nextCursor: String? = null,
     @SerialName("has_more") @Serializable(with = LenientBooleanSerializer::class) val hasMore: Boolean = false,
     @SerialName("load_threshold") @Serializable(with = LenientIntSerializer::class) val loadThreshold: Int = 3,
     @SerialName("on_load_more_actions") val onLoadMoreActions: List<HeimActionDto> = emptyList()
 )
 
-public @Serializable
+@Serializable
 @SerialName("text")
-data class TextComponentDto(
+public data class TextComponentDto(
     override val id: String = "",
     @SerialName("visible_if") override val visibleIf: String? = null,
     override val a11y: HeimAccessibilityDto? = null,
@@ -145,9 +145,9 @@ data class TextComponentDto(
     @SerialName("text_align") val textAlign: TextAlignDto = TextAlignDto.START
 ) : HeimComponentDto
 
-public @Serializable
+@Serializable
 @SerialName("image")
-data class ImageComponentDto(
+public data class ImageComponentDto(
     override val id: String = "",
     @SerialName("visible_if") override val visibleIf: String? = null,
     override val a11y: HeimAccessibilityDto? = null,
@@ -159,9 +159,9 @@ data class ImageComponentDto(
     @SerialName("content_scale") val contentScale: ContentScaleDto = ContentScaleDto.CROP
 ) : HeimComponentDto
 
-public @Serializable
+@Serializable
 @SerialName("card")
-data class CardComponentDto(
+public data class CardComponentDto(
     override val id: String = "",
     @SerialName("visible_if") override val visibleIf: String? = null,
     override val a11y: HeimAccessibilityDto? = null,
@@ -174,9 +174,9 @@ data class CardComponentDto(
     val child: HeimComponentDto = UnknownComponentDto(id = "missing_child")
 ) : HeimComponentDto
 
-public @Serializable
+@Serializable
 @SerialName("badge")
-data class BadgeComponentDto(
+public data class BadgeComponentDto(
     override val id: String = "",
     @SerialName("visible_if") override val visibleIf: String? = null,
     override val a11y: HeimAccessibilityDto? = null,
@@ -186,9 +186,9 @@ data class BadgeComponentDto(
     @SerialName("icon_url") val iconUrl: String? = null
 ) : HeimComponentDto
 
-public @Serializable
+@Serializable
 @SerialName("button")
-data class ButtonComponentDto(
+public data class ButtonComponentDto(
     override val id: String = "",
     @SerialName("visible_if") override val visibleIf: String? = null,
     override val a11y: HeimAccessibilityDto? = null,
@@ -200,9 +200,9 @@ data class ButtonComponentDto(
     val actions: List<HeimActionDto> = emptyList()
 ) : HeimComponentDto
 
-public @Serializable
+@Serializable
 @SerialName("text_field")
-data class TextFieldComponentDto(
+public data class TextFieldComponentDto(
     override val id: String = "",
     @SerialName("visible_if") override val visibleIf: String? = null,
     override val a11y: HeimAccessibilityDto? = null,
@@ -215,9 +215,9 @@ data class TextFieldComponentDto(
     @SerialName("helper_text") val helperText: String? = null
 ) : HeimComponentDto
 
-public @Serializable
+@Serializable
 @SerialName("switch")
-data class SwitchComponentDto(
+public data class SwitchComponentDto(
     override val id: String = "",
     @SerialName("visible_if") override val visibleIf: String? = null,
     override val a11y: HeimAccessibilityDto? = null,
@@ -227,9 +227,9 @@ data class SwitchComponentDto(
     @SerialName("on_check_actions") val onCheckActions: List<HeimActionDto> = emptyList()
 ) : HeimComponentDto
 
-public @Serializable
+@Serializable
 @SerialName("icon")
-data class IconComponentDto(
+public data class IconComponentDto(
     override val id: String = "",
     @SerialName("visible_if") override val visibleIf: String? = null,
     override val a11y: HeimAccessibilityDto? = null,
@@ -238,9 +238,9 @@ data class IconComponentDto(
     @Serializable(with = LenientIntSerializer::class) val size: Int = 24
 ) : HeimComponentDto
 
-public @Serializable
+@Serializable
 @SerialName("spacer")
-data class SpacerComponentDto(
+public data class SpacerComponentDto(
     override val id: String = "",
     @SerialName("visible_if") override val visibleIf: String? = null,
     override val a11y: HeimAccessibilityDto? = null,
@@ -248,9 +248,9 @@ data class SpacerComponentDto(
     @SerialName("is_flexible") @Serializable(with = LenientBooleanSerializer::class) val isFlexible: Boolean = false
 ) : HeimComponentDto
 
-public @Serializable
+@Serializable
 @SerialName("divider")
-data class DividerComponentDto(
+public data class DividerComponentDto(
     override val id: String = "",
     @SerialName("visible_if") override val visibleIf: String? = null,
     override val a11y: HeimAccessibilityDto? = null,
@@ -258,9 +258,9 @@ data class DividerComponentDto(
     val color: String = "outlineVariant"
 ) : HeimComponentDto
 
-public @Serializable
+@Serializable
 @SerialName("custom")
-data class CustomComponentDto(
+public data class CustomComponentDto(
     override val id: String = "",
     @SerialName("visible_if") override val visibleIf: String? = null,
     override val a11y: HeimAccessibilityDto? = null,
@@ -268,9 +268,9 @@ data class CustomComponentDto(
     val data: JsonObject? = null
 ) : HeimComponentDto
 
-public @Serializable
+@Serializable
 @SerialName("unknown")
-data class UnknownComponentDto(
+public data class UnknownComponentDto(
     override val id: String = "unknown_component",
     @SerialName("visible_if") override val visibleIf: String? = null,
     override val a11y: HeimAccessibilityDto? = null,

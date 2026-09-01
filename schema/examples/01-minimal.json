@@ -1,0 +1,14 @@
+{
+  "id": "minimal",
+  "root": {
+    "type": "container",
+    "id": "root",
+    "children": [
+      {
+        "type": "text",
+        "id": "hello",
+        "text": "Hola HeimUI"
+      }
+    ]
+  }
+}

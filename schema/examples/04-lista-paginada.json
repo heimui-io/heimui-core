@@ -1,0 +1,73 @@
+{
+  "id": "feed",
+  "title": "Feed",
+  "root": {
+    "type": "lazy_column",
+    "id": "lista",
+    "spacing": 12,
+    "padding": 16,
+    "pagination": {
+      "next_cursor": "cursor_p2",
+      "has_more": true,
+      "load_threshold": 3,
+      "on_load_more_actions": [
+        {
+          "type": "custom",
+          "name": "load_more",
+          "payload": {
+            "cursor": "cursor_p2"
+          }
+        }
+      ]
+    },
+    "items": [
+      {
+        "type": "card",
+        "id": "item_1",
+        "elevation": 2,
+        "padding": 16,
+        "actions": [
+          {
+            "type": "navigate",
+            "screen_id": "detalle",
+            "params": {
+              "id": "1"
+            }
+          }
+        ],
+        "child": {
+          "type": "container",
+          "id": "c_1",
+          "spacing": 8,
+          "scrollable": false,
+          "children": [
+            {
+              "type": "text",
+              "id": "t_1",
+              "text": "Producto uno",
+              "style": "titleMedium"
+            },
+            {
+              "type": "text",
+              "id": "p_1",
+              "text": "$120.000",
+              "color": "primary"
+            }
+          ]
+        }
+      },
+      {
+        "type": "card",
+        "id": "item_2",
+        "elevation": 2,
+        "padding": 16,
+        "child": {
+          "type": "text",
+          "id": "t_2",
+          "text": "Producto dos",
+          "max_lines": 2
+        }
+      }
+    ]
+  }
+}

@@ -14,52 +14,52 @@ import kotlinx.serialization.json.JsonObject
 @Serializable
 public sealed interface HeimActionDto
 
-public @Serializable
+@Serializable
 @SerialName("navigate")
-data class NavigateActionDto(
+public data class NavigateActionDto(
     @SerialName("screen_id") val screenId: String = "",
     val params: Map<String, String> = emptyMap()
 ) : HeimActionDto
 
-public @Serializable
+@Serializable
 @SerialName("submit_form")
-data class SubmitFormActionDto(
+public data class SubmitFormActionDto(
     val endpoint: String = "",
     val method: String = "POST",
     val payload: JsonObject? = null
 ) : HeimActionDto
 
-public @Serializable
+@Serializable
 @SerialName("show_snackbar")
-data class ShowSnackbarActionDto(
+public data class ShowSnackbarActionDto(
     val message: String = "",
     val duration: String = "SHORT"
 ) : HeimActionDto
 
-public @Serializable
+@Serializable
 @SerialName("open_url")
-data class OpenUrlActionDto(
+public data class OpenUrlActionDto(
     val url: String = ""
 ) : HeimActionDto
 
-public @Serializable
+@Serializable
 @SerialName("custom")
-data class CustomActionDto(
+public data class CustomActionDto(
     val name: String = "",
     val payload: JsonObject? = null
 ) : HeimActionDto
 
-public @Serializable
+@Serializable
 @SerialName("show_bottom_sheet")
-data class ShowBottomSheetActionDto(
+public data class ShowBottomSheetActionDto(
     val title: String? = null,
     @SerialName("is_dismissible") val isDismissible: Boolean = true,
     val content: HeimComponentDto = UnknownComponentDto(id = "missing_content")
 ) : HeimActionDto
 
-public @Serializable
+@Serializable
 @SerialName("show_dialog")
-data class ShowDialogActionDto(
+public data class ShowDialogActionDto(
     val title: String = "",
     val message: String = "",
     @SerialName("confirm_text") val confirmText: String = "OK",
@@ -68,16 +68,16 @@ data class ShowDialogActionDto(
     @SerialName("dismiss_actions") val dismissActions: List<HeimActionDto> = emptyList()
 ) : HeimActionDto
 
-public @Serializable
+@Serializable
 @SerialName("dismiss_modal")
-data object DismissModalActionDto : HeimActionDto
+public data object DismissModalActionDto : HeimActionDto
 
-public @Serializable
+@Serializable
 @SerialName("dismiss")
-data object DismissActionDto : HeimActionDto
+public data object DismissActionDto : HeimActionDto
 
-public @Serializable
+@Serializable
 @SerialName("unknown")
-data class UnknownActionDto(
+public data class UnknownActionDto(
     val originalType: String? = null
 ) : HeimActionDto

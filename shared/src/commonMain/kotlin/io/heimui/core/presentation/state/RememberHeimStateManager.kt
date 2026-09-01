@@ -33,8 +33,8 @@ public val LocalHeimFormDraftStorage: ProvidableCompositionLocal<HeimFormDraftSt
  *
  * A plain `remember` -- which is what the SDK shipped with -- survives neither.
  */
-public @Composable
-fun rememberHeimStateManager(
+@Composable
+public fun rememberHeimStateManager(
     screenId: String,
     screenVersion: String = DEFAULT_SCREEN_VERSION,
     draftStorage: HeimFormDraftStorage? = LocalHeimFormDraftStorage.current

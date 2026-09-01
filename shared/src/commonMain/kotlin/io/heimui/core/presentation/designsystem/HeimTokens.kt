@@ -15,17 +15,17 @@ import androidx.compose.ui.text.TextStyle
  * `HeimBrandTokens.default` singleton -- brand tokens registered by a host were never applied.
  * Reading the CompositionLocal here is what makes the registry actually reachable.
  */
-public @Composable
+@Composable
 @ReadOnlyComposable
-fun heimColor(tokenOrHex: String?, default: Color): Color {
+public fun heimColor(tokenOrHex: String?, default: Color): Color {
     val brand = LocalHeimBrandTokens.current
     val scheme = MaterialTheme.colorScheme
     return HeimTokenResolver.resolveColor(tokenOrHex, scheme, default, brand)
 }
 
-public @Composable
+@Composable
 @ReadOnlyComposable
-fun heimTextStyle(styleName: String?): TextStyle {
+public fun heimTextStyle(styleName: String?): TextStyle {
     val brand = LocalHeimBrandTokens.current
     return HeimTokenResolver.resolveTextStyle(styleName, MaterialTheme.typography, brand)
 }

@@ -51,8 +51,8 @@ import io.heimui.core.presentation.validation.LocalHeimValidatorRegistry
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 
-internal @Composable
-fun HeimButtonRenderer(
+@Composable
+internal fun HeimButtonRenderer(
     component: ButtonComponent,
     onAction: (HeimAction) -> Unit,
     modifier: Modifier = Modifier
@@ -118,8 +118,8 @@ fun HeimButtonRenderer(
     }
 }
 
-internal @Composable
-fun HeimTextFieldRenderer(
+@Composable
+internal fun HeimTextFieldRenderer(
     component: TextFieldComponent,
     stateManager: HeimStateManager,
     modifier: Modifier = Modifier
@@ -236,8 +236,8 @@ fun HeimTextFieldRenderer(
     }
 }
 
-internal @Composable
-fun HeimSwitchRenderer(
+@Composable
+internal fun HeimSwitchRenderer(
     component: SwitchComponent,
     stateManager: HeimStateManager,
     onAction: (HeimAction) -> Unit,

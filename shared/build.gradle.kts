@@ -101,10 +101,11 @@ dependencies {
 
 publishing {
     publications.withType<MavenPublication> {
+        artifactId = artifactId.replace("shared", "heimui-core")
         pom {
             name.set("HeimUI Core")
             description.set("Engine for Server-Driven UI in Kotlin Multiplatform & Compose")
-            url.set("https://github.com/julianvelandia23/heimui-core")
+            url.set("https://github.com/heimui-io/heimui-core")
             licenses {
                 license {
                     name.set("Apache-2.0")
@@ -119,9 +120,9 @@ publishing {
                 }
             }
             scm {
-                connection.set("scm:git:git://github.com/julianvelandia23/heimui-core.git")
-                developerConnection.set("scm:git:ssh://github.com:julianvelandia23/heimui-core.git")
-                url.set("https://github.com/julianvelandia23/heimui-core")
+                connection.set("scm:git:git://github.com/heimui-io/heimui-core.git")
+                developerConnection.set("scm:git:ssh://github.com:heimui-io/heimui-core.git")
+                url.set("https://github.com/heimui-io/heimui-core")
             }
         }
     }

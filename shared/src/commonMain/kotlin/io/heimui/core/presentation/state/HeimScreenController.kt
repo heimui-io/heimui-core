@@ -250,8 +250,8 @@ public class HeimScreenController(
  * (whether content was already loaded, which modal was open) ride along in `rememberSaveable`
  * so a rotation does not restart the screen.
  */
-public @Composable
-fun rememberHeimScreenController(
+@Composable
+public fun rememberHeimScreenController(
     screenId: String,
     repository: HeimScreenRepository,
     queryParams: Map<String, String> = emptyMap(),

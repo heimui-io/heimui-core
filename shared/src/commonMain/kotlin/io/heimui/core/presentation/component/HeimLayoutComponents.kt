@@ -36,8 +36,8 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.staticCompositionLocalOf
 
-internal @Composable
-fun HeimContainerRenderer(
+@Composable
+internal fun HeimContainerRenderer(
     component: ContainerComponent,
     stateManager: HeimStateManager,
     onAction: (HeimAction) -> Unit,
@@ -115,8 +115,8 @@ fun HeimContainerRenderer(
 /** True while composing inside a scrollable ancestor, so nested scrollers can opt out. */
 internal val LocalInsideVerticalScroller = staticCompositionLocalOf { false }
 
-internal @Composable
-fun HeimBoxRenderer(
+@Composable
+internal fun HeimBoxRenderer(
     component: BoxComponent,
     stateManager: HeimStateManager,
     onAction: (HeimAction) -> Unit,
@@ -143,8 +143,8 @@ fun HeimBoxRenderer(
  * `weight(1f)` from the enclosing scope. The previous `fillMaxWidth()` filled the cross axis in a
  * vertical container -- silently the opposite of what "flexible" declares.
  */
-internal @Composable
-fun ColumnScope.HeimSpacerRenderer(
+@Composable
+internal fun ColumnScope.HeimSpacerRenderer(
     component: SpacerComponent,
     modifier: Modifier = Modifier
 ) {
@@ -155,8 +155,8 @@ fun ColumnScope.HeimSpacerRenderer(
     }
 }
 
-internal @Composable
-fun RowScope.HeimSpacerRenderer(
+@Composable
+internal fun RowScope.HeimSpacerRenderer(
     component: SpacerComponent,
     modifier: Modifier = Modifier
 ) {
@@ -168,16 +168,16 @@ fun RowScope.HeimSpacerRenderer(
 }
 
 /** Fallback for spacers outside a Row/Column scope, where weight is not expressible. */
-internal @Composable
-fun HeimSpacerRenderer(
+@Composable
+internal fun HeimSpacerRenderer(
     component: SpacerComponent,
     modifier: Modifier = Modifier
 ) {
     Spacer(modifier = modifier.size(component.size.coerceAtLeast(0).dp))
 }
 
-internal @Composable
-fun HeimDividerRenderer(
+@Composable
+internal fun HeimDividerRenderer(
     component: DividerComponent,
     modifier: Modifier = Modifier
 ) {

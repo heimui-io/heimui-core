@@ -1,0 +1,32 @@
+{
+  "id": "futuro",
+  "root": {
+    "type": "container",
+    "id": "root",
+    "children": [
+      {
+        "type": "text",
+        "id": "antes",
+        "text": "Antes del desconocido"
+      },
+      {
+        "type": "carousel_3d",
+        "id": "futuro_1"
+      },
+      {
+        "type": "custom",
+        "id": "grafico",
+        "name": "stock_chart",
+        "data": {
+          "ticker": "AAPL",
+          "volumen": 15000
+        }
+      },
+      {
+        "type": "text",
+        "id": "despues",
+        "text": "Después: el árbol sigue vivo"
+      }
+    ]
+  }
+}

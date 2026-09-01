@@ -12,8 +12,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 
-internal @Composable
-fun HeimSkeletonRenderer(
+@Composable
+internal fun HeimSkeletonRenderer(
     modifier: Modifier = Modifier
 ) {
     val infiniteTransition = rememberInfiniteTransition(label = "shimmer_transition")

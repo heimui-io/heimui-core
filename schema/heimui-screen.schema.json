@@ -1,0 +1,1518 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://heimui.io/schema/v1/screen.json",
+  "title": "HeimUI Screen",
+  "description": "Wire contract for a HeimUI server-driven screen. Any backend, in any language, that emits JSON matching this document can drive a HeimUI client. Field names are snake_case; every component is discriminated by its `type`.",
+  "type": "object",
+  "required": [
+    "id",
+    "root"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "id": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Identifier of this screen. Independent from the id used to request it."
+    },
+    "version": {
+      "type": "string",
+      "default": "1.0.0",
+      "description": "Screen version. Form drafts saved against a different version are discarded rather than restored onto changed fields."
+    },
+    "title": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "apply_safe_insets": {
+      "type": "boolean",
+      "default": true,
+      "description": "Whether the client pads the screen for system bars and notches."
+    },
+    "root": {
+      "$ref": "#/$defs/component"
+    },
+    "metadata": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "description": "Free-form data passed through to the host app untouched."
+    },
+    "signature": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "Deprecated in the body. Send the signature in the X-Heim-Signature header so it can cover the exact response bytes."
+    }
+  },
+  "$defs": {
+    "component": {
+      "description": "A component is discriminated by `type`. Known types are validated strictly. An UNKNOWN type is accepted on purpose: forward compatibility is a core property of the system — a newer server ships a component and older clients render a fallback while the rest of the tree survives. The trade-off is that a typo like \"contaner\" passes validation here and shows as a fallback on the device.",
+      "type": "object",
+      "required": [
+        "type"
+      ],
+      "properties": {
+        "type": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "container"
+              }
+            },
+            "required": [
+              "type"
+            ]
+          },
+          "then": {
+            "$ref": "#/$defs/container"
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "box"
+              }
+            },
+            "required": [
+              "type"
+            ]
+          },
+          "then": {
+            "$ref": "#/$defs/box"
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "lazy_column"
+              }
+            },
+            "required": [
+              "type"
+            ]
+          },
+          "then": {
+            "$ref": "#/$defs/lazy_column"
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "lazy_row"
+              }
+            },
+            "required": [
+              "type"
+            ]
+          },
+          "then": {
+            "$ref": "#/$defs/lazy_row"
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "text"
+              }
+            },
+            "required": [
+              "type"
+            ]
+          },
+          "then": {
+            "$ref": "#/$defs/text"
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "image"
+              }
+            },
+            "required": [
+              "type"
+            ]
+          },
+          "then": {
+            "$ref": "#/$defs/image"
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "card"
+              }
+            },
+            "required": [
+              "type"
+            ]
+          },
+          "then": {
+            "$ref": "#/$defs/card"
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "badge"
+              }
+            },
+            "required": [
+              "type"
+            ]
+          },
+          "then": {
+            "$ref": "#/$defs/badge"
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "button"
+              }
+            },
+            "required": [
+              "type"
+            ]
+          },
+          "then": {
+            "$ref": "#/$defs/button"
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "text_field"
+              }
+            },
+            "required": [
+              "type"
+            ]
+          },
+          "then": {
+            "$ref": "#/$defs/text_field"
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "switch"
+              }
+            },
+            "required": [
+              "type"
+            ]
+          },
+          "then": {
+            "$ref": "#/$defs/switch"
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "icon"
+              }
+            },
+            "required": [
+              "type"
+            ]
+          },
+          "then": {
+            "$ref": "#/$defs/icon"
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "spacer"
+              }
+            },
+            "required": [
+              "type"
+            ]
+          },
+          "then": {
+            "$ref": "#/$defs/spacer"
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "divider"
+              }
+            },
+            "required": [
+              "type"
+            ]
+          },
+          "then": {
+            "$ref": "#/$defs/divider"
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "custom"
+              }
+            },
+            "required": [
+              "type"
+            ]
+          },
+          "then": {
+            "$ref": "#/$defs/custom"
+          }
+        }
+      ]
+    },
+    "common": {
+      "id": {
+        "type": "string",
+        "description": "Unique within its sibling list. Duplicates are disambiguated by the client, but relying on that is a bug: the id is also the test tag and the list key."
+      },
+      "visible_if": {
+        "type": [
+          "string",
+          "null"
+        ],
+        "description": "Client-side visibility expression: \"is_admin\", \"plan == 'PREMIUM'\", \"age >= 18\", \"!hidden\". Evaluated against form state. An unresolved key evaluates to false. NOT an authorization mechanism: the payload already reached the device.",
+        "examples": [
+          "is_accepted",
+          "state.plan == 'PREMIUM'",
+          "age >= 18",
+          "!is_guest"
+        ]
+      },
+      "a11y": {
+        "$ref": "#/$defs/accessibility"
+      }
+    },
+    "accessibility": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "content_description": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "role": {
+          "enum": [
+            "BUTTON",
+            "IMAGE",
+            "HEADER",
+            "SWITCH",
+            "TAB",
+            null
+          ]
+        },
+        "is_heading": {
+          "type": "boolean",
+          "default": false
+        },
+        "state_description": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "hidden_from_accessibility": {
+          "type": "boolean",
+          "default": false
+        }
+      }
+    },
+    "container": {
+      "title": "container — linear layout",
+      "type": "object",
+      "required": [
+        "type"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "const": "container"
+        },
+        "id": {
+          "$ref": "#/$defs/common/id"
+        },
+        "visible_if": {
+          "$ref": "#/$defs/common/visible_if"
+        },
+        "a11y": {
+          "$ref": "#/$defs/accessibility"
+        },
+        "direction": {
+          "enum": [
+            "VERTICAL",
+            "HORIZONTAL"
+          ],
+          "default": "VERTICAL"
+        },
+        "alignment": {
+          "enum": [
+            "START",
+            "CENTER",
+            "END",
+            "TOP",
+            "BOTTOM"
+          ],
+          "default": "START"
+        },
+        "padding": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 0,
+          "description": "dp. Negative values are clamped to 0 by the client."
+        },
+        "spacing": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 0,
+          "description": "dp between children."
+        },
+        "background_color": {
+          "$ref": "#/$defs/color"
+        },
+        "scrollable": {
+          "type": "boolean",
+          "default": true,
+          "description": "Vertical containers scroll by default. Set false when nesting inside another scrolling container."
+        },
+        "children": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/component"
+          }
+        }
+      }
+    },
+    "box": {
+      "title": "box — z-axis overlay",
+      "type": "object",
+      "required": [
+        "type"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "const": "box"
+        },
+        "id": {
+          "$ref": "#/$defs/common/id"
+        },
+        "visible_if": {
+          "$ref": "#/$defs/common/visible_if"
+        },
+        "a11y": {
+          "$ref": "#/$defs/accessibility"
+        },
+        "content_alignment": {
+          "enum": [
+            "START",
+            "CENTER",
+            "END",
+            "TOP",
+            "BOTTOM"
+          ],
+          "default": "CENTER"
+        },
+        "children": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/component"
+          }
+        }
+      }
+    },
+    "lazy_column": {
+      "title": "lazy_column — virtualised vertical list",
+      "type": "object",
+      "required": [
+        "type"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "const": "lazy_column"
+        },
+        "id": {
+          "$ref": "#/$defs/common/id"
+        },
+        "visible_if": {
+          "$ref": "#/$defs/common/visible_if"
+        },
+        "a11y": {
+          "$ref": "#/$defs/accessibility"
+        },
+        "spacing": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 8
+        },
+        "padding": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 0
+        },
+        "items": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/component"
+          }
+        },
+        "pagination": {
+          "$ref": "#/$defs/pagination"
+        }
+      }
+    },
+    "lazy_row": {
+      "title": "lazy_row — virtualised horizontal carousel",
+      "type": "object",
+      "required": [
+        "type"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "const": "lazy_row"
+        },
+        "id": {
+          "$ref": "#/$defs/common/id"
+        },
+        "visible_if": {
+          "$ref": "#/$defs/common/visible_if"
+        },
+        "a11y": {
+          "$ref": "#/$defs/accessibility"
+        },
+        "spacing": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 8
+        },
+        "padding": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 0
+        },
+        "items": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/component"
+          }
+        },
+        "pagination": {
+          "$ref": "#/$defs/pagination"
+        }
+      }
+    },
+    "pagination": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "next_cursor": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "has_more": {
+          "type": "boolean",
+          "default": false
+        },
+        "load_threshold": {
+          "type": "integer",
+          "minimum": 1,
+          "default": 3,
+          "description": "Items from the end at which the client requests the next page."
+        },
+        "on_load_more_actions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/action"
+          }
+        }
+      }
+    },
+    "text": {
+      "title": "text",
+      "type": "object",
+      "required": [
+        "type"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "const": "text"
+        },
+        "id": {
+          "$ref": "#/$defs/common/id"
+        },
+        "visible_if": {
+          "$ref": "#/$defs/common/visible_if"
+        },
+        "a11y": {
+          "$ref": "#/$defs/accessibility"
+        },
+        "text": {
+          "type": "string",
+          "default": ""
+        },
+        "style": {
+          "$ref": "#/$defs/typography"
+        },
+        "color": {
+          "$ref": "#/$defs/color"
+        },
+        "max_lines": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 1,
+          "description": "Truncates with an ellipsis. null or below 1 means unlimited."
+        },
+        "text_align": {
+          "enum": [
+            "START",
+            "CENTER",
+            "END",
+            "JUSTIFY"
+          ],
+          "default": "START"
+        }
+      }
+    },
+    "image": {
+      "title": "image",
+      "type": "object",
+      "required": [
+        "type"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "const": "image"
+        },
+        "id": {
+          "$ref": "#/$defs/common/id"
+        },
+        "visible_if": {
+          "$ref": "#/$defs/common/visible_if"
+        },
+        "a11y": {
+          "$ref": "#/$defs/accessibility"
+        },
+        "url": {
+          "type": "string",
+          "description": "Only https and data URIs are fetched by default. file:// and content:// are refused."
+        },
+        "blur_hash": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Placeholder shown while loading. See https://blurha.sh"
+        },
+        "aspect_ratio": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "exclusiveMinimum": 0,
+          "description": "width/height. Ignored when height is set."
+        },
+        "height": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 1,
+          "description": "dp. Takes precedence over aspect_ratio."
+        },
+        "corner_radius": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 0
+        },
+        "content_scale": {
+          "enum": [
+            "CROP",
+            "FIT",
+            "FILL_BOUNDS",
+            "INSIDE"
+          ],
+          "default": "CROP"
+        }
+      }
+    },
+    "card": {
+      "title": "card — elevated surface wrapping one child",
+      "type": "object",
+      "required": [
+        "type"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "const": "card"
+        },
+        "id": {
+          "$ref": "#/$defs/common/id"
+        },
+        "visible_if": {
+          "$ref": "#/$defs/common/visible_if"
+        },
+        "a11y": {
+          "$ref": "#/$defs/accessibility"
+        },
+        "elevation": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 0
+        },
+        "corner_radius": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 12
+        },
+        "background_color": {
+          "$ref": "#/$defs/color",
+          "default": "surface"
+        },
+        "border_color": {
+          "$ref": "#/$defs/color"
+        },
+        "padding": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 12
+        },
+        "actions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/action"
+          },
+          "description": "Non-empty makes the whole card clickable."
+        },
+        "child": {
+          "$ref": "#/$defs/component"
+        }
+      }
+    },
+    "badge": {
+      "title": "badge — compact pill label",
+      "type": "object",
+      "required": [
+        "type"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "const": "badge"
+        },
+        "id": {
+          "$ref": "#/$defs/common/id"
+        },
+        "visible_if": {
+          "$ref": "#/$defs/common/visible_if"
+        },
+        "a11y": {
+          "$ref": "#/$defs/accessibility"
+        },
+        "text": {
+          "type": "string",
+          "default": ""
+        },
+        "background_color": {
+          "$ref": "#/$defs/color",
+          "default": "primaryContainer"
+        },
+        "text_color": {
+          "$ref": "#/$defs/color",
+          "default": "onPrimaryContainer"
+        },
+        "icon_url": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      }
+    },
+    "button": {
+      "title": "button",
+      "type": "object",
+      "required": [
+        "type"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "const": "button"
+        },
+        "id": {
+          "$ref": "#/$defs/common/id"
+        },
+        "visible_if": {
+          "$ref": "#/$defs/common/visible_if"
+        },
+        "a11y": {
+          "$ref": "#/$defs/accessibility"
+        },
+        "title": {
+          "type": "string",
+          "default": ""
+        },
+        "variant": {
+          "enum": [
+            "FILLED",
+            "OUTLINED",
+            "TEXT",
+            "TONAL"
+          ],
+          "default": "FILLED"
+        },
+        "is_full_width": {
+          "type": "boolean",
+          "default": false
+        },
+        "is_enabled": {
+          "type": "boolean",
+          "default": true
+        },
+        "is_loading": {
+          "type": "boolean",
+          "default": false,
+          "description": "Replaces the label with a spinner and blocks interaction."
+        },
+        "actions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/action"
+          }
+        }
+      }
+    },
+    "text_field": {
+      "title": "text_field — input bound to form state",
+      "type": "object",
+      "required": [
+        "type"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "const": "text_field"
+        },
+        "id": {
+          "$ref": "#/$defs/common/id"
+        },
+        "visible_if": {
+          "$ref": "#/$defs/common/visible_if"
+        },
+        "a11y": {
+          "$ref": "#/$defs/accessibility"
+        },
+        "state_key": {
+          "type": "string",
+          "description": "Key this field reads and writes. Also the key referenced by {{state.key}} in a submit payload."
+        },
+        "label": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "placeholder": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "input_type": {
+          "enum": [
+            "TEXT",
+            "NUMBER",
+            "EMAIL",
+            "PASSWORD",
+            "PHONE"
+          ],
+          "default": "TEXT",
+          "description": "PASSWORD fields are excluded from draft persistence automatically."
+        },
+        "initial_value": {
+          "type": "string",
+          "default": ""
+        },
+        "validation_rules": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/validation_rule"
+          }
+        },
+        "helper_text": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Shown below the field while there is no validation error."
+        }
+      }
+    },
+    "switch": {
+      "title": "switch — boolean toggle bound to form state",
+      "type": "object",
+      "required": [
+        "type"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "const": "switch"
+        },
+        "id": {
+          "$ref": "#/$defs/common/id"
+        },
+        "visible_if": {
+          "$ref": "#/$defs/common/visible_if"
+        },
+        "a11y": {
+          "$ref": "#/$defs/accessibility"
+        },
+        "state_key": {
+          "type": "string"
+        },
+        "label": {
+          "type": "string",
+          "default": ""
+        },
+        "initial_checked": {
+          "type": "boolean",
+          "default": false
+        },
+        "on_check_actions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/action"
+          }
+        }
+      }
+    },
+    "icon": {
+      "title": "icon — vector drawn by name",
+      "type": "object",
+      "required": [
+        "type"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "const": "icon"
+        },
+        "id": {
+          "$ref": "#/$defs/common/id"
+        },
+        "visible_if": {
+          "$ref": "#/$defs/common/visible_if"
+        },
+        "a11y": {
+          "$ref": "#/$defs/accessibility"
+        },
+        "name": {
+          "type": "string",
+          "description": "An unrecognised name draws a generic glyph and emits an IconMissing telemetry event. Hosts can install their own icon set.",
+          "examples": [
+            "check",
+            "close",
+            "star",
+            "favorite",
+            "search",
+            "add",
+            "arrow_back",
+            "arrow_forward",
+            "info",
+            "settings",
+            "person",
+            "home"
+          ]
+        },
+        "tint": {
+          "$ref": "#/$defs/color"
+        },
+        "size": {
+          "type": "integer",
+          "minimum": 1,
+          "default": 24
+        }
+      }
+    },
+    "spacer": {
+      "title": "spacer",
+      "type": "object",
+      "required": [
+        "type"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "const": "spacer"
+        },
+        "id": {
+          "$ref": "#/$defs/common/id"
+        },
+        "visible_if": {
+          "$ref": "#/$defs/common/visible_if"
+        },
+        "a11y": {
+          "$ref": "#/$defs/accessibility"
+        },
+        "size": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 0
+        },
+        "is_flexible": {
+          "type": "boolean",
+          "default": false,
+          "description": "Absorbs the remaining space along the parent's axis instead of using a fixed size."
+        }
+      }
+    },
+    "divider": {
+      "title": "divider",
+      "type": "object",
+      "required": [
+        "type"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "const": "divider"
+        },
+        "id": {
+          "$ref": "#/$defs/common/id"
+        },
+        "visible_if": {
+          "$ref": "#/$defs/common/visible_if"
+        },
+        "a11y": {
+          "$ref": "#/$defs/accessibility"
+        },
+        "thickness": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 1
+        },
+        "color": {
+          "$ref": "#/$defs/color",
+          "default": "outlineVariant"
+        }
+      }
+    },
+    "custom": {
+      "title": "custom — escape hatch for host-provided native components",
+      "type": "object",
+      "required": [
+        "type"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "const": "custom"
+        },
+        "id": {
+          "$ref": "#/$defs/common/id"
+        },
+        "visible_if": {
+          "$ref": "#/$defs/common/visible_if"
+        },
+        "a11y": {
+          "$ref": "#/$defs/accessibility"
+        },
+        "name": {
+          "type": "string",
+          "description": "Looked up in the host's component registry."
+        },
+        "data": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "description": "Arbitrary typed parameters passed to the native component."
+        }
+      }
+    },
+    "action": {
+      "description": "Discriminated by `type`. Known actions are validated strictly; an unknown action is accepted and degrades on the client without taking down the screen that declares it.",
+      "type": "object",
+      "required": [
+        "type"
+      ],
+      "properties": {
+        "type": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "navigate"
+              }
+            },
+            "required": [
+              "type"
+            ]
+          },
+          "then": {
+            "$ref": "#/$defs/action_navigate"
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "submit_form"
+              }
+            },
+            "required": [
+              "type"
+            ]
+          },
+          "then": {
+            "$ref": "#/$defs/action_submit_form"
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "open_url"
+              }
+            },
+            "required": [
+              "type"
+            ]
+          },
+          "then": {
+            "$ref": "#/$defs/action_open_url"
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "show_snackbar"
+              }
+            },
+            "required": [
+              "type"
+            ]
+          },
+          "then": {
+            "$ref": "#/$defs/action_show_snackbar"
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "show_bottom_sheet"
+              }
+            },
+            "required": [
+              "type"
+            ]
+          },
+          "then": {
+            "$ref": "#/$defs/action_show_bottom_sheet"
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "show_dialog"
+              }
+            },
+            "required": [
+              "type"
+            ]
+          },
+          "then": {
+            "$ref": "#/$defs/action_show_dialog"
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "dismiss_modal"
+              }
+            },
+            "required": [
+              "type"
+            ]
+          },
+          "then": {
+            "$ref": "#/$defs/action_dismiss_modal"
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "dismiss"
+              }
+            },
+            "required": [
+              "type"
+            ]
+          },
+          "then": {
+            "$ref": "#/$defs/action_dismiss"
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "custom"
+              }
+            },
+            "required": [
+              "type"
+            ]
+          },
+          "then": {
+            "$ref": "#/$defs/action_custom"
+          }
+        }
+      ]
+    },
+    "validation_rule": {
+      "type": "object",
+      "required": [
+        "type",
+        "error_message"
+      ],
+      "additionalProperties": false,
+      "description": "Rules run as the user types AND again before submission, so a field the user never touched still blocks an invalid form.",
+      "properties": {
+        "type": {
+          "enum": [
+            "REQUIRED",
+            "REGEX",
+            "MIN_LENGTH",
+            "MAX_LENGTH",
+            "EMAIL",
+            "NUMERIC",
+            "CUSTOM"
+          ]
+        },
+        "value": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "REGEX: the pattern (max 256 chars). MIN_LENGTH/MAX_LENGTH: the bound. CUSTOM: the validator name. A CUSTOM name the host has not registered FAILS the field — it is never skipped."
+        },
+        "error_message": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "color": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "A Material 3 token name, a brand token registered by the host, or a hex value (#RGB, #RGBA, #RRGGBB, #AARRGGBB). Unrecognised values fall back to the component's default.",
+      "examples": [
+        "primary",
+        "onSurface",
+        "errorContainer",
+        "outlineVariant",
+        "#FF6750A4",
+        "#6750A4",
+        "transparent"
+      ]
+    },
+    "typography": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "default": "bodyMedium",
+      "description": "A Material 3 type-scale token or a brand token registered by the host.",
+      "enum": [
+        "displayLarge",
+        "displayMedium",
+        "displaySmall",
+        "headlineLarge",
+        "headlineMedium",
+        "headlineSmall",
+        "titleLarge",
+        "titleMedium",
+        "titleSmall",
+        "bodyLarge",
+        "bodyMedium",
+        "bodySmall",
+        "labelLarge",
+        "labelMedium",
+        "labelSmall",
+        null
+      ]
+    },
+    "action_navigate": {
+      "title": "navigate — handled by the host app",
+      "type": "object",
+      "required": [
+        "type"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "const": "navigate"
+        },
+        "screen_id": {
+          "type": "string"
+        },
+        "params": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "action_submit_form": {
+      "title": "submit_form — executed by the SDK",
+      "type": "object",
+      "required": [
+        "type"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "const": "submit_form"
+        },
+        "endpoint": {
+          "type": "string",
+          "description": "Relative paths resolve against baseUrl. Absolute URLs must be HTTPS and match the baseUrl origin, or a host listed in HeimConfig.allowedSubmitHosts — otherwise the submission is refused locally, because the session token travels with it."
+        },
+        "method": {
+          "enum": [
+            "POST",
+            "PUT",
+            "PATCH"
+          ],
+          "default": "POST"
+        },
+        "payload": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "description": "Values of the form \"{{state.key}}\" are replaced with form state before sending, preserving type: a numeric state value is sent as a number. Placeholders may also be embedded inside a longer string."
+        }
+      }
+    },
+    "action_open_url": {
+      "title": "open_url — executed by the SDK",
+      "type": "object",
+      "required": [
+        "type"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "const": "open_url"
+        },
+        "url": {
+          "type": "string",
+          "description": "Filtered by HeimUrlPolicy. https only by default; add your own deep-link scheme to permit it."
+        }
+      }
+    },
+    "action_show_snackbar": {
+      "title": "show_snackbar — handled by the host app",
+      "type": "object",
+      "required": [
+        "type"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "const": "show_snackbar"
+        },
+        "message": {
+          "type": "string",
+          "default": ""
+        },
+        "duration": {
+          "enum": [
+            "SHORT",
+            "LONG"
+          ],
+          "default": "SHORT"
+        }
+      }
+    },
+    "action_show_bottom_sheet": {
+      "title": "show_bottom_sheet — executed by the SDK",
+      "type": "object",
+      "required": [
+        "type"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "const": "show_bottom_sheet"
+        },
+        "title": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "is_dismissible": {
+          "type": "boolean",
+          "default": true
+        },
+        "content": {
+          "$ref": "#/$defs/component"
+        }
+      }
+    },
+    "action_show_dialog": {
+      "title": "show_dialog — executed by the SDK",
+      "type": "object",
+      "required": [
+        "type"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "const": "show_dialog"
+        },
+        "title": {
+          "type": "string",
+          "default": ""
+        },
+        "message": {
+          "type": "string",
+          "default": ""
+        },
+        "confirm_text": {
+          "type": "string",
+          "default": "OK"
+        },
+        "confirm_actions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/action"
+          }
+        },
+        "dismiss_text": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "dismiss_actions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/action"
+          }
+        }
+      }
+    },
+    "action_dismiss_modal": {
+      "title": "dismiss_modal — closes any open sheet or dialog",
+      "type": "object",
+      "required": [
+        "type"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "const": "dismiss_modal"
+        }
+      }
+    },
+    "action_dismiss": {
+      "title": "dismiss — handled by the host app",
+      "type": "object",
+      "required": [
+        "type"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "const": "dismiss"
+        }
+      }
+    },
+    "action_custom": {
+      "title": "custom — handled by the host app",
+      "type": "object",
+      "required": [
+        "type"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "const": "custom"
+        },
+        "name": {
+          "type": "string",
+          "default": ""
+        },
+        "payload": {
+          "type": [
+            "object",
+            "null"
+          ]
+        }
+      }
+    }
+  }
+}

@@ -34,8 +34,8 @@ import io.heimui.core.presentation.designsystem.LocalHeimIconProvider
 import io.heimui.core.presentation.imageloader.LocalHeimImageLoader
 import io.heimui.core.presentation.state.HeimStateManager
 
-internal @Composable
-fun HeimTextRenderer(
+@Composable
+internal fun HeimTextRenderer(
     component: TextComponent,
     modifier: Modifier = Modifier
 ) {
@@ -57,8 +57,8 @@ fun HeimTextRenderer(
     )
 }
 
-internal @Composable
-fun HeimImageRenderer(
+@Composable
+internal fun HeimImageRenderer(
     component: ImageComponent,
     modifier: Modifier = Modifier
 ) {
@@ -77,8 +77,8 @@ fun HeimImageRenderer(
     )
 }
 
-internal @Composable
-fun HeimCardRenderer(
+@Composable
+internal fun HeimCardRenderer(
     component: CardComponent,
     stateManager: HeimStateManager,
     onAction: (HeimAction) -> Unit,
@@ -120,8 +120,8 @@ fun HeimCardRenderer(
     }
 }
 
-internal @Composable
-fun HeimBadgeRenderer(
+@Composable
+internal fun HeimBadgeRenderer(
     component: BadgeComponent,
     modifier: Modifier = Modifier
 ) {
@@ -149,8 +149,8 @@ fun HeimBadgeRenderer(
     }
 }
 
-internal @Composable
-fun HeimIconRenderer(
+@Composable
+internal fun HeimIconRenderer(
     component: IconComponent,
     modifier: Modifier = Modifier
 ) {

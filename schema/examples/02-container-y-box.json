@@ -1,0 +1,44 @@
+{
+  "id": "layout",
+  "title": "Layout",
+  "root": {
+    "type": "container",
+    "id": "root",
+    "direction": "VERTICAL",
+    "padding": 16,
+    "spacing": 12,
+    "background_color": "surface",
+    "children": [
+      {
+        "type": "box",
+        "id": "overlay",
+        "content_alignment": "CENTER",
+        "children": [
+          {
+            "type": "image",
+            "id": "bg",
+            "url": "https://picsum.photos/800/400",
+            "aspect_ratio": 2.0,
+            "corner_radius": 12
+          },
+          {
+            "type": "badge",
+            "id": "tag",
+            "text": "NUEVO",
+            "background_color": "primaryContainer"
+          }
+        ]
+      },
+      {
+        "type": "divider",
+        "id": "sep",
+        "thickness": 1
+      },
+      {
+        "type": "spacer",
+        "id": "gap",
+        "size": 24
+      }
+    ]
+  }
+}

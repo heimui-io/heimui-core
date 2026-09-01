@@ -3,8 +3,8 @@ package io.heimui.core.data.dto
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
-public @Serializable
-data class HeimAccessibilityDto(
+@Serializable
+public data class HeimAccessibilityDto(
     @SerialName("content_description") val contentDescription: String? = null,
     val role: AccessibilityRoleDto? = null,
     @SerialName("is_heading") val isHeading: Boolean = false,
@@ -12,8 +12,8 @@ data class HeimAccessibilityDto(
     @SerialName("hidden_from_accessibility") val hiddenFromAccessibility: Boolean = false
 )
 
-public @Serializable
-enum class AccessibilityRoleDto {
+@Serializable
+public enum class AccessibilityRoleDto {
     @SerialName("BUTTON") BUTTON,
     @SerialName("IMAGE") IMAGE,
     @SerialName("HEADER") HEADER,

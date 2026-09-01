@@ -50,8 +50,8 @@ import io.heimui.core.presentation.state.HeimStateManager
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 
-public @Composable
-fun HeimScreenRenderer(
+@Composable
+public fun HeimScreenRenderer(
     response: HeimScreenResponse,
     stateManager: HeimStateManager,
     onAction: (HeimAction) -> Unit,
@@ -101,8 +101,8 @@ internal fun rememberVisibility(visibleIf: String?, stateManager: HeimStateManag
     return remember(visibleIf, slice) { HeimConditionEvaluator.evaluate(visibleIf, slice) }
 }
 
-public @Composable
-fun HeimRenderer(
+@Composable
+public fun HeimRenderer(
     component: HeimComponent,
     stateManager: HeimStateManager,
     onAction: (HeimAction) -> Unit,

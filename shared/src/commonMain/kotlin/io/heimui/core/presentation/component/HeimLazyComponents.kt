@@ -25,8 +25,8 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 
-internal @Composable
-fun HeimLazyColumnRenderer(
+@Composable
+internal fun HeimLazyColumnRenderer(
     component: LazyColumnComponent,
     stateManager: HeimStateManager,
     onAction: (HeimAction) -> Unit,
@@ -80,8 +80,8 @@ fun HeimLazyColumnRenderer(
     }
 }
 
-internal @Composable
-fun HeimLazyRowRenderer(
+@Composable
+internal fun HeimLazyRowRenderer(
     component: LazyRowComponent,
     stateManager: HeimStateManager,
     onAction: (HeimAction) -> Unit,

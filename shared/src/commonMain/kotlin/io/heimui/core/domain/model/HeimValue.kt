@@ -21,8 +21,8 @@ import kotlinx.serialization.json.longOrNull
  * parameters. Eliminates platform interop issues with Swift and prevents SerializationExceptions
  * in mixed payloads.
  */
-public @Serializable(with = HeimValueSerializer::class)
-sealed interface HeimValue {
+@Serializable(with = HeimValueSerializer::class)
+public sealed interface HeimValue {
 
     /**
      * Human/wire representation of the value.

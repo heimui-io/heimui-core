@@ -1,0 +1,105 @@
+{
+  "id": "registro",
+  "title": "Registro",
+  "root": {
+    "type": "container",
+    "id": "root",
+    "padding": 16,
+    "spacing": 16,
+    "children": [
+      {
+        "type": "text",
+        "id": "h",
+        "text": "Crear cuenta",
+        "style": "headlineSmall",
+        "a11y": {
+          "content_description": "Crear cuenta",
+          "is_heading": true
+        }
+      },
+      {
+        "type": "text_field",
+        "id": "f_nombre",
+        "state_key": "nombre",
+        "label": "Nombre completo",
+        "validation_rules": [
+          {
+            "type": "REQUIRED",
+            "error_message": "El nombre es obligatorio"
+          }
+        ]
+      },
+      {
+        "type": "text_field",
+        "id": "f_email",
+        "state_key": "email",
+        "label": "Email",
+        "input_type": "EMAIL",
+        "helper_text": "Te enviaremos un código",
+        "validation_rules": [
+          {
+            "type": "REQUIRED",
+            "error_message": "El email es obligatorio"
+          },
+          {
+            "type": "EMAIL",
+            "error_message": "Email inválido"
+          }
+        ]
+      },
+      {
+        "type": "text_field",
+        "id": "f_pass",
+        "state_key": "password",
+        "label": "Contraseña",
+        "input_type": "PASSWORD",
+        "validation_rules": [
+          {
+            "type": "MIN_LENGTH",
+            "value": "8",
+            "error_message": "Mínimo 8 caracteres"
+          }
+        ]
+      },
+      {
+        "type": "switch",
+        "id": "sw_empresa",
+        "state_key": "es_empresa",
+        "label": "¿Cuenta empresarial?"
+      },
+      {
+        "type": "text_field",
+        "id": "f_nit",
+        "state_key": "nit",
+        "label": "NIT",
+        "visible_if": "es_empresa",
+        "validation_rules": [
+          {
+            "type": "CUSTOM",
+            "value": "COLOMBIAN_NIT",
+            "error_message": "NIT inválido"
+          }
+        ]
+      },
+      {
+        "type": "button",
+        "id": "btn_enviar",
+        "title": "Crear cuenta",
+        "is_full_width": true,
+        "actions": [
+          {
+            "type": "submit_form",
+            "endpoint": "/ms-cuentas/registro",
+            "method": "POST",
+            "payload": {
+              "nombre": "{{state.nombre}}",
+              "email": "{{state.email}}",
+              "empresarial": "{{state.es_empresa}}",
+              "origen": "mobile"
+            }
+          }
+        ]
+      }
+    ]
+  }
+}

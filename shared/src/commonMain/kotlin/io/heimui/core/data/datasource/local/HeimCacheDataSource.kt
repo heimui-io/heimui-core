@@ -13,8 +13,8 @@ import kotlinx.serialization.json.Json
 /** Schema version of the cache envelope. Bumped whenever [CachedScreenEntry] changes shape. */
 public const val HEIM_CACHE_SCHEMA_VERSION: Int = 2
 
-public @Serializable
-data class CachedScreenEntry(
+@Serializable
+public data class CachedScreenEntry(
     val screen: HeimScreenResponseDto,
     val etag: String? = null,
     val cachedAtMillis: Long = 0L,

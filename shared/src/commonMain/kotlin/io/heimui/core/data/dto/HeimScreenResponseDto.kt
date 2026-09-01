@@ -4,8 +4,8 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.JsonObject
 
-public @Serializable
-data class HeimScreenResponseDto(
+@Serializable
+public data class HeimScreenResponseDto(
     val id: String,
     val version: String = "1.0.0",
     val title: String? = null,

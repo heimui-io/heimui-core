@@ -1,0 +1,88 @@
+{
+  "id": "acciones",
+  "root": {
+    "type": "container",
+    "id": "root",
+    "padding": 16,
+    "spacing": 12,
+    "children": [
+      {
+        "type": "button",
+        "id": "b_sheet",
+        "title": "Abrir hoja",
+        "variant": "OUTLINED",
+        "actions": [
+          {
+            "type": "show_bottom_sheet",
+            "title": "Detalles",
+            "is_dismissible": true,
+            "content": {
+              "type": "container",
+              "id": "sheet",
+              "padding": 16,
+              "scrollable": false,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "s_t",
+                  "text": "Contenido de la hoja"
+                },
+                {
+                  "type": "button",
+                  "id": "s_c",
+                  "title": "Cerrar",
+                  "actions": [
+                    {
+                      "type": "dismiss_modal"
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "type": "button",
+        "id": "b_dialog",
+        "title": "Confirmar",
+        "variant": "TONAL",
+        "actions": [
+          {
+            "type": "show_dialog",
+            "title": "¿Seguro?",
+            "message": "Esta acción no se puede deshacer.",
+            "confirm_text": "Sí",
+            "dismiss_text": "No",
+            "confirm_actions": [
+              {
+                "type": "show_snackbar",
+                "message": "Hecho",
+                "duration": "SHORT"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "button",
+        "id": "b_url",
+        "title": "Términos",
+        "variant": "TEXT",
+        "actions": [
+          {
+            "type": "open_url",
+            "url": "https://heimui.io/terminos"
+          }
+        ]
+      },
+      {
+        "type": "icon",
+        "id": "ic",
+        "name": "info",
+        "tint": "onSurfaceVariant",
+        "size": 24
+      }
+    ]
+  }
+}
