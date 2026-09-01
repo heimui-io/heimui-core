@@ -125,6 +125,7 @@ internal fun HeimComponentDto.toDomain(
             // A weight of 0 or less is not a layout instruction; Compose throws on it, so one bad
             // number would cost the whole screen rather than one component.
             weight = weight?.takeIf { it > 0f },
+            frame = frame.sanitized(),
             originalType = "depth_limit_exceeded"
         )
     }
@@ -137,6 +138,7 @@ internal fun HeimComponentDto.toDomain(
             // A weight of 0 or less is not a layout instruction; Compose throws on it, so one bad
             // number would cost the whole screen rather than one component.
             weight = weight?.takeIf { it > 0f },
+            frame = frame.sanitized(),
             direction = when (direction) {
                 DirectionDto.VERTICAL -> Direction.VERTICAL
                 DirectionDto.HORIZONTAL -> Direction.HORIZONTAL
@@ -169,6 +171,7 @@ internal fun HeimComponentDto.toDomain(
             // A weight of 0 or less is not a layout instruction; Compose throws on it, so one bad
             // number would cost the whole screen rather than one component.
             weight = weight?.takeIf { it > 0f },
+            frame = frame.sanitized(),
             contentAlignment = when (contentAlignment) {
                 AlignmentDto.START -> Alignment.START
                 AlignmentDto.CENTER -> Alignment.CENTER
@@ -187,6 +190,7 @@ internal fun HeimComponentDto.toDomain(
             // A weight of 0 or less is not a layout instruction; Compose throws on it, so one bad
             // number would cost the whole screen rather than one component.
             weight = weight?.takeIf { it > 0f },
+            frame = frame.sanitized(),
             spacing = maxOf(0, spacing),
             padding = padding.clampedToZero(),
             alignment = when (alignment) {
@@ -214,6 +218,7 @@ internal fun HeimComponentDto.toDomain(
             // A weight of 0 or less is not a layout instruction; Compose throws on it, so one bad
             // number would cost the whole screen rather than one component.
             weight = weight?.takeIf { it > 0f },
+            frame = frame.sanitized(),
             spacing = maxOf(0, spacing),
             padding = padding.clampedToZero(),
             alignment = when (alignment) {
@@ -241,6 +246,7 @@ internal fun HeimComponentDto.toDomain(
             // A weight of 0 or less is not a layout instruction; Compose throws on it, so one bad
             // number would cost the whole screen rather than one component.
             weight = weight?.takeIf { it > 0f },
+            frame = frame.sanitized(),
             text = text,
             style = style,
             color = color,
@@ -259,6 +265,7 @@ internal fun HeimComponentDto.toDomain(
             // A weight of 0 or less is not a layout instruction; Compose throws on it, so one bad
             // number would cost the whole screen rather than one component.
             weight = weight?.takeIf { it > 0f },
+            frame = frame.sanitized(),
             url = url,
             blurHash = blurHash,
             aspectRatio = if (aspectRatio != null && aspectRatio > 0f) aspectRatio else null,
@@ -278,6 +285,7 @@ internal fun HeimComponentDto.toDomain(
             // A weight of 0 or less is not a layout instruction; Compose throws on it, so one bad
             // number would cost the whole screen rather than one component.
             weight = weight?.takeIf { it > 0f },
+            frame = frame.sanitized(),
             elevation = maxOf(0, elevation),
             cornerRadius = maxOf(0, cornerRadius),
             backgroundColor = backgroundColor,
@@ -293,6 +301,7 @@ internal fun HeimComponentDto.toDomain(
             // A weight of 0 or less is not a layout instruction; Compose throws on it, so one bad
             // number would cost the whole screen rather than one component.
             weight = weight?.takeIf { it > 0f },
+            frame = frame.sanitized(),
             text = text,
             backgroundColor = backgroundColor,
             textColor = textColor,
@@ -305,6 +314,7 @@ internal fun HeimComponentDto.toDomain(
             // A weight of 0 or less is not a layout instruction; Compose throws on it, so one bad
             // number would cost the whole screen rather than one component.
             weight = weight?.takeIf { it > 0f },
+            frame = frame.sanitized(),
             title = title,
             variant = when (variant) {
                 ButtonVariantDto.FILLED -> ButtonVariant.FILLED
@@ -325,6 +335,7 @@ internal fun HeimComponentDto.toDomain(
             // A weight of 0 or less is not a layout instruction; Compose throws on it, so one bad
             // number would cost the whole screen rather than one component.
             weight = weight?.takeIf { it > 0f },
+            frame = frame.sanitized(),
             stateKey = stateKey,
             label = label,
             placeholder = placeholder,
@@ -346,6 +357,7 @@ internal fun HeimComponentDto.toDomain(
             // A weight of 0 or less is not a layout instruction; Compose throws on it, so one bad
             // number would cost the whole screen rather than one component.
             weight = weight?.takeIf { it > 0f },
+            frame = frame.sanitized(),
             stateKey = stateKey,
             label = label,
             initialChecked = initialChecked,
@@ -358,6 +370,7 @@ internal fun HeimComponentDto.toDomain(
             // A weight of 0 or less is not a layout instruction; Compose throws on it, so one bad
             // number would cost the whole screen rather than one component.
             weight = weight?.takeIf { it > 0f },
+            frame = frame.sanitized(),
             name = name,
             tint = tint,
             size = maxOf(1, size)
@@ -369,6 +382,7 @@ internal fun HeimComponentDto.toDomain(
             // A weight of 0 or less is not a layout instruction; Compose throws on it, so one bad
             // number would cost the whole screen rather than one component.
             weight = weight?.takeIf { it > 0f },
+            frame = frame.sanitized(),
             size = maxOf(0, size),
             isFlexible = isFlexible
         )
@@ -379,6 +393,7 @@ internal fun HeimComponentDto.toDomain(
             // A weight of 0 or less is not a layout instruction; Compose throws on it, so one bad
             // number would cost the whole screen rather than one component.
             weight = weight?.takeIf { it > 0f },
+            frame = frame.sanitized(),
             thickness = maxOf(1, thickness),
             color = color
         )
@@ -389,6 +404,7 @@ internal fun HeimComponentDto.toDomain(
             // A weight of 0 or less is not a layout instruction; Compose throws on it, so one bad
             // number would cost the whole screen rather than one component.
             weight = weight?.takeIf { it > 0f },
+            frame = frame.sanitized(),
             name = name,
             data = data?.toMapHeimValue() ?: emptyMap()
         )
@@ -399,6 +415,7 @@ internal fun HeimComponentDto.toDomain(
             // A weight of 0 or less is not a layout instruction; Compose throws on it, so one bad
             // number would cost the whole screen rather than one component.
             weight = weight?.takeIf { it > 0f },
+            frame = frame.sanitized(),
             originalType = originalType
         )
     }

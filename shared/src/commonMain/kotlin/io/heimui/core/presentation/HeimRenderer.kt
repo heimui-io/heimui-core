@@ -31,6 +31,7 @@ import io.heimui.core.domain.model.component.TextComponent
 import io.heimui.core.domain.model.component.TextFieldComponent
 import io.heimui.core.domain.model.component.UnknownComponent
 import io.heimui.core.presentation.component.HeimBadgeRenderer
+import io.heimui.core.presentation.component.heimSize
 import io.heimui.core.presentation.component.HeimBoxRenderer
 import io.heimui.core.presentation.component.HeimButtonRenderer
 import io.heimui.core.presentation.component.HeimCardRenderer
@@ -112,6 +113,10 @@ public fun HeimRenderer(
     val isVisible = rememberVisibility(component.visibleIf, stateManager)
 
     if (!isVisible) return
+
+    // One place for every component's dimensions, so adding a constraint later does not mean
+    // touching sixteen renderers.
+    val modifier = modifier.heimSize(component.frame)
 
     when (component) {
         is ContainerComponent -> HeimContainerRenderer(

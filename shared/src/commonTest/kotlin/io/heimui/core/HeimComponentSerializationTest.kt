@@ -9,6 +9,7 @@ import io.heimui.core.data.mapper.toDomain
 import io.heimui.core.domain.model.accessibility.AccessibilityRole
 import io.heimui.core.domain.model.component.HeimArrangement
 import io.heimui.core.domain.model.component.HeimPadding
+import io.heimui.core.domain.model.component.HeimSize
 import io.heimui.core.domain.model.component.*
 import kotlinx.serialization.json.Json
 import kotlin.test.Test
@@ -261,6 +262,42 @@ class HeimComponentSerializationTest {
         ).toDomain().root as ContainerComponent
         assertNull(bad.children[0].weight)
         assertNull(bad.children[1].weight)
+    }
+
+    @Test
+    fun `frame constrains a component and drops what Compose would reject`() {
+        fun frameOf(json: String): HeimSize =
+            HeimJson.decodeScreen("""{"id":"s","root":$json}""").toDomain().root.frame
+
+        assertEquals(
+            HeimSize(minHeight = 120),
+            frameOf("""{"type":"card","id":"c","frame":{"min_height":120}}""")
+        )
+        assertEquals(
+            HeimSize(width = 48, height = 48),
+            frameOf("""{"type":"box","id":"b","frame":{"width":48,"height":48}}""")
+        )
+        assertEquals(
+            HeimSize(aspectRatio = 1.78f),
+            frameOf("""{"type":"image","id":"i","frame":{"aspect_ratio":1.78}}""")
+        )
+
+        // Any component carries it, and a numeric string is the common backend bug.
+        assertEquals(
+            HeimSize(minHeight = 44),
+            frameOf("""{"type":"button","id":"btn","frame":{"min_height":"44"}}""")
+        )
+
+        // Zero and negative are bugs upstream, not instructions. Compose throws on them, so one
+        // bad number would cost the whole screen rather than one component's sizing.
+        assertEquals(
+            HeimSize.None,
+            frameOf("""{"type":"card","id":"c","frame":{"height":0,"width":-10,"aspect_ratio":0}}""")
+        )
+
+        // Absent and malformed both mean "size yourself".
+        assertEquals(HeimSize.None, frameOf("""{"type":"card","id":"c"}"""))
+        assertEquals(HeimSize.None, frameOf("""{"type":"card","id":"c","frame":"tall"}"""))
     }
 
 }

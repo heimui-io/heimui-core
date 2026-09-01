@@ -22,6 +22,15 @@ public sealed interface HeimComponent {
      * a child and its parent, so the parent is what applies it.
      */
     public val weight: Float? get() = null
+
+    /**
+     * Intrinsic dimensions this component asks for. See [HeimSize].
+     *
+     * Named `frame` after SwiftUI rather than `size`, because `size` is already taken by `spacer`
+     * and `icon` as a scalar length. Renaming two established keys to free the word would break
+     * every payload using them, for no gain a reader would notice.
+     */
+    public val frame: HeimSize get() = HeimSize.None
 }
 
 public enum class Direction {
@@ -127,6 +136,7 @@ public data class ContainerComponent(
     /** Scrolls along [direction] by default; set false when nesting inside another scroller. */
     val scrollable: Boolean = true,
     override val weight: Float? = null,
+    override val frame: HeimSize = HeimSize.None,
     val children: List<HeimComponent> = emptyList()
 ) : HeimComponent
 
@@ -142,6 +152,7 @@ public data class BoxComponent(
     val padding: HeimPadding = HeimPadding.None,
     val backgroundColor: String? = null,
     override val weight: Float? = null,
+    override val frame: HeimSize = HeimSize.None,
     val children: List<HeimComponent> = emptyList()
 ) : HeimComponent
 
@@ -163,6 +174,7 @@ public data class LazyColumnComponent(
     override val visibleIf: String? = null,
     override val a11y: HeimAccessibility? = null,
     override val weight: Float? = null,
+    override val frame: HeimSize = HeimSize.None,
     val spacing: Int = 8,
     val padding: HeimPadding = HeimPadding.None,
     val alignment: Alignment = Alignment.START,
@@ -184,6 +196,7 @@ public data class LazyRowComponent(
     override val visibleIf: String? = null,
     override val a11y: HeimAccessibility? = null,
     override val weight: Float? = null,
+    override val frame: HeimSize = HeimSize.None,
     val spacing: Int = 8,
     val padding: HeimPadding = HeimPadding.None,
     val alignment: Alignment = Alignment.START,
@@ -213,6 +226,7 @@ public data class TextComponent(
     override val visibleIf: String? = null,
     override val a11y: HeimAccessibility? = null,
     override val weight: Float? = null,
+    override val frame: HeimSize = HeimSize.None,
     val text: String,
     val style: String = "bodyMedium",
     val color: String? = null,
@@ -233,6 +247,7 @@ public data class ImageComponent(
     override val visibleIf: String? = null,
     override val a11y: HeimAccessibility? = null,
     override val weight: Float? = null,
+    override val frame: HeimSize = HeimSize.None,
     val url: String,
     val blurHash: String? = null,
     val aspectRatio: Float? = null,
@@ -257,6 +272,7 @@ public data class CardComponent(
     val padding: HeimPadding = HeimPadding.all(12),
     val actions: List<HeimAction> = emptyList(),
     override val weight: Float? = null,
+    override val frame: HeimSize = HeimSize.None,
     val child: HeimComponent
 ) : HeimComponent
 
@@ -266,6 +282,7 @@ public data class BadgeComponent(
     override val visibleIf: String? = null,
     override val a11y: HeimAccessibility? = null,
     override val weight: Float? = null,
+    override val frame: HeimSize = HeimSize.None,
     val text: String,
     val backgroundColor: String = "primaryContainer",
     val textColor: String = "onPrimaryContainer",
@@ -286,6 +303,7 @@ public data class ButtonComponent(
     override val visibleIf: String? = null,
     override val a11y: HeimAccessibility? = null,
     override val weight: Float? = null,
+    override val frame: HeimSize = HeimSize.None,
     val title: String,
     val variant: ButtonVariant = ButtonVariant.FILLED,
     val isFullWidth: Boolean = false,
@@ -311,6 +329,7 @@ public data class TextFieldComponent(
     override val visibleIf: String? = null,
     override val a11y: HeimAccessibility? = null,
     override val weight: Float? = null,
+    override val frame: HeimSize = HeimSize.None,
     val stateKey: String,
     val label: String? = null,
     val placeholder: String? = null,
@@ -326,6 +345,7 @@ public data class SwitchComponent(
     override val visibleIf: String? = null,
     override val a11y: HeimAccessibility? = null,
     override val weight: Float? = null,
+    override val frame: HeimSize = HeimSize.None,
     val stateKey: String,
     val label: String,
     val initialChecked: Boolean = false,
@@ -343,6 +363,7 @@ public data class IconComponent(
     override val visibleIf: String? = null,
     override val a11y: HeimAccessibility? = null,
     override val weight: Float? = null,
+    override val frame: HeimSize = HeimSize.None,
     val name: String,
     val tint: String? = null,
     val size: Int = 24
@@ -359,6 +380,7 @@ public data class SpacerComponent(
     override val visibleIf: String? = null,
     override val a11y: HeimAccessibility? = null,
     override val weight: Float? = null,
+    override val frame: HeimSize = HeimSize.None,
     val size: Int,
     val isFlexible: Boolean = false
 ) : HeimComponent
@@ -369,6 +391,7 @@ public data class DividerComponent(
     override val visibleIf: String? = null,
     override val a11y: HeimAccessibility? = null,
     override val weight: Float? = null,
+    override val frame: HeimSize = HeimSize.None,
     val thickness: Int = 1,
     val color: String = "outlineVariant"
 ) : HeimComponent
@@ -384,6 +407,7 @@ public data class CustomComponent(
     override val visibleIf: String? = null,
     override val a11y: HeimAccessibility? = null,
     override val weight: Float? = null,
+    override val frame: HeimSize = HeimSize.None,
     val name: String,
     val data: Map<String, HeimValue> = emptyMap()
 ) : HeimComponent
@@ -399,5 +423,6 @@ public data class UnknownComponent(
     override val visibleIf: String? = null,
     override val a11y: HeimAccessibility? = null,
     override val weight: Float? = null,
+    override val frame: HeimSize = HeimSize.None,
     val originalType: String? = null
 ) : HeimComponent
