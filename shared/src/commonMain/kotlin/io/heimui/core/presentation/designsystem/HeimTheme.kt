@@ -3,6 +3,7 @@ package io.heimui.core.presentation.designsystem
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Shapes
 import androidx.compose.material3.Typography
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
@@ -56,6 +57,8 @@ import io.heimui.core.presentation.validation.LocalHeimValidatorRegistry
  * @param colorScheme overrides the Material 3 palette. `null` uses the platform default for
  *   [darkTheme].
  * @param typography overrides the Material 3 type scale.
+ * @param shapes overrides the Material 3 shape scale. SDK surfaces such as the error card and
+ *   dialogs read it, so supplying it keeps them consistent with the host app.
  * @param iconProvider draws icons requested by name in the payload. Replace it to use your own
  *   icon set instead of the built-in vector suite.
  * @param brandTokens custom semantic color and text-style names a payload may reference, resolved
@@ -84,6 +87,7 @@ public fun HeimTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
     colorScheme: ColorScheme? = null,
     typography: Typography? = null,
+    shapes: Shapes? = null,
     iconProvider: HeimIconProvider = DefaultHeimIconProvider,
     brandTokens: HeimBrandTokens = HeimBrandTokens.default,
     imageLoader: HeimImageLoader = remember { CoilHeimImageLoader() },
@@ -107,6 +111,7 @@ public fun HeimTheme(
 
     val finalColorScheme = colorScheme ?: defaultColorScheme
     val finalTypography = typography ?: Typography()
+    val finalShapes = shapes ?: Shapes()
     val uriHandler = LocalUriHandler.current
     val effectiveUrlLauncher = urlLauncher ?: remember(uriHandler, urlPolicy, telemetryObserver) {
         ComposeUriUrlLauncher(
@@ -133,6 +138,7 @@ public fun HeimTheme(
         MaterialTheme(
             colorScheme = finalColorScheme,
             typography = finalTypography,
+            shapes = finalShapes,
             content = content
         )
     }

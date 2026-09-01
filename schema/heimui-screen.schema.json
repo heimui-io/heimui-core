@@ -10,6 +10,10 @@
   ],
   "additionalProperties": false,
   "properties": {
+    "$schema": {
+      "type": "string",
+      "description": "Optional pointer to this schema, so editors can offer completion. Ignored by the client."
+    },
     "id": {
       "type": "string",
       "minLength": 1,
@@ -1281,8 +1285,8 @@
         "null"
       ],
       "default": "bodyMedium",
-      "description": "A Material 3 type-scale token or a brand token registered by the host.",
-      "enum": [
+      "description": "A Material 3 type-scale token, or a brand text style the host registered via HeimBrandTokens. Deliberately not a closed enum: brand tokens exist so a payload can name a treatment the design team owns (\"price\", \"legal\"), and a schema that rejected those would defeat them. An unrecognised name falls back to bodyMedium.",
+      "examples": [
         "displayLarge",
         "displayMedium",
         "displaySmall",
@@ -1298,7 +1302,8 @@
         "labelLarge",
         "labelMedium",
         "labelSmall",
-        null
+        "price",
+        "legal"
       ]
     },
     "action_navigate": {
