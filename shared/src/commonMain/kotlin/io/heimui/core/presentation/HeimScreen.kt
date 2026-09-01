@@ -116,10 +116,11 @@ fun HeimScreen(
     PullToRefreshBox(
         isRefreshing = isRefreshing,
         onRefresh = {
-            isRefreshing = true
-            retryCount++
+            if (enablePullToRefresh) {
+                isRefreshing = true
+                retryCount++
+            }
         },
-        enabled = enablePullToRefresh,
         modifier = modifier.fillMaxSize()
     ) {
         Box(modifier = Modifier.fillMaxSize()) {

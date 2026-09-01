@@ -163,21 +163,22 @@ fun HeimTextFieldRenderer(
             isError = errorMessage != null,
             keyboardOptions = KeyboardOptions(keyboardType = keyboardType),
             visualTransformation = visualTransformation,
-            singleLine = component.inputType != InputType.TEXT,
-            supportingText = {
-                if (errorMessage != null) {
-                    Text(
-                        text = errorMessage!!,
-                        color = MaterialTheme.colorScheme.error,
-                        style = MaterialTheme.typography.bodySmall
-                    )
-                } else if (component.helperText != null) {
-                    Text(
-                        text = component.helperText,
-                        style = MaterialTheme.typography.bodySmall
-                    )
+            supportingText = if (errorMessage != null || component.helperText != null) {
+                {
+                    if (errorMessage != null) {
+                        Text(
+                            text = errorMessage!!,
+                            color = MaterialTheme.colorScheme.error,
+                            style = MaterialTheme.typography.bodySmall
+                        )
+                    } else if (component.helperText != null) {
+                        Text(
+                            text = component.helperText,
+                            style = MaterialTheme.typography.bodySmall
+                        )
+                    }
                 }
-            }
+            } else null
         )
     }
 }
