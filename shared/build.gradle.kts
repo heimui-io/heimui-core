@@ -13,12 +13,19 @@ group = "io.heimui"
 version = "0.0.1-alpha"
 
 kotlin {
+    // Forces an explicit visibility modifier and return type on every public declaration.
+    // Without it every internal helper is part of the published contract, and any refactor is a
+    // potential breaking change for consumers that nobody notices.
+    explicitApi()
+
     listOf(
         iosArm64(),
         iosSimulatorArm64()
     ).forEach { iosTarget ->
         iosTarget.binaries.framework {
-            baseName = "Shared"
+            // Not "Shared": that is the KMP wizard default, so it is the name most likely to
+            // collide with a framework the host app already links.
+            baseName = "HeimUI"
             isStatic = true
         }
     }
@@ -33,6 +40,9 @@ kotlin {
        }
        androidResources {
            enable = true
+       }
+       optimization {
+           consumerKeepRules.files.add(file("consumer-rules.pro"))
        }
        withHostTest {
            isIncludeAndroidResources = true
@@ -54,16 +64,16 @@ kotlin {
             implementation(libs.ktor.client.darwin)
         }
         commonMain.dependencies {
-            implementation(compose.runtime)
-            implementation(compose.foundation)
-            implementation(compose.material3)
-            implementation(compose.ui)
-            implementation(compose.components.resources)
+            api(compose.runtime)
+            api(compose.foundation)
+            api(compose.material3)
+            api(compose.ui)
+            api(compose.components.resources)
+            api(libs.kotlinx.coroutines.core)
+            api(libs.ktor.client.core)
             implementation(libs.androidx.lifecycle.viewmodelCompose)
             implementation(libs.androidx.lifecycle.runtimeCompose)
             implementation(libs.kotlinx.serialization.json)
-            implementation(libs.kotlinx.coroutines.core)
-            implementation(libs.ktor.client.core)
             implementation(libs.ktor.client.content.negotiation)
             implementation(libs.ktor.serialization.kotlinx.json)
             implementation(libs.koin.core)
@@ -76,6 +86,12 @@ kotlin {
             implementation(libs.kotlinx.coroutines.test)
             implementation(libs.ktor.client.mock)
         }
+        iosTest.dependencies {
+            // Compose UI tests run on the iOS simulator; the Android host target is a bare JVM
+            // and would need Robolectric to host a composition.
+            @OptIn(org.jetbrains.compose.ExperimentalComposeLibrary::class)
+            implementation(compose.uiTest)
+        }
     }
 }
 
@@ -87,18 +103,19 @@ publishing {
     publications.withType<MavenPublication> {
         pom {
             name.set("HeimUI Core")
-            description.set("The extensible Server-Driven UI framework for Kotlin Multiplatform & Compose Multiplatform")
+            description.set("Engine for Server-Driven UI in Kotlin Multiplatform & Compose")
             url.set("https://github.com/julianvelandia23/heimui-core")
             licenses {
                 license {
                     name.set("Apache-2.0")
-                    url.set("https://opensource.org/licenses/Apache-2.0")
+                    url.set("https://www.apache.org/licenses/LICENSE-2.0.txt")
                 }
             }
             developers {
                 developer {
                     id.set("julianvelandia")
                     name.set("Julian Velandia")
+                    organization.set("HeimUI")
                 }
             }
             scm {

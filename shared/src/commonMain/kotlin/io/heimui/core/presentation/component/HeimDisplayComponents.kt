@@ -19,7 +19,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import io.heimui.core.domain.model.action.HeimAction
 import io.heimui.core.domain.model.component.BadgeComponent
 import io.heimui.core.domain.model.component.CardComponent
@@ -29,11 +28,13 @@ import io.heimui.core.domain.model.component.TextComponent
 import io.heimui.core.presentation.HeimRenderer
 import io.heimui.core.presentation.accessibility.heimAccessibility
 import io.heimui.core.presentation.designsystem.HeimTokenResolver
+import io.heimui.core.presentation.designsystem.heimColor
+import io.heimui.core.presentation.designsystem.heimTextStyle
 import io.heimui.core.presentation.designsystem.LocalHeimIconProvider
 import io.heimui.core.presentation.imageloader.LocalHeimImageLoader
 import io.heimui.core.presentation.state.HeimStateManager
 
-@Composable
+internal @Composable
 fun HeimTextRenderer(
     component: TextComponent,
     modifier: Modifier = Modifier
@@ -41,15 +42,8 @@ fun HeimTextRenderer(
     val colorScheme = MaterialTheme.colorScheme
     val typography = MaterialTheme.typography
 
-    val textColor = HeimTokenResolver.resolveColor(
-        tokenOrHex = component.color,
-        colorScheme = colorScheme,
-        default = colorScheme.onSurface
-    )
-    val textStyle = HeimTokenResolver.resolveTextStyle(
-        styleName = component.style,
-        typography = typography
-    )
+    val textColor = heimColor(component.color, colorScheme.onSurface)
+    val textStyle = heimTextStyle(component.style)
     val textAlign = HeimTokenResolver.resolveTextAlign(component.textAlign)
 
     Text(
@@ -59,11 +53,11 @@ fun HeimTextRenderer(
         textAlign = textAlign,
         maxLines = component.maxLines ?: Int.MAX_VALUE,
         overflow = if (component.maxLines != null) TextOverflow.Ellipsis else TextOverflow.Clip,
-        modifier = modifier.heimAccessibility(component.a11y)
+        modifier = modifier.heimAccessibility(component.a11y, componentId = component.id)
     )
 }
 
-@Composable
+internal @Composable
 fun HeimImageRenderer(
     component: ImageComponent,
     modifier: Modifier = Modifier
@@ -79,11 +73,11 @@ fun HeimImageRenderer(
         height = component.height,
         aspectRatio = component.aspectRatio,
         contentScale = contentScale,
-        modifier = modifier.heimAccessibility(component.a11y)
+        modifier = modifier.heimAccessibility(component.a11y, componentId = component.id)
     )
 }
 
-@Composable
+internal @Composable
 fun HeimCardRenderer(
     component: CardComponent,
     stateManager: HeimStateManager,
@@ -91,23 +85,15 @@ fun HeimCardRenderer(
     modifier: Modifier = Modifier
 ) {
     val colorScheme = MaterialTheme.colorScheme
-    val bgColor = HeimTokenResolver.resolveColor(
-        component.backgroundColor,
-        colorScheme,
-        colorScheme.surface
-    )
-    val borderColor = HeimTokenResolver.resolveColor(
-        component.borderColor,
-        colorScheme,
-        Color.Transparent
-    )
+    val bgColor = heimColor(component.backgroundColor, colorScheme.surface)
+    val borderColor = heimColor(component.borderColor, Color.Transparent)
 
     val shape = RoundedCornerShape(component.cornerRadius.dp)
     val borderStroke = if (component.borderColor != null) BorderStroke(1.dp, borderColor) else null
 
     var cardModifier = modifier
         .fillMaxWidth()
-        .heimAccessibility(component.a11y)
+        .heimAccessibility(component.a11y, componentId = component.id)
 
     if (component.actions.isNotEmpty()) {
         cardModifier = cardModifier.clickable {
@@ -134,25 +120,17 @@ fun HeimCardRenderer(
     }
 }
 
-@Composable
+internal @Composable
 fun HeimBadgeRenderer(
     component: BadgeComponent,
     modifier: Modifier = Modifier
 ) {
     val colorScheme = MaterialTheme.colorScheme
-    val bgColor = HeimTokenResolver.resolveColor(
-        component.backgroundColor,
-        colorScheme,
-        colorScheme.primaryContainer
-    )
-    val textColor = HeimTokenResolver.resolveColor(
-        component.textColor,
-        colorScheme,
-        colorScheme.onPrimaryContainer
-    )
+    val bgColor = heimColor(component.backgroundColor, colorScheme.primaryContainer)
+    val textColor = heimColor(component.textColor, colorScheme.onPrimaryContainer)
 
     Surface(
-        modifier = modifier.heimAccessibility(component.a11y),
+        modifier = modifier.heimAccessibility(component.a11y, componentId = component.id),
         shape = RoundedCornerShape(16.dp),
         color = bgColor
     ) {
@@ -164,30 +142,26 @@ fun HeimBadgeRenderer(
             Text(
                 text = component.text,
                 color = textColor,
-                fontSize = 12.sp,
+                // No hardcoded fontSize: it silently overrode the design-system token.
                 style = MaterialTheme.typography.labelSmall
             )
         }
     }
 }
 
-@Composable
+internal @Composable
 fun HeimIconRenderer(
     component: IconComponent,
     modifier: Modifier = Modifier
 ) {
     val colorScheme = MaterialTheme.colorScheme
-    val tint = HeimTokenResolver.resolveColor(
-        component.tint,
-        colorScheme,
-        colorScheme.onSurface
-    )
+    val tint = heimColor(component.tint, colorScheme.onSurface)
 
     val iconProvider = LocalHeimIconProvider.current
     iconProvider.RenderIcon(
         name = component.name,
         tint = tint,
         size = component.size.dp,
-        modifier = modifier.heimAccessibility(component.a11y)
+        modifier = modifier.heimAccessibility(component.a11y, componentId = component.id)
     )
 }

@@ -36,10 +36,12 @@ import io.heimui.core.data.dto.SwitchComponentDto
 import io.heimui.core.data.dto.TextAlignDto
 import io.heimui.core.data.dto.TextComponentDto
 import io.heimui.core.data.dto.TextFieldComponentDto
+import io.heimui.core.data.dto.UnknownActionDto
 import io.heimui.core.data.dto.UnknownComponentDto
 import io.heimui.core.data.dto.ValidationRuleDto
 import io.heimui.core.data.dto.ValidationTypeDto
 import io.heimui.core.domain.model.HeimScreenResponse
+import io.heimui.core.domain.model.HeimValue
 import io.heimui.core.domain.model.accessibility.AccessibilityRole
 import io.heimui.core.domain.model.accessibility.HeimAccessibility
 import io.heimui.core.domain.model.action.CustomAction
@@ -52,6 +54,7 @@ import io.heimui.core.domain.model.action.ShowBottomSheetAction
 import io.heimui.core.domain.model.action.ShowDialogAction
 import io.heimui.core.domain.model.action.ShowSnackbarAction
 import io.heimui.core.domain.model.action.SubmitFormAction
+import io.heimui.core.domain.model.action.UnknownAction
 import io.heimui.core.domain.model.component.Alignment
 import io.heimui.core.domain.model.component.BadgeComponent
 import io.heimui.core.domain.model.component.BoxComponent
@@ -76,30 +79,51 @@ import io.heimui.core.domain.model.component.TextAlign
 import io.heimui.core.domain.model.component.TextComponent
 import io.heimui.core.domain.model.component.TextFieldComponent
 import io.heimui.core.domain.model.component.UnknownComponent
+import io.heimui.core.domain.model.toHeimValue
 import io.heimui.core.domain.model.validation.ValidationRule
 import io.heimui.core.domain.model.validation.ValidationType
-import kotlinx.serialization.json.JsonArray
-import kotlinx.serialization.json.JsonElement
-import kotlinx.serialization.json.JsonNull
 import kotlinx.serialization.json.JsonObject
-import kotlinx.serialization.json.JsonPrimitive
-import kotlinx.serialization.json.booleanOrNull
-import kotlinx.serialization.json.doubleOrNull
-import kotlinx.serialization.json.longOrNull
 
-fun HeimScreenResponseDto.toDomain(): HeimScreenResponse {
+internal const val MAX_COMPONENT_DEPTH = 64
+
+/** Collects the repairs performed while mapping one payload. */
+internal class HeimMappingReport {
+    private val entries = mutableListOf<String>()
+    val violations: List<String> get() = entries
+    fun record(message: String) {
+        if (entries.size < MAX_RECORDED_VIOLATIONS) entries += message
+    }
+    private companion object { const val MAX_RECORDED_VIOLATIONS = 50 }
+}
+
+internal fun HeimScreenResponseDto.toDomain(): HeimScreenResponse {
+    val report = HeimMappingReport()
     return HeimScreenResponse(
         id = id,
         version = version,
         title = title,
         applySafeInsets = applySafeInsets,
-        root = root.toDomain(),
-        metadata = metadata?.toMapValue(),
-        signature = signature
+        root = root.toDomain(depth = 0, report = report),
+        metadata = metadata?.toMapHeimValue(),
+        signature = signature,
+        violations = report.violations
     )
 }
 
-fun HeimComponentDto.toDomain(): HeimComponent {
+internal fun HeimComponentDto.toDomain(
+    depth: Int = 0,
+    report: HeimMappingReport = HeimMappingReport()
+): HeimComponent {
+    if (depth > MAX_COMPONENT_DEPTH) {
+        report.record("Tree pruned at id='$id': exceeded max depth $MAX_COMPONENT_DEPTH")
+        return UnknownComponent(
+            id = id,
+            visibleIf = visibleIf,
+            a11y = a11y?.toDomain(),
+            originalType = "depth_limit_exceeded"
+        )
+    }
+
     return when (this) {
         is ContainerComponentDto -> ContainerComponent(
             id = id,
@@ -116,10 +140,11 @@ fun HeimComponentDto.toDomain(): HeimComponent {
                 AlignmentDto.TOP -> Alignment.TOP
                 AlignmentDto.BOTTOM -> Alignment.BOTTOM
             },
-            padding = padding,
-            spacing = spacing,
+            padding = maxOf(0, padding),
+            spacing = maxOf(0, spacing),
             backgroundColor = backgroundColor,
-            children = children.map { it.toDomain() }
+            scrollable = scrollable,
+            children = children.mapDeduplicated(depth = depth + 1, report = report)
         )
         is BoxComponentDto -> BoxComponent(
             id = id,
@@ -132,24 +157,24 @@ fun HeimComponentDto.toDomain(): HeimComponent {
                 AlignmentDto.TOP -> Alignment.TOP
                 AlignmentDto.BOTTOM -> Alignment.BOTTOM
             },
-            children = children.map { it.toDomain() }
+            children = children.mapDeduplicated(depth = depth + 1, report = report)
         )
         is LazyColumnComponentDto -> LazyColumnComponent(
             id = id,
             visibleIf = visibleIf,
             a11y = a11y?.toDomain(),
-            spacing = spacing,
-            padding = padding,
-            items = items.map { it.toDomain() },
+            spacing = maxOf(0, spacing),
+            padding = maxOf(0, padding),
+            items = items.mapDeduplicated(depth = depth + 1, report = report),
             pagination = pagination?.toDomain()
         )
         is LazyRowComponentDto -> LazyRowComponent(
             id = id,
             visibleIf = visibleIf,
             a11y = a11y?.toDomain(),
-            spacing = spacing,
-            padding = padding,
-            items = items.map { it.toDomain() },
+            spacing = maxOf(0, spacing),
+            padding = maxOf(0, padding),
+            items = items.mapDeduplicated(depth = depth + 1, report = report),
             pagination = pagination?.toDomain()
         )
         is TextComponentDto -> TextComponent(
@@ -159,7 +184,7 @@ fun HeimComponentDto.toDomain(): HeimComponent {
             text = text,
             style = style,
             color = color,
-            maxLines = maxLines,
+            maxLines = maxLines?.let { maxOf(1, it) },
             textAlign = when (textAlign) {
                 TextAlignDto.START -> TextAlign.START
                 TextAlignDto.CENTER -> TextAlign.CENTER
@@ -173,9 +198,9 @@ fun HeimComponentDto.toDomain(): HeimComponent {
             a11y = a11y?.toDomain(),
             url = url,
             blurHash = blurHash,
-            aspectRatio = aspectRatio,
-            height = height,
-            cornerRadius = cornerRadius,
+            aspectRatio = if (aspectRatio != null && aspectRatio > 0f) aspectRatio else null,
+            height = height?.let { maxOf(1, it) },
+            cornerRadius = maxOf(0, cornerRadius),
             contentScale = when (contentScale) {
                 ContentScaleDto.CROP -> ContentScale.CROP
                 ContentScaleDto.FIT -> ContentScale.FIT
@@ -187,13 +212,13 @@ fun HeimComponentDto.toDomain(): HeimComponent {
             id = id,
             visibleIf = visibleIf,
             a11y = a11y?.toDomain(),
-            elevation = elevation,
-            cornerRadius = cornerRadius,
+            elevation = maxOf(0, elevation),
+            cornerRadius = maxOf(0, cornerRadius),
             backgroundColor = backgroundColor,
             borderColor = borderColor,
-            padding = padding,
+            padding = maxOf(0, padding),
             actions = actions.map { it.toDomain() },
-            child = child.toDomain()
+            child = child.toDomain(depth = depth + 1)
         )
         is BadgeComponentDto -> BadgeComponent(
             id = id,
@@ -253,20 +278,20 @@ fun HeimComponentDto.toDomain(): HeimComponent {
             a11y = a11y?.toDomain(),
             name = name,
             tint = tint,
-            size = size
+            size = maxOf(1, size)
         )
         is SpacerComponentDto -> SpacerComponent(
             id = id,
             visibleIf = visibleIf,
             a11y = a11y?.toDomain(),
-            size = size,
+            size = maxOf(0, size),
             isFlexible = isFlexible
         )
         is DividerComponentDto -> DividerComponent(
             id = id,
             visibleIf = visibleIf,
             a11y = a11y?.toDomain(),
-            thickness = thickness,
+            thickness = maxOf(1, thickness),
             color = color
         )
         is CustomComponentDto -> CustomComponent(
@@ -274,30 +299,86 @@ fun HeimComponentDto.toDomain(): HeimComponent {
             visibleIf = visibleIf,
             a11y = a11y?.toDomain(),
             name = name,
-            data = data?.toMapValue() ?: emptyMap()
+            data = data?.toMapHeimValue() ?: emptyMap()
         )
         is UnknownComponentDto -> UnknownComponent(
             id = id,
             visibleIf = visibleIf,
-            a11y = a11y?.toDomain()
+            a11y = a11y?.toDomain(),
+            originalType = originalType
         )
     }
 }
 
-fun PaginationConfigDto.toDomain() = PaginationConfig(
+private fun List<HeimComponentDto>.mapDeduplicated(
+    depth: Int,
+    report: HeimMappingReport = HeimMappingReport()
+): List<HeimComponent> {
+    val seenIds = mutableSetOf<String>()
+    return mapIndexed { index, childDto ->
+        val mapped = childDto.toDomain(depth = depth, report = report)
+        // A blank id is a valid LazyColumn key but makes every sibling collide; synthesise one.
+        val child = if (mapped.id.isBlank()) mapped.withId("heim_node_$index") else mapped
+        if (seenIds.add(child.id)) {
+            child
+        } else {
+            report.record("Duplicate component id '${child.id}' disambiguated to '${child.id}_$index'")
+            // Deduplicate conflicting ID
+            when (child) {
+                is TextComponent -> child.copy(id = "${child.id}_$index")
+                is ButtonComponent -> child.copy(id = "${child.id}_$index")
+                is ImageComponent -> child.copy(id = "${child.id}_$index")
+                is CardComponent -> child.copy(id = "${child.id}_$index")
+                is ContainerComponent -> child.copy(id = "${child.id}_$index")
+                is BoxComponent -> child.copy(id = "${child.id}_$index")
+                is TextFieldComponent -> child.copy(id = "${child.id}_$index")
+                is SwitchComponent -> child.copy(id = "${child.id}_$index")
+                is BadgeComponent -> child.copy(id = "${child.id}_$index")
+                is IconComponent -> child.copy(id = "${child.id}_$index")
+                is SpacerComponent -> child.copy(id = "${child.id}_$index")
+                is DividerComponent -> child.copy(id = "${child.id}_$index")
+                is LazyColumnComponent -> child.copy(id = "${child.id}_$index")
+                is LazyRowComponent -> child.copy(id = "${child.id}_$index")
+                is CustomComponent -> child.copy(id = "${child.id}_$index")
+                is UnknownComponent -> child.copy(id = "${child.id}_$index")
+            }
+        }
+    }
+}
+
+private fun HeimComponent.withId(newId: String): HeimComponent = when (this) {
+    is TextComponent -> copy(id = newId)
+    is ButtonComponent -> copy(id = newId)
+    is ImageComponent -> copy(id = newId)
+    is CardComponent -> copy(id = newId)
+    is ContainerComponent -> copy(id = newId)
+    is BoxComponent -> copy(id = newId)
+    is TextFieldComponent -> copy(id = newId)
+    is SwitchComponent -> copy(id = newId)
+    is BadgeComponent -> copy(id = newId)
+    is IconComponent -> copy(id = newId)
+    is SpacerComponent -> copy(id = newId)
+    is DividerComponent -> copy(id = newId)
+    is LazyColumnComponent -> copy(id = newId)
+    is LazyRowComponent -> copy(id = newId)
+    is CustomComponent -> copy(id = newId)
+    is UnknownComponent -> copy(id = newId)
+}
+
+internal fun PaginationConfigDto.toDomain() = PaginationConfig(
     nextCursor = nextCursor,
     hasMore = hasMore,
     loadThreshold = loadThreshold,
     onLoadMoreActions = onLoadMoreActions.map { it.toDomain() }
 )
 
-fun HeimActionDto.toDomain(): HeimAction {
+internal fun HeimActionDto.toDomain(): HeimAction {
     return when (this) {
         is NavigateActionDto -> NavigateAction(screenId = screenId, params = params)
-        is SubmitFormActionDto -> SubmitFormAction(endpoint = endpoint, method = method, payload = payload?.toMapValue())
+        is SubmitFormActionDto -> SubmitFormAction(endpoint = endpoint, method = method, payload = payload?.toMapHeimValue())
         is ShowSnackbarActionDto -> ShowSnackbarAction(message = message, duration = duration)
         is OpenUrlActionDto -> OpenUrlAction(url = url)
-        is CustomActionDto -> CustomAction(name = name, payload = payload?.toMapValue())
+        is CustomActionDto -> CustomAction(name = name, payload = payload?.toMapHeimValue())
         is ShowBottomSheetActionDto -> ShowBottomSheetAction(
             title = title,
             isDismissible = isDismissible,
@@ -313,10 +394,11 @@ fun HeimActionDto.toDomain(): HeimAction {
         )
         is DismissModalActionDto -> DismissModalAction
         is DismissActionDto -> DismissAction
+        is UnknownActionDto -> UnknownAction(originalType = originalType)
     }
 }
 
-fun HeimAccessibilityDto.toDomain() = HeimAccessibility(
+internal fun HeimAccessibilityDto.toDomain() = HeimAccessibility(
     contentDescription = contentDescription,
     role = role?.let {
         when (it) {
@@ -332,7 +414,7 @@ fun HeimAccessibilityDto.toDomain() = HeimAccessibility(
     hiddenFromAccessibility = hiddenFromAccessibility
 )
 
-fun ValidationRuleDto.toDomain() = ValidationRule(
+internal fun ValidationRuleDto.toDomain() = ValidationRule(
     type = when (type) {
         ValidationTypeDto.REQUIRED -> ValidationType.REQUIRED
         ValidationTypeDto.REGEX -> ValidationType.REGEX
@@ -346,18 +428,6 @@ fun ValidationRuleDto.toDomain() = ValidationRule(
     errorMessage = errorMessage
 )
 
-fun JsonObject.toMapValue(): Map<String, Any?> {
-    return this.mapValues { (_, value) -> value.toPrimitiveValue() }
-}
-
-fun JsonElement.toPrimitiveValue(): Any? {
-    return when (this) {
-        is JsonNull -> null
-        is JsonPrimitive -> {
-            if (isString) content
-            else booleanOrNull ?: longOrNull ?: doubleOrNull ?: content
-        }
-        is JsonArray -> this.map { it.toPrimitiveValue() }
-        is JsonObject -> this.toMapValue()
-    }
+internal fun JsonObject.toMapHeimValue(): Map<String, HeimValue> {
+    return this.mapValues { (_, value) -> value.toHeimValue() }
 }

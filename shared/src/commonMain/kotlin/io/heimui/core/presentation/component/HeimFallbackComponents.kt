@@ -18,7 +18,7 @@ import io.heimui.core.presentation.accessibility.heimAccessibility
 import io.heimui.core.presentation.registry.LocalHeimCustomComponentRegistry
 import io.heimui.core.presentation.state.HeimStateManager
 
-@Composable
+internal @Composable
 fun HeimCustomRenderer(
     component: CustomComponent,
     stateManager: HeimStateManager,
@@ -28,15 +28,18 @@ fun HeimCustomRenderer(
 ) {
     val registryRenderer = LocalHeimCustomComponentRegistry.current.getRenderer(component.name)
 
-    if (customRenderer != null) {
-        customRenderer(component)
-    } else if (registryRenderer != null) {
+    // Registry first: it is keyed by component name, so it is the more specific match. Checking
+    // the screen-level lambda first meant one custom renderer swallowed every custom component
+    // on the screen and eclipsed the registry entirely.
+    if (registryRenderer != null) {
         registryRenderer(component, stateManager, onAction, modifier)
+    } else if (customRenderer != null) {
+        customRenderer(component)
     } else {
         Box(
             modifier = modifier
                 .fillMaxWidth()
-                .heimAccessibility(component.a11y)
+                .heimAccessibility(component.a11y, componentId = component.id)
                 .background(
                     MaterialTheme.colorScheme.surfaceVariant,
                     RoundedCornerShape(8.dp)
@@ -57,7 +60,7 @@ fun HeimCustomRenderer(
     }
 }
 
-@Composable
+internal @Composable
 fun HeimUnknownRenderer(
     component: UnknownComponent,
     modifier: Modifier = Modifier
@@ -65,7 +68,7 @@ fun HeimUnknownRenderer(
     Box(
         modifier = modifier
             .fillMaxWidth()
-            .heimAccessibility(component.a11y)
+            .heimAccessibility(component.a11y, componentId = component.id)
             .background(
                 MaterialTheme.colorScheme.errorContainer,
                 RoundedCornerShape(8.dp)

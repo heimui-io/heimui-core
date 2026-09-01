@@ -1,6 +1,7 @@
 package io.heimui.core.presentation.imageloader
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.ProvidableCompositionLocal
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
@@ -9,9 +10,9 @@ import androidx.compose.ui.layout.ContentScale
  * Contract for rendering remote images in HeimUI.
  * Allows host applications to plug in alternative engines (Glide, Kamel, SDWebImage, or custom cache).
  */
-interface HeimImageLoader {
+public interface HeimImageLoader {
     @Composable
-    fun RenderImage(
+    public fun RenderImage(
         url: String,
         contentDescription: String?,
         blurHash: String?,
@@ -23,6 +24,7 @@ interface HeimImageLoader {
     )
 }
 
-val LocalHeimImageLoader = staticCompositionLocalOf<HeimImageLoader> {
+public val LocalHeimImageLoader: ProvidableCompositionLocal<HeimImageLoader> =
+    staticCompositionLocalOf {
     CoilHeimImageLoader()
 }

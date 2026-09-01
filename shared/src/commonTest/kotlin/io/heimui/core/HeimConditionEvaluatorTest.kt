@@ -2,6 +2,7 @@ package io.heimui.core
 
 import io.heimui.core.domain.evaluator.HeimConditionEvaluator
 import kotlin.test.Test
+import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
@@ -12,6 +13,20 @@ class HeimConditionEvaluatorTest {
         assertTrue(HeimConditionEvaluator.evaluate(null, emptyMap()))
         assertTrue(HeimConditionEvaluator.evaluate("", emptyMap()))
         assertTrue(HeimConditionEvaluator.evaluate("   ", emptyMap()))
+    }
+
+    @Test
+    fun testMissingKeyFailsClosed() {
+        // Missing key in state MUST evaluate to false (fail-closed)
+        assertFalse(HeimConditionEvaluator.evaluate("is_admin", emptyMap()))
+        assertFalse(HeimConditionEvaluator.evaluate("state.is_vip", emptyMap()))
+        assertFalse(HeimConditionEvaluator.evaluate("{{state.is_manager}}", emptyMap()))
+    }
+
+    @Test
+    fun testReferencedKeysExtraction() {
+        val keys = HeimConditionEvaluator.referencedKeys("state.plan == 'PREMIUM' && age >= 18")
+        assertEquals(setOf("plan", "age"), keys)
     }
 
     @Test

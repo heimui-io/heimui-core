@@ -1,5 +1,6 @@
 package io.heimui.core.presentation.action
 
+import androidx.compose.runtime.ProvidableCompositionLocal
 import androidx.compose.runtime.staticCompositionLocalOf
 import io.heimui.core.domain.model.action.HeimAction
 import io.heimui.core.presentation.state.HeimStateManager
@@ -7,8 +8,8 @@ import io.heimui.core.presentation.state.HeimStateManager
 /**
  * Interceptor for HeimUI actions. Allows logging, analytics, auth checks, or action transformation.
  */
-interface HeimActionInterceptor {
-    suspend fun intercept(
+public interface HeimActionInterceptor {
+    public suspend fun intercept(
         action: HeimAction,
         stateManager: HeimStateManager,
         next: suspend (HeimAction) -> Unit
@@ -18,11 +19,11 @@ interface HeimActionInterceptor {
 /**
  * Pipeline dispatcher that executes registered interceptors in chain of responsibility.
  */
-class HeimActionDispatcher(
+public class HeimActionDispatcher(
     private val interceptors: List<HeimActionInterceptor> = emptyList(),
     private val defaultHandler: ((HeimAction) -> Unit)? = null
 ) {
-    suspend fun dispatch(
+    public suspend fun dispatch(
         action: HeimAction,
         stateManager: HeimStateManager,
         finalHandler: (HeimAction) -> Unit
@@ -40,28 +41,29 @@ class HeimActionDispatcher(
         executeChain(0, action)
     }
 
-    companion object {
-        fun build(builder: Builder.() -> Unit): HeimActionDispatcher {
+    public companion object {
+        public fun build(builder: Builder.() -> Unit): HeimActionDispatcher {
             return Builder().apply(builder).build()
         }
     }
 
-    class Builder {
+    public class Builder {
         private val interceptors = mutableListOf<HeimActionInterceptor>()
         private var defaultHandler: ((HeimAction) -> Unit)? = null
 
-        fun addInterceptor(interceptor: HeimActionInterceptor) = apply {
+        public fun addInterceptor(interceptor: HeimActionInterceptor): Builder = apply {
             interceptors.add(interceptor)
         }
 
-        fun setDefaultHandler(handler: (HeimAction) -> Unit) = apply {
+        public fun setDefaultHandler(handler: (HeimAction) -> Unit): Builder = apply {
             this.defaultHandler = handler
         }
 
-        fun build(): HeimActionDispatcher = HeimActionDispatcher(interceptors.toList(), defaultHandler)
+        public fun build(): HeimActionDispatcher = HeimActionDispatcher(interceptors.toList(), defaultHandler)
     }
 }
 
-val LocalHeimActionDispatcher = staticCompositionLocalOf<HeimActionDispatcher> {
+public val LocalHeimActionDispatcher: ProvidableCompositionLocal<HeimActionDispatcher> =
+    staticCompositionLocalOf {
     HeimActionDispatcher()
 }

@@ -1,7 +1,7 @@
 package io.heimui.core
 
 import io.heimui.core.domain.repository.HeimScreenResult
-import io.heimui.core.domain.repository.MockHeimScreenRepository
+import io.heimui.core.data.repository.MockHeimScreenRepository
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
 import kotlin.test.Test

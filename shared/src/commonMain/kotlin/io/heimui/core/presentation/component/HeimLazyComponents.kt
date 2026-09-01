@@ -20,8 +20,12 @@ import io.heimui.core.domain.model.component.LazyRowComponent
 import io.heimui.core.presentation.HeimRenderer
 import io.heimui.core.presentation.accessibility.heimAccessibility
 import io.heimui.core.presentation.state.HeimStateManager
+import io.heimui.core.presentation.component.LocalInsideVerticalScroller
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 
-@Composable
+internal @Composable
 fun HeimLazyColumnRenderer(
     component: LazyColumnComponent,
     stateManager: HeimStateManager,
@@ -31,22 +35,24 @@ fun HeimLazyColumnRenderer(
     val listState = rememberLazyListState()
 
     // Pagination detection
-    component.pagination?.let { pagination ->
-        if (pagination.hasMore) {
-            val shouldLoadMore by remember {
-                derivedStateOf {
-                    val lastVisibleItemIndex = listState.layoutInfo.visibleItemsInfo.lastOrNull()?.index ?: 0
-                    val totalItems = listState.layoutInfo.totalItemsCount
-                    totalItems > 0 && lastVisibleItemIndex >= (totalItems - pagination.loadThreshold)
-                }
+    val pagination = component.pagination
+    if (pagination != null && pagination.hasMore) {
+        // Keyed on `pagination`: without it the derived state froze the first page's threshold
+        // and cursor, so page 2 never loaded.
+        var requestedCursor by remember(pagination.nextCursor) { mutableStateOf<String?>(null) }
+        val shouldLoadMore by remember(pagination, listState) {
+            derivedStateOf {
+                val last = listState.layoutInfo.visibleItemsInfo.lastOrNull()?.index ?: return@derivedStateOf false
+                val total = listState.layoutInfo.totalItemsCount
+                total > 0 && last >= total - pagination.loadThreshold.coerceAtLeast(1)
             }
-
-            LaunchedEffect(shouldLoadMore) {
-                if (shouldLoadMore) {
-                    pagination.onLoadMoreActions.forEach { action ->
-                        onAction(action)
-                    }
-                }
+        }
+        LaunchedEffect(shouldLoadMore, pagination.nextCursor) {
+            // The cursor guard de-duplicates: a scroll bounce used to fire two concurrent
+            // page requests for the same cursor.
+            if (shouldLoadMore && requestedCursor != pagination.nextCursor) {
+                requestedCursor = pagination.nextCursor
+                pagination.onLoadMoreActions.forEach { onAction(it) }
             }
         }
     }
@@ -55,7 +61,7 @@ fun HeimLazyColumnRenderer(
         state = listState,
         modifier = modifier
             .fillMaxWidth()
-            .heimAccessibility(component.a11y),
+            .heimAccessibility(component.a11y, componentId = component.id),
         contentPadding = PaddingValues(component.padding.dp),
         verticalArrangement = Arrangement.spacedBy(component.spacing.dp)
     ) {
@@ -63,16 +69,18 @@ fun HeimLazyColumnRenderer(
             items = component.items,
             key = { _, item -> item.id }
         ) { _, child ->
-            HeimRenderer(
-                component = child,
-                stateManager = stateManager,
-                onAction = onAction
-            )
+            CompositionLocalProvider(LocalInsideVerticalScroller provides true) {
+                HeimRenderer(
+                    component = child,
+                    stateManager = stateManager,
+                    onAction = onAction
+                )
+            }
         }
     }
 }
 
-@Composable
+internal @Composable
 fun HeimLazyRowRenderer(
     component: LazyRowComponent,
     stateManager: HeimStateManager,
@@ -81,22 +89,24 @@ fun HeimLazyRowRenderer(
 ) {
     val listState = rememberLazyListState()
 
-    component.pagination?.let { pagination ->
-        if (pagination.hasMore) {
-            val shouldLoadMore by remember {
-                derivedStateOf {
-                    val lastVisibleItemIndex = listState.layoutInfo.visibleItemsInfo.lastOrNull()?.index ?: 0
-                    val totalItems = listState.layoutInfo.totalItemsCount
-                    totalItems > 0 && lastVisibleItemIndex >= (totalItems - pagination.loadThreshold)
-                }
+    val pagination = component.pagination
+    if (pagination != null && pagination.hasMore) {
+        // Keyed on `pagination`: without it the derived state froze the first page's threshold
+        // and cursor, so page 2 never loaded.
+        var requestedCursor by remember(pagination.nextCursor) { mutableStateOf<String?>(null) }
+        val shouldLoadMore by remember(pagination, listState) {
+            derivedStateOf {
+                val last = listState.layoutInfo.visibleItemsInfo.lastOrNull()?.index ?: return@derivedStateOf false
+                val total = listState.layoutInfo.totalItemsCount
+                total > 0 && last >= total - pagination.loadThreshold.coerceAtLeast(1)
             }
-
-            LaunchedEffect(shouldLoadMore) {
-                if (shouldLoadMore) {
-                    pagination.onLoadMoreActions.forEach { action ->
-                        onAction(action)
-                    }
-                }
+        }
+        LaunchedEffect(shouldLoadMore, pagination.nextCursor) {
+            // The cursor guard de-duplicates: a scroll bounce used to fire two concurrent
+            // page requests for the same cursor.
+            if (shouldLoadMore && requestedCursor != pagination.nextCursor) {
+                requestedCursor = pagination.nextCursor
+                pagination.onLoadMoreActions.forEach { onAction(it) }
             }
         }
     }
@@ -105,7 +115,7 @@ fun HeimLazyRowRenderer(
         state = listState,
         modifier = modifier
             .fillMaxWidth()
-            .heimAccessibility(component.a11y),
+            .heimAccessibility(component.a11y, componentId = component.id),
         contentPadding = PaddingValues(component.padding.dp),
         horizontalArrangement = Arrangement.spacedBy(component.spacing.dp)
     ) {
@@ -113,11 +123,13 @@ fun HeimLazyRowRenderer(
             items = component.items,
             key = { _, item -> item.id }
         ) { _, child ->
-            HeimRenderer(
-                component = child,
-                stateManager = stateManager,
-                onAction = onAction
-            )
+            CompositionLocalProvider(LocalInsideVerticalScroller provides true) {
+                HeimRenderer(
+                    component = child,
+                    stateManager = stateManager,
+                    onAction = onAction
+                )
+            }
         }
     }
 }

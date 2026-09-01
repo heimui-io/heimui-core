@@ -60,7 +60,7 @@ class HeimScreenRepositoryTest {
 
         val client = HttpClient(mockEngine) {
             install(ContentNegotiation) {
-                json(Json { ignoreUnknownKeys = true })
+                json(HeimRemoteDataSource.defaultJson)
             }
         }
 

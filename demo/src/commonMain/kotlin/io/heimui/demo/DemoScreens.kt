@@ -1,4 +1,4 @@
-package io.heimui.core.demo
+package io.heimui.demo
 
 /**
  * Catalog of rich Server-Driven UI screens for local testing, previewing, and demos.

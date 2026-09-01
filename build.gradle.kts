@@ -7,4 +7,17 @@ plugins {
     alias(libs.plugins.composeCompiler) apply false
     alias(libs.plugins.kotlinMultiplatform) apply false
     alias(libs.plugins.kotlinSerialization) apply false
+    alias(libs.plugins.binaryCompatibility)
+}
+
+apiValidation {
+    // Only :shared is published, so only its ABI is a contract.
+    ignoredProjects.addAll(listOf("androidApp", "demo"))
+
+    @OptIn(kotlinx.validation.ExperimentalBCVApi::class)
+    klib {
+        // The published targets are Android and iOS; without this only JVM ABI would be tracked,
+        // which for this module is nothing.
+        enabled = true
+    }
 }

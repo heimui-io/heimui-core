@@ -5,21 +5,28 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.produceState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.painter.BitmapPainter
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import io.heimui.core.presentation.util.HeimBlurHashDecoder
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 /**
- * Default implementation of [HeimImageLoader] powered by Coil 3 and BlurHash.
+ * Default [HeimImageLoader] powered by Coil 3, with BlurHash placeholders.
  */
-class CoilHeimImageLoader(
-    private val blurWidth: Int = 32,
-    private val blurHeight: Int = 32,
-    private val blurPunch: Float = 1f
+public class CoilHeimImageLoader(
+    private val blurWidth: Int = 24,
+    private val blurHeight: Int = 24,
+    private val blurPunch: Float = 1f,
+    /** Schemes an image URL may use. `file://` and `content://` would expose local storage. */
+    private val allowedSchemes: Set<String> = setOf("https", "data")
 ) : HeimImageLoader {
 
     @Composable
@@ -33,33 +40,41 @@ class CoilHeimImageLoader(
         contentScale: ContentScale,
         modifier: Modifier
     ) {
-        val shape = RoundedCornerShape(cornerRadius.dp)
+        val shape = RoundedCornerShape(cornerRadius.coerceAtLeast(0).dp)
         var imageModifier = modifier
             .fillMaxWidth()
             .clip(shape)
 
-        if (height != null) {
-            imageModifier = imageModifier.height(height.dp)
-        } else if (aspectRatio != null && aspectRatio > 0) {
-            imageModifier = imageModifier.aspectRatio(aspectRatio)
-        } else {
-            imageModifier = imageModifier.height(180.dp)
+        imageModifier = when {
+            height != null && height > 0 -> imageModifier.height(height.dp)
+            aspectRatio != null && aspectRatio > 0f -> imageModifier.aspectRatio(aspectRatio)
+            else -> imageModifier.height(180.dp)
         }
 
-        val placeholderPainter = remember(blurHash) {
-            HeimBlurHashDecoder.decodeToPainter(
-                blurHash = blurHash,
-                width = blurWidth,
-                height = blurHeight,
-                punch = blurPunch
-            )
+        // Decoding a BlurHash is O(w*h*compX*compY); doing it inside remember{} ran ~83k cos()
+        // calls on the UI thread for every item appearing in a list.
+        val placeholder: Painter? by produceState<Painter?>(null, blurHash, blurWidth, blurHeight) {
+            value = if (blurHash == null) {
+                null
+            } else {
+                withContext(Dispatchers.Default) {
+                    HeimBlurHashDecoder
+                        .decodeToImageBitmap(blurHash, blurWidth, blurHeight, blurPunch)
+                        ?.let { BitmapPainter(it) }
+                }
+            }
         }
+
+        val scheme = url.substringBefore(':', "").lowercase()
+        if (scheme.isNotEmpty() && scheme !in allowedSchemes) return
 
         AsyncImage(
             model = url,
             contentDescription = contentDescription,
-            placeholder = placeholderPainter,
-            error = placeholderPainter,
+            placeholder = placeholder,
+            // Deliberately not the same painter as the placeholder: a permanently failed image
+            // must be distinguishable from one that is still loading.
+            error = null,
             contentScale = contentScale,
             modifier = imageModifier
         )

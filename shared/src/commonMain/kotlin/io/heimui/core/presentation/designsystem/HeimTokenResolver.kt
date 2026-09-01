@@ -11,9 +11,9 @@ import io.heimui.core.domain.model.component.Alignment as HeimAlignment
 import io.heimui.core.domain.model.component.ContentScale as HeimContentScale
 import io.heimui.core.domain.model.component.TextAlign as HeimTextAlign
 
-object HeimTokenResolver {
+public object HeimTokenResolver {
 
-    fun resolveColor(
+    public fun resolveColor(
         tokenOrHex: String?,
         colorScheme: ColorScheme,
         default: Color = Color.Unspecified,
@@ -78,7 +78,7 @@ object HeimTokenResolver {
         }
     }
 
-    fun parseHexColor(hex: String): Color? {
+    public fun parseHexColor(hex: String): Color? {
         val clean = hex.removePrefix("#").trim()
         return try {
             when (clean.length) {
@@ -115,7 +115,7 @@ object HeimTokenResolver {
         }
     }
 
-    fun resolveTextStyle(
+    public fun resolveTextStyle(
         styleName: String?,
         typography: Typography,
         brandTokens: HeimBrandTokens = HeimBrandTokens.default
@@ -151,7 +151,7 @@ object HeimTokenResolver {
         }
     }
 
-    fun resolveHorizontalAlignment(alignment: HeimAlignment): Alignment.Horizontal {
+    public fun resolveHorizontalAlignment(alignment: HeimAlignment): Alignment.Horizontal {
         return when (alignment) {
             HeimAlignment.START -> Alignment.Start
             HeimAlignment.CENTER -> Alignment.CenterHorizontally
@@ -160,7 +160,7 @@ object HeimTokenResolver {
         }
     }
 
-    fun resolveVerticalAlignment(alignment: HeimAlignment): Alignment.Vertical {
+    public fun resolveVerticalAlignment(alignment: HeimAlignment): Alignment.Vertical {
         return when (alignment) {
             HeimAlignment.TOP, HeimAlignment.START -> Alignment.Top
             HeimAlignment.CENTER -> Alignment.CenterVertically
@@ -168,7 +168,7 @@ object HeimTokenResolver {
         }
     }
 
-    fun resolveBoxAlignment(alignment: HeimAlignment): Alignment {
+    public fun resolveBoxAlignment(alignment: HeimAlignment): Alignment {
         return when (alignment) {
             HeimAlignment.START -> Alignment.CenterStart
             HeimAlignment.CENTER -> Alignment.Center
@@ -178,7 +178,7 @@ object HeimTokenResolver {
         }
     }
 
-    fun resolveTextAlign(textAlign: HeimTextAlign): TextAlign {
+    public fun resolveTextAlign(textAlign: HeimTextAlign): TextAlign {
         return when (textAlign) {
             HeimTextAlign.START -> TextAlign.Start
             HeimTextAlign.CENTER -> TextAlign.Center
@@ -187,7 +187,7 @@ object HeimTokenResolver {
         }
     }
 
-    fun resolveContentScale(scale: HeimContentScale): ContentScale {
+    public fun resolveContentScale(scale: HeimContentScale): ContentScale {
         return when (scale) {
             HeimContentScale.CROP -> ContentScale.Crop
             HeimContentScale.FIT -> ContentScale.Fit

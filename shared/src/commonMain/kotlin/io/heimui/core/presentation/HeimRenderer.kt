@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import io.heimui.core.domain.evaluator.HeimConditionEvaluator
 import io.heimui.core.domain.model.HeimScreenResponse
@@ -46,8 +47,10 @@ import io.heimui.core.presentation.component.HeimTextFieldRenderer
 import io.heimui.core.presentation.component.HeimTextRenderer
 import io.heimui.core.presentation.component.HeimUnknownRenderer
 import io.heimui.core.presentation.state.HeimStateManager
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.map
 
-@Composable
+public @Composable
 fun HeimScreenRenderer(
     response: HeimScreenResponse,
     stateManager: HeimStateManager,
@@ -55,15 +58,13 @@ fun HeimScreenRenderer(
     modifier: Modifier = Modifier,
     customRenderer: (@Composable (CustomComponent) -> Unit)? = null
 ) {
-    val screenModifier = if (response.applySafeInsets) {
-        modifier
-            .fillMaxSize()
-            .windowInsetsPadding(WindowInsets.safeDrawing)
+    val contentModifier = if (response.applySafeInsets) {
+        modifier.windowInsetsPadding(WindowInsets.safeDrawing)
     } else {
-        modifier.fillMaxSize()
+        modifier
     }
 
-    Box(modifier = screenModifier) {
+    Box(modifier = contentModifier.fillMaxSize()) {
         HeimRenderer(
             component = response.root,
             stateManager = stateManager,
@@ -73,7 +74,34 @@ fun HeimScreenRenderer(
     }
 }
 
+/**
+ * Visibility for one node, subscribed to only the state keys its own expression references.
+ *
+ * Subscribing every node to the whole form map (the previous behaviour) meant a single keystroke
+ * recomposed the entire tree. Slicing keeps the blast radius to the nodes that actually depend on
+ * the key that changed.
+ */
 @Composable
+internal fun rememberVisibility(visibleIf: String?, stateManager: HeimStateManager): Boolean {
+    if (visibleIf == null) return true
+    val keys = remember(visibleIf) { HeimConditionEvaluator.referencedKeys(visibleIf) }
+
+    // Seeded from the current state rather than emptyMap(): with a fail-closed evaluator an empty
+    // initial slice makes every conditional node invisible for one frame, which reads as a flicker
+    // on every screen load.
+    val initialSlice = remember(visibleIf, stateManager) {
+        stateManager.formState.value.let { state -> keys.associateWith { state[it].orEmpty() } }
+    }
+    val slice by remember(visibleIf, stateManager) {
+        stateManager.formState
+            .map { state -> keys.associateWith { state[it].orEmpty() } }
+            .distinctUntilChanged()
+    }.collectAsState(initial = initialSlice)
+
+    return remember(visibleIf, slice) { HeimConditionEvaluator.evaluate(visibleIf, slice) }
+}
+
+public @Composable
 fun HeimRenderer(
     component: HeimComponent,
     stateManager: HeimStateManager,
@@ -81,8 +109,7 @@ fun HeimRenderer(
     modifier: Modifier = Modifier,
     customRenderer: (@Composable (CustomComponent) -> Unit)? = null
 ) {
-    val formState by stateManager.formState.collectAsState()
-    val isVisible = HeimConditionEvaluator.evaluate(component.visibleIf, formState)
+    val isVisible = rememberVisibility(component.visibleIf, stateManager)
 
     if (!isVisible) return
 

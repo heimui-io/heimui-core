@@ -1,6 +1,6 @@
 package io.heimui.core.domain.model.accessibility
 
-data class HeimAccessibility(
+public data class HeimAccessibility(
     val contentDescription: String? = null,
     val role: AccessibilityRole? = null,
     val isHeading: Boolean = false,
@@ -8,7 +8,7 @@ data class HeimAccessibility(
     val hiddenFromAccessibility: Boolean = false
 )
 
-enum class AccessibilityRole {
+public enum class AccessibilityRole {
     BUTTON,
     IMAGE,
     HEADER,

@@ -1,22 +1,22 @@
 package io.heimui.core.presentation.state
 
-import io.heimui.core.data.datasource.local.HeimStorageDriver
-import io.heimui.core.data.datasource.local.InMemoryStorageDriver
+import io.heimui.core.domain.port.HeimStorageDriver
+import io.heimui.core.domain.port.InMemoryStorageDriver
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 
 /**
  * Storage manager for persisting in-progress form drafts across app crashes or process deaths.
  */
-interface HeimFormDraftStorage {
-    suspend fun saveDraft(screenId: String, state: Map<String, String>)
-    suspend fun getDraft(screenId: String): Map<String, String>?
-    suspend fun clearDraft(screenId: String)
+public interface HeimFormDraftStorage {
+    public suspend fun saveDraft(screenId: String, state: Map<String, String>)
+    public suspend fun getDraft(screenId: String): Map<String, String>?
+    public suspend fun clearDraft(screenId: String)
 }
 
-class DriverBackedFormDraftStorage(
+public class DriverBackedFormDraftStorage(
     private val driver: HeimStorageDriver = InMemoryStorageDriver(),
-    private val json: Json = Json { ignoreUnknownKeys = true; isLenient = true; encodeDefaults = true }
+    private val json: Json = io.heimui.core.data.serialization.HeimJson.instance
 ) : HeimFormDraftStorage {
 
     private fun keyFor(screenId: String) = "heim_form_draft_$screenId"

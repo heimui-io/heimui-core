@@ -3,6 +3,7 @@ package io.heimui.core.presentation.util
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.painter.Painter
 import kotlin.math.PI
@@ -10,11 +11,42 @@ import kotlin.math.cos
 import kotlin.math.pow
 import kotlin.math.withSign
 
-object HeimBlurHashDecoder {
+internal object HeimBlurHashDecoder {
 
     fun decodeToPainter(blurHash: String?, width: Int = 32, height: Int = 32, punch: Float = 1f): Painter? {
         val colors = decode(blurHash, width, height, punch) ?: return null
         return BlurHashPainter(colors, width, height)
+    }
+
+    /**
+     * Rasterises the hash once into an [ImageBitmap].
+     *
+     * [BlurHashPainter] issues width*height drawRect calls on **every frame** -- 1024 draw calls
+     * per placeholder at the default 32x32. Drawing a single bitmap instead collapses that to one.
+     */
+    fun decodeToImageBitmap(
+        blurHash: String?,
+        width: Int = 24,
+        height: Int = 24,
+        punch: Float = 1f
+    ): ImageBitmap? {
+        val colors = decode(blurHash, width, height, punch) ?: return null
+        val bitmap = ImageBitmap(width, height)
+        val canvas = androidx.compose.ui.graphics.Canvas(bitmap)
+        val paint = androidx.compose.ui.graphics.Paint()
+        for (y in 0 until height) {
+            for (x in 0 until width) {
+                paint.color = colors[y * width + x]
+                canvas.drawRect(
+                    left = x.toFloat(),
+                    top = y.toFloat(),
+                    right = x + 1f,
+                    bottom = y + 1f,
+                    paint = paint
+                )
+            }
+        }
+        return bitmap
     }
 
     fun decode(blurHash: String?, width: Int = 32, height: Int = 32, punch: Float = 1f): List<Color>? {
@@ -41,6 +73,15 @@ object HeimBlurHashDecoder {
                 }
             }
 
+            // Precomputed cosine tables. The naive form calls cos() width*height*numCompX*numCompY
+            // times -- about 83,000 calls for a 32x32 render of a 9x9 hash, on the caller's thread.
+            val cosX = FloatArray(width * numCompX) { i ->
+                cos(PI * (i / numCompX) * (i % numCompX) / width).toFloat()
+            }
+            val cosY = FloatArray(height * numCompY) { i ->
+                cos(PI * (i / numCompY) * (i % numCompY) / height).toFloat()
+            }
+
             val result = ArrayList<Color>(width * height)
             for (y in 0 until height) {
                 for (x in 0 until width) {
@@ -50,7 +91,7 @@ object HeimBlurHashDecoder {
 
                     for (j in 0 until numCompY) {
                         for (k in 0 until numCompX) {
-                            val basis = (cos(PI * x * k / width) * cos(PI * y * j / height)).toFloat()
+                            val basis = cosX[x * numCompX + k] * cosY[y * numCompY + j]
                             val color = colors[j * numCompX + k]
                             r += color[0] * basis
                             g += color[1] * basis

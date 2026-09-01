@@ -1,19 +1,23 @@
-package io.heimui.core.domain.repository
+package io.heimui.core.data.repository
 
-import io.heimui.core.data.dto.HeimScreenResponseDto
 import io.heimui.core.data.mapper.toDomain
+import io.heimui.core.domain.repository.HeimScreenRepository
+import io.heimui.core.domain.repository.HeimScreenResult
+import io.heimui.core.domain.repository.HeimSubmitResult
+import io.heimui.core.domain.model.HeimValue
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
-import kotlinx.serialization.json.Json
 
 /**
  * Mock repository for local testing, previewing, and debugging without a backend server.
+ *
+ * Lives in `data`, not `domain`: it parses wire JSON and maps DTOs, so keeping it in the domain
+ * made the domain layer depend on the transport format it is supposed to be independent of.
  */
-class MockHeimScreenRepository(
+public class MockHeimScreenRepository(
     private val jsonProvider: (screenId: String) -> String?,
-    private val simulatedDelayMillis: Long = 0L,
-    private val json: Json = Json { ignoreUnknownKeys = true; isLenient = true }
+    private val simulatedDelayMillis: Long = 0L
 ) : HeimScreenRepository {
 
     override fun getScreen(
@@ -31,7 +35,7 @@ class MockHeimScreenRepository(
         }
 
         val result: HeimScreenResult = try {
-            val dto = json.decodeFromString<HeimScreenResponseDto>(rawJson)
+            val dto = io.heimui.core.data.serialization.HeimJson.decodeScreen(rawJson)
             HeimScreenResult.Success(screen = dto.toDomain(), isStale = false)
         } catch (e: Exception) {
             HeimScreenResult.Error(message = "Failed to parse mock JSON: ${e.message}", throwable = e)
@@ -42,7 +46,7 @@ class MockHeimScreenRepository(
     override suspend fun submitForm(
         endpoint: String,
         method: String,
-        payload: Map<String, Any?>?
+        payload: Map<String, HeimValue>?
     ): HeimSubmitResult {
         if (simulatedDelayMillis > 0) {
             delay(simulatedDelayMillis)

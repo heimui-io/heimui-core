@@ -1,4 +1,4 @@
-package io.heimui.core
+package io.heimui.demo
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -22,10 +22,9 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import io.heimui.core.demo.DemoScreens
 import io.heimui.core.domain.model.action.ShowSnackbarAction
 import io.heimui.core.domain.model.action.SubmitFormAction
-import io.heimui.core.domain.repository.MockHeimScreenRepository
+import io.heimui.core.data.repository.MockHeimScreenRepository
 import io.heimui.core.presentation.HeimScreen
 import io.heimui.core.presentation.designsystem.HeimTheme
 import kotlinx.coroutines.launch

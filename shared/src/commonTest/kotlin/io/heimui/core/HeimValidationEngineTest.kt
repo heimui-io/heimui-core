@@ -1,6 +1,7 @@
 package io.heimui.core
 
 import io.heimui.core.domain.evaluator.HeimValidationEngine
+import io.heimui.core.domain.evaluator.HeimValidatorRegistry
 import io.heimui.core.domain.model.validation.ValidationRule
 import io.heimui.core.domain.model.validation.ValidationType
 import kotlin.test.Test
@@ -38,5 +39,26 @@ class HeimValidationEngineTest {
 
         assertEquals("Too long", HeimValidationEngine.validate("12345678901", maxRule))
         assertNull(HeimValidationEngine.validate("1234567890", maxRule))
+    }
+
+    @Test
+    fun testUnregisteredCustomRuleFailsClosed() {
+        val customRule = listOf(
+            ValidationRule(type = ValidationType.CUSTOM, value = "UNREGISTERED_NIT", errorMessage = "Invalid NIT")
+        )
+        // Must fail-closed if rule is not registered
+        assertEquals("Invalid NIT", HeimValidationEngine.validate("123456", customRule))
+    }
+
+    @Test
+    fun testRegisteredCustomRule() {
+        val registry = HeimValidatorRegistry()
+        registry.register("EVEN_NUMBER") { value, _ ->
+            value.toIntOrNull()?.let { it % 2 == 0 } ?: false
+        }
+        val rule = listOf(ValidationRule(type = ValidationType.CUSTOM, value = "EVEN_NUMBER", errorMessage = "Must be even"))
+
+        assertEquals("Must be even", HeimValidationEngine.validate("5", rule, registry))
+        assertNull(HeimValidationEngine.validate("6", rule, registry))
     }
 }

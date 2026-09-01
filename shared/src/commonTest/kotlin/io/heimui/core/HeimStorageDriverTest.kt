@@ -1,7 +1,7 @@
 package io.heimui.core
 
 import io.heimui.core.data.datasource.local.DriverBackedHeimCacheDataSource
-import io.heimui.core.data.datasource.local.HeimStorageDriver
+import io.heimui.core.domain.port.HeimStorageDriver
 import io.heimui.core.data.dto.ContainerComponentDto
 import io.heimui.core.data.dto.HeimScreenResponseDto
 import kotlinx.coroutines.test.runTest

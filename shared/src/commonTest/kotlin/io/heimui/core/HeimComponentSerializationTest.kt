@@ -126,7 +126,8 @@ class HeimComponentSerializationTest {
         val custom = container.children[5]
         assertIs<CustomComponent>(custom)
         assertEquals("stock_chart", custom.name)
-        assertEquals("AAPL", custom.data["ticker"])
-        assertEquals(15000L, custom.data["volume"])
+        assertEquals(io.heimui.core.domain.model.HeimValue.Str("AAPL"), custom.data["ticker"])
+        // Integers stay exact: routing them through Double corrupted anything above 2^53.
+        assertEquals(io.heimui.core.domain.model.HeimValue.Int64(15000), custom.data["volume"])
     }
 }

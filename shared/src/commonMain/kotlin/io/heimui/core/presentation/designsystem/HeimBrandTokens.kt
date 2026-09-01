@@ -1,5 +1,6 @@
 package io.heimui.core.presentation.designsystem
 
+import androidx.compose.runtime.ProvidableCompositionLocal
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
@@ -8,37 +9,38 @@ import androidx.compose.ui.text.TextStyle
  * Enterprise Brand Design Tokens registry.
  * Allows host apps to register custom brand semantic colors, gradients, and custom text styles.
  */
-class HeimBrandTokens(
+public class HeimBrandTokens(
     private val colors: Map<String, Color> = emptyMap(),
     private val textStyles: Map<String, TextStyle> = emptyMap()
 ) {
-    fun getColor(token: String): Color? = colors[token.lowercase()]
-    fun getTextStyle(token: String): TextStyle? = textStyles[token.lowercase()]
+    public fun getColor(token: String): Color? = colors[token.lowercase()]
+    public fun getTextStyle(token: String): TextStyle? = textStyles[token.lowercase()]
 
-    companion object {
-        val default = HeimBrandTokens()
+    public companion object {
+        public val default: HeimBrandTokens = HeimBrandTokens()
 
-        fun build(builder: Builder.() -> Unit): HeimBrandTokens {
+        public fun build(builder: Builder.() -> Unit): HeimBrandTokens {
             return Builder().apply(builder).build()
         }
     }
 
-    class Builder {
+    public class Builder {
         private val colors = mutableMapOf<String, Color>()
         private val textStyles = mutableMapOf<String, TextStyle>()
 
-        fun color(token: String, color: Color) = apply {
+        public fun color(token: String, color: Color): Builder = apply {
             colors[token.lowercase()] = color
         }
 
-        fun textStyle(token: String, style: TextStyle) = apply {
+        public fun textStyle(token: String, style: TextStyle): Builder = apply {
             textStyles[token.lowercase()] = style
         }
 
-        fun build() = HeimBrandTokens(colors.toMap(), textStyles.toMap())
+        public fun build(): HeimBrandTokens = HeimBrandTokens(colors.toMap(), textStyles.toMap())
     }
 }
 
-val LocalHeimBrandTokens = staticCompositionLocalOf<HeimBrandTokens> {
+public val LocalHeimBrandTokens: ProvidableCompositionLocal<HeimBrandTokens> =
+    staticCompositionLocalOf {
     HeimBrandTokens.default
 }

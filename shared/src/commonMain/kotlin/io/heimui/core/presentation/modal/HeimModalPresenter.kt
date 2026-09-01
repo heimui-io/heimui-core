@@ -12,6 +12,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.ProvidableCompositionLocal
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -22,10 +23,10 @@ import io.heimui.core.domain.model.action.ShowDialogAction
 /**
  * Pluggable contract for presenting dynamic BottomSheets and Dialogs.
  */
-interface HeimModalPresenter {
+public interface HeimModalPresenter {
 
     @Composable
-    fun RenderBottomSheet(
+    public fun RenderBottomSheet(
         action: ShowBottomSheetAction,
         onDismiss: () -> Unit,
         onAction: (HeimAction) -> Unit,
@@ -33,14 +34,14 @@ interface HeimModalPresenter {
     )
 
     @Composable
-    fun RenderDialog(
+    public fun RenderDialog(
         action: ShowDialogAction,
         onDismiss: () -> Unit,
         onAction: (HeimAction) -> Unit
     )
 }
 
-class DefaultHeimModalPresenter : HeimModalPresenter {
+public class DefaultHeimModalPresenter : HeimModalPresenter {
 
     @OptIn(ExperimentalMaterial3Api::class)
     @Composable
@@ -122,6 +123,7 @@ class DefaultHeimModalPresenter : HeimModalPresenter {
     }
 }
 
-val LocalHeimModalPresenter = staticCompositionLocalOf<HeimModalPresenter> {
+public val LocalHeimModalPresenter: ProvidableCompositionLocal<HeimModalPresenter> =
+    staticCompositionLocalOf {
     DefaultHeimModalPresenter()
 }

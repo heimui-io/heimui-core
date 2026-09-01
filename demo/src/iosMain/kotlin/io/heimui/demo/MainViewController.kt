@@ -1,4 +1,4 @@
-package io.heimui.core
+package io.heimui.demo
 
 import androidx.compose.ui.window.ComposeUIViewController
 

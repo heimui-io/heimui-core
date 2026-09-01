@@ -3,39 +3,57 @@ package io.heimui.core.presentation.designsystem
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.size
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.ProvidableCompositionLocal
 import androidx.compose.runtime.staticCompositionLocalOf
+import io.heimui.core.presentation.telemetry.HeimTelemetryEvent
+import io.heimui.core.presentation.telemetry.LocalHeimTelemetryObserver
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import kotlin.math.PI
 import kotlin.math.cos
 import kotlin.math.sin
 
-fun interface HeimIconProvider {
+public fun interface HeimIconProvider {
     @Composable
-    fun RenderIcon(name: String, tint: Color, size: Dp, modifier: Modifier)
+    public fun RenderIcon(name: String, tint: Color, size: Dp, modifier: Modifier)
 }
 
-val LocalHeimIconProvider = staticCompositionLocalOf<HeimIconProvider> {
+public val LocalHeimIconProvider: ProvidableCompositionLocal<HeimIconProvider> =
+    staticCompositionLocalOf {
     DefaultHeimIconProvider
 }
 
-object DefaultHeimIconProvider : HeimIconProvider {
+public object DefaultHeimIconProvider : HeimIconProvider {
+
+    /** Names this provider can draw; anything else falls back and is reported. */
+    public val supportedNames: Set<String> = setOf(
+        "check", "done", "close", "clear", "star", "favorite", "heart", "search",
+        "add", "plus", "arrow_back", "back", "chevron_left",
+        "arrow_forward", "forward", "chevron_right",
+        "info", "settings", "person", "user", "home"
+    )
 
     @Composable
     override fun RenderIcon(name: String, tint: Color, size: Dp, modifier: Modifier) {
-        val cleanName = name.lowercase().trim()
+        val cleanName = remember(name) { name.lowercase().trim() }
+        val telemetry = LocalHeimTelemetryObserver.current
+
+        LaunchedEffect(cleanName) {
+            if (cleanName !in supportedNames) {
+                // An icon name the server misspelled used to render as "info" with no signal.
+                telemetry.onEvent(HeimTelemetryEvent.IconMissing(cleanName))
+            }
+        }
 
         Box(
             modifier = modifier.size(size),

@@ -1,47 +1,82 @@
 package io.heimui.core.domain.model.action
 
-sealed interface HeimAction
+import io.heimui.core.domain.model.HeimValue
+import io.heimui.core.domain.model.component.HeimComponent
 
-data class NavigateAction(
+public sealed interface HeimAction {
+    /**
+     * Stable identifier for telemetry.
+     *
+     * `action::class.simpleName` is obfuscated by R8 in release builds, so action analytics
+     * collected in production would be unreadable without this.
+     */
+    public val telemetryName: String
+}
+
+public data class NavigateAction(
     val screenId: String,
     val params: Map<String, String> = emptyMap()
-) : HeimAction
+) : HeimAction {
+    override val telemetryName: String get() = "navigate"
+}
 
-data class SubmitFormAction(
+public data class SubmitFormAction(
     val endpoint: String,
     val method: String = "POST",
-    val payload: Map<String, Any?>? = null
-) : HeimAction
+    val payload: Map<String, HeimValue>? = null
+) : HeimAction {
+    override val telemetryName: String get() = "submit_form"
+}
 
-data class ShowSnackbarAction(
+public data class ShowSnackbarAction(
     val message: String,
     val duration: String = "SHORT"
-) : HeimAction
+) : HeimAction {
+    override val telemetryName: String get() = "show_snackbar"
+}
 
-data class OpenUrlAction(
+public data class OpenUrlAction(
     val url: String
-) : HeimAction
+) : HeimAction {
+    override val telemetryName: String get() = "open_url"
+}
 
-data class CustomAction(
+public data class CustomAction(
     val name: String,
-    val payload: Map<String, Any?>? = null
-) : HeimAction
+    val payload: Map<String, HeimValue>? = null
+) : HeimAction {
+    override val telemetryName: String get() = "custom"
+}
 
-data class ShowBottomSheetAction(
+public data class ShowBottomSheetAction(
     val title: String? = null,
     val isDismissible: Boolean = true,
-    val content: io.heimui.core.domain.model.component.HeimComponent
-) : HeimAction
+    val content: HeimComponent
+) : HeimAction {
+    override val telemetryName: String get() = "show_bottom_sheet"
+}
 
-data class ShowDialogAction(
+public data class ShowDialogAction(
     val title: String,
     val message: String,
     val confirmText: String = "OK",
     val confirmActions: List<HeimAction> = emptyList(),
     val dismissText: String? = null,
     val dismissActions: List<HeimAction> = emptyList()
-) : HeimAction
+) : HeimAction {
+    override val telemetryName: String get() = "show_dialog"
+}
 
-data object DismissModalAction : HeimAction
+public data object DismissModalAction : HeimAction {
+    override val telemetryName: String get() = "dismiss_modal"
+}
 
-data object DismissAction : HeimAction
+public data object DismissAction : HeimAction {
+    override val telemetryName: String get() = "dismiss"
+}
+
+public data class UnknownAction(
+    val originalType: String? = null
+) : HeimAction {
+    override val telemetryName: String get() = "unknown"
+}

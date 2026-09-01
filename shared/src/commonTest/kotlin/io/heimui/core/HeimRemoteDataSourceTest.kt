@@ -97,7 +97,7 @@ class HeimRemoteDataSourceTest {
         val response = dataSource.submitForm(
             endpoint = "/api/v1/checkout",
             method = "POST",
-            payload = mapOf("amount" to 5000)
+            payload = mapOf("amount" to io.heimui.core.domain.model.HeimValue.Num(5000.0))
         )
 
         assertIs<RemoteSubmitResponse.Success>(response)

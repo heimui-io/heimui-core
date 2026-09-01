@@ -11,12 +11,18 @@ kotlin {
     }
 }
 dependencies {
-    implementation(project(":shared"))
+    implementation(project(":demo"))
 
     implementation(libs.androidx.activity.compose)
 
     implementation(libs.compose.uiToolingPreview)
     debugImplementation(libs.compose.uiTooling)
+
+    // Instrumented smoke tests: these run on a device/emulator, against the real Android
+    // runtime. Host tests use the JVM's java.util.regex while Android delegates to ICU, so a
+    // pattern that passes 67 unit tests can still crash at startup on a phone.
+    androidTestImplementation(libs.androidx.testExt.junit)
+    androidTestImplementation(libs.androidx.test.runner)
 }
 
 android {
@@ -29,6 +35,7 @@ android {
         targetSdk = libs.versions.android.targetSdk.get().toInt()
         versionCode = 1
         versionName = "1.0"
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
     packaging {
         resources {
