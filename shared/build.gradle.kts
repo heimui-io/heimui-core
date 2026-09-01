@@ -6,7 +6,11 @@ plugins {
     alias(libs.plugins.composeMultiplatform)
     alias(libs.plugins.composeCompiler)
     alias(libs.plugins.kotlinSerialization)
+    id("maven-publish")
 }
+
+group = "io.heimui"
+version = "0.1.0"
 
 kotlin {
     listOf(
@@ -78,4 +82,31 @@ kotlin {
 
 dependencies {
     androidRuntimeClasspath(libs.compose.uiTooling)
+}
+
+publishing {
+    publications.withType<MavenPublication> {
+        pom {
+            name.set("HeimUI Core")
+            description.set("The extensible Server-Driven UI framework for Kotlin Multiplatform & Compose Multiplatform")
+            url.set("https://github.com/julianvelandia23/heimui-core")
+            licenses {
+                license {
+                    name.set("Apache-2.0")
+                    url.set("https://opensource.org/licenses/Apache-2.0")
+                }
+            }
+            developers {
+                developer {
+                    id.set("julianvelandia")
+                    name.set("Julian Velandia")
+                }
+            }
+            scm {
+                connection.set("scm:git:git://github.com/julianvelandia23/heimui-core.git")
+                developerConnection.set("scm:git:ssh://github.com:julianvelandia23/heimui-core.git")
+                url.set("https://github.com/julianvelandia23/heimui-core")
+            }
+        }
+    }
 }

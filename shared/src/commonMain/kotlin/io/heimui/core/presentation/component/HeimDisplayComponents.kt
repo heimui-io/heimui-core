@@ -1,22 +1,25 @@
 package io.heimui.core.presentation.component
 
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.*
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.painter.BitmapPainter
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import coil3.compose.AsyncImage
 import io.heimui.core.domain.model.action.HeimAction
 import io.heimui.core.domain.model.component.BadgeComponent
 import io.heimui.core.domain.model.component.CardComponent
@@ -26,25 +29,33 @@ import io.heimui.core.domain.model.component.TextComponent
 import io.heimui.core.presentation.HeimRenderer
 import io.heimui.core.presentation.accessibility.heimAccessibility
 import io.heimui.core.presentation.designsystem.HeimTokenResolver
+import io.heimui.core.presentation.designsystem.LocalHeimIconProvider
+import io.heimui.core.presentation.imageloader.LocalHeimImageLoader
 import io.heimui.core.presentation.state.HeimStateManager
-import io.heimui.core.presentation.util.HeimBlurHashDecoder
 
 @Composable
 fun HeimTextRenderer(
     component: TextComponent,
     modifier: Modifier = Modifier
 ) {
-    val typography = MaterialTheme.typography
     val colorScheme = MaterialTheme.colorScheme
+    val typography = MaterialTheme.typography
 
-    val style = HeimTokenResolver.resolveTextStyle(component.style, typography)
-    val color = HeimTokenResolver.resolveColor(component.color, colorScheme, style.color)
+    val textColor = HeimTokenResolver.resolveColor(
+        tokenOrHex = component.color,
+        colorScheme = colorScheme,
+        default = colorScheme.onSurface
+    )
+    val textStyle = HeimTokenResolver.resolveTextStyle(
+        styleName = component.style,
+        typography = typography
+    )
     val textAlign = HeimTokenResolver.resolveTextAlign(component.textAlign)
 
     Text(
         text = component.text,
-        style = style,
-        color = color,
+        color = textColor,
+        style = textStyle,
         textAlign = textAlign,
         maxLines = component.maxLines ?: Int.MAX_VALUE,
         overflow = if (component.maxLines != null) TextOverflow.Ellipsis else TextOverflow.Clip,
@@ -57,7 +68,7 @@ fun HeimImageRenderer(
     component: ImageComponent,
     modifier: Modifier = Modifier
 ) {
-    val imageLoader = io.heimui.core.presentation.imageloader.LocalHeimImageLoader.current
+    val imageLoader = LocalHeimImageLoader.current
     val contentScale = HeimTokenResolver.resolveContentScale(component.contentScale)
 
     imageLoader.RenderImage(
@@ -172,7 +183,7 @@ fun HeimIconRenderer(
         colorScheme.onSurface
     )
 
-    val iconProvider = io.heimui.core.presentation.designsystem.LocalHeimIconProvider.current
+    val iconProvider = LocalHeimIconProvider.current
     iconProvider.RenderIcon(
         name = component.name,
         tint = tint,

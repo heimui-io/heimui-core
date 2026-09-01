@@ -11,19 +11,22 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import io.heimui.core.domain.model.action.HeimAction
 import io.heimui.core.domain.model.component.CustomComponent
 import io.heimui.core.domain.model.component.UnknownComponent
 import io.heimui.core.presentation.accessibility.heimAccessibility
+import io.heimui.core.presentation.registry.LocalHeimCustomComponentRegistry
+import io.heimui.core.presentation.state.HeimStateManager
 
 @Composable
 fun HeimCustomRenderer(
     component: CustomComponent,
-    stateManager: io.heimui.core.presentation.state.HeimStateManager,
-    onAction: (io.heimui.core.domain.model.action.HeimAction) -> Unit,
+    stateManager: HeimStateManager,
+    onAction: (HeimAction) -> Unit,
     customRenderer: (@Composable (CustomComponent) -> Unit)?,
     modifier: Modifier = Modifier
 ) {
-    val registryRenderer = io.heimui.core.presentation.registry.LocalHeimCustomComponentRegistry.current.getRenderer(component.name)
+    val registryRenderer = LocalHeimCustomComponentRegistry.current.getRenderer(component.name)
 
     if (customRenderer != null) {
         customRenderer(component)

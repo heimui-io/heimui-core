@@ -1,7 +1,16 @@
 package io.heimui.core.presentation.component
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.material3.DividerDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
@@ -10,7 +19,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import io.heimui.core.domain.model.action.HeimAction
-import io.heimui.core.domain.model.component.*
+import io.heimui.core.domain.model.component.BoxComponent
+import io.heimui.core.domain.model.component.ContainerComponent
+import io.heimui.core.domain.model.component.Direction
+import io.heimui.core.domain.model.component.DividerComponent
+import io.heimui.core.domain.model.component.SpacerComponent
 import io.heimui.core.presentation.HeimRenderer
 import io.heimui.core.presentation.accessibility.heimAccessibility
 import io.heimui.core.presentation.designsystem.HeimTokenResolver

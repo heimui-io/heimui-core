@@ -36,6 +36,14 @@ class HeimStateManager(
 
     fun getValue(key: String): String = _formState.value[key] ?: ""
 
+    fun getAllValues(): Map<String, String> = _formState.value
+
+    fun restoreDraft(draft: Map<String, String>) {
+        val updated = _formState.value + draft
+        _formState.value = updated
+        storage?.save(screenId, updated)
+    }
+
     fun interpolatePayload(payload: Map<String, Any?>?): Map<String, Any?>? {
         if (payload == null) return null
         val newMap = mutableMapOf<String, Any?>()

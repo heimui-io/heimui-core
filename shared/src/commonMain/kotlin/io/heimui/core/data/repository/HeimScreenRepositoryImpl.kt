@@ -1,10 +1,13 @@
 package io.heimui.core.data.repository
 
 import io.heimui.core.data.datasource.local.HeimCacheDataSource
+import io.heimui.core.data.datasource.local.HeimEmergencyBundleProvider
 import io.heimui.core.data.datasource.remote.HeimRemoteDataSource
 import io.heimui.core.data.datasource.remote.RemoteScreenResponse
 import io.heimui.core.data.datasource.remote.RemoteSubmitResponse
 import io.heimui.core.data.mapper.toDomain
+import io.heimui.core.data.security.DefaultHeimSignatureVerifier
+import io.heimui.core.data.security.HeimSignatureVerifier
 import io.heimui.core.domain.repository.HeimScreenRepository
 import io.heimui.core.domain.repository.HeimScreenResult
 import io.heimui.core.domain.repository.HeimSubmitResult
@@ -13,7 +16,11 @@ import kotlinx.coroutines.flow.flow
 
 class HeimScreenRepositoryImpl(
     private val remoteDataSource: HeimRemoteDataSource,
-    private val cacheDataSource: HeimCacheDataSource
+    private val cacheDataSource: HeimCacheDataSource,
+    private val signatureVerifier: HeimSignatureVerifier = DefaultHeimSignatureVerifier(),
+    private val emergencyBundleProvider: HeimEmergencyBundleProvider? = null,
+    private val verifySignatures: Boolean = false,
+    private val publicKey: String? = null
 ) : HeimScreenRepository {
 
     override fun getScreen(
@@ -27,6 +34,17 @@ class HeimScreenRepositoryImpl(
 
         when (val remoteResponse = remoteDataSource.fetchScreen(screenId, queryParams, cachedEntry?.etag)) {
             is RemoteScreenResponse.Success -> {
+                if (verifySignatures) {
+                    val isValid = signatureVerifier.verify(
+                        payload = remoteResponse.screen.id,
+                        signature = remoteResponse.screen.signature,
+                        publicKey = publicKey
+                    )
+                    if (!isValid) {
+                        emit(HeimScreenResult.Error(message = "Security verification failed: payload signature invalid"))
+                        return@flow
+                    }
+                }
                 cacheDataSource.saveScreen(screenId, remoteResponse.screen, remoteResponse.etag)
                 emit(HeimScreenResult.Success(screen = remoteResponse.screen.toDomain(), isStale = false))
             }
@@ -37,7 +55,12 @@ class HeimScreenRepositoryImpl(
             }
             is RemoteScreenResponse.Error -> {
                 if (cachedEntry == null) {
-                    emit(HeimScreenResult.Error(message = remoteResponse.message))
+                    val emergency = emergencyBundleProvider?.getEmergencyScreen(screenId)
+                    if (emergency != null) {
+                        emit(HeimScreenResult.Success(screen = emergency.toDomain(), isStale = true))
+                    } else {
+                        emit(HeimScreenResult.Error(message = remoteResponse.message))
+                    }
                 }
             }
         }
