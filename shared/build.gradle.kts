@@ -6,7 +6,9 @@ plugins {
     alias(libs.plugins.composeMultiplatform)
     alias(libs.plugins.composeCompiler)
     alias(libs.plugins.kotlinSerialization)
-    id("maven-publish")
+    alias(libs.plugins.dokka)
+    alias(libs.plugins.mavenPublish)
+    id("signing")
 }
 
 group = "io.heimui"
@@ -160,31 +162,46 @@ run {
     }
 }
 
-publishing {
-    publications.withType<MavenPublication> {
-        artifactId = artifactId.replace("shared", "heimui-core")
-        pom {
-            name.set("HeimUI Core")
-            description.set("Engine for Server-Driven UI in Kotlin Multiplatform & Compose")
-            url.set("https://github.com/heimui-io/heimui-core")
-            licenses {
-                license {
-                    name.set("Apache-2.0")
-                    url.set("https://www.apache.org/licenses/LICENSE-2.0.txt")
-                }
-            }
-            developers {
-                developer {
-                    id.set("julianvelandia")
-                    name.set("Julian Velandia")
-                    organization.set("HeimUI")
-                }
-            }
-            scm {
-                connection.set("scm:git:git://github.com/heimui-io/heimui-core.git")
-                developerConnection.set("scm:git:ssh://github.com:heimui-io/heimui-core.git")
-                url.set("https://github.com/heimui-io/heimui-core")
+mavenPublishing {
+    // Central Portal, not the retired OSSRH endpoint.
+    publishToMavenCentral()
+
+    // Central rejects unsigned artifacts.
+    signAllPublications()
+
+    // Without this, artifacts would be named after the Gradle module, which is `shared`.
+    coordinates("io.heimui", "heimui-core", version.toString())
+
+    pom {
+        name.set("HeimUI Core")
+        description.set("Engine for Server-Driven UI in Kotlin Multiplatform & Compose")
+        url.set("https://github.com/heimui-io/heimui-core")
+        inceptionYear.set("2026")
+        licenses {
+            license {
+                name.set("Apache-2.0")
+                url.set("https://www.apache.org/licenses/LICENSE-2.0.txt")
             }
         }
+        developers {
+            developer {
+                id.set("julianvelandia")
+                name.set("Julian Velandia")
+                organization.set("HeimUI")
+            }
+        }
+        scm {
+            connection.set("scm:git:git://github.com/heimui-io/heimui-core.git")
+            developerConnection.set("scm:git:ssh://github.com:heimui-io/heimui-core.git")
+            url.set("https://github.com/heimui-io/heimui-core")
+        }
     }
+}
+
+// Sign by shelling out to `gpg` rather than handing Gradle the key material: the private key stays
+// in the local keyring, and only its id and passphrase live in ~/.gradle/gradle.properties, which
+// is outside the repo. Without this line the signing plugin finds no signatory and every
+// `sign*Publication` task fails, because `signing.gnupg.*` is only read in gpg-command mode.
+signing {
+    useGpgCmd()
 }
