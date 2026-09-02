@@ -246,4 +246,22 @@ class HeimSecurityAndResilienceTest {
         assertEquals("Invalid value", field.validationRules.single().errorMessage)
     }
 
+    @Test
+    fun `an unknown component keeps its original type for telemetry`() {
+        // The type is preserved rather than discarded, which is what lets the backend team learn
+        // *which* component this client could not render. Whether it is also drawn is a separate
+        // decision — see HeimTheme's showDiagnostics, which is off outside development so a user
+        // is never shown a red box and an internal id.
+        val screen = HeimJson.decodeScreen(
+            """{"id":"s","root":{"type":"container","id":"c","children":[
+                 {"type":"hologram","id":"h1"}]}}"""
+        ).toDomain()
+
+        val unknown = assertIs<UnknownComponent>(
+            assertIs<ContainerComponent>(screen.root).children.single()
+        )
+        assertEquals("hologram", unknown.originalType)
+        assertEquals("h1", unknown.id)
+    }
+
 }
