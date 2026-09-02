@@ -50,5 +50,5 @@ tasks.register("publishLocal") {
 tasks.register("verify") {
     group = "verification"
     description = "Run the full test suite and the binary-compatibility check."
-    dependsOn(":shared:allTests", "apiCheck")
+    dependsOn(":shared:allTests", ":shared:apiCheck")
 }
