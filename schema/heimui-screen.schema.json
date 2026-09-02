@@ -366,6 +366,21 @@
           "then": {
             "$ref": "#/$defs/chip"
           }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "rich_text"
+              }
+            },
+            "required": [
+              "type"
+            ]
+          },
+          "then": {
+            "$ref": "#/$defs/rich_text"
+          }
         }
       ]
     },
@@ -2354,6 +2369,94 @@
           "items": {
             "$ref": "#/$defs/action"
           }
+        }
+      }
+    },
+    "rich_text": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "type",
+        "spans"
+      ],
+      "description": "Text made of styled runs, so one paragraph can mix weights, colours and links. This is the component for 'I accept the [terms and conditions]' with only the bracketed part linked — splitting that into three components puts a line break where the sentence should flow. There is no HTML: a fixed set of span properties, because handing a payload a markup renderer is handing it a capability you cannot take back.",
+      "properties": {
+        "type": {
+          "const": "rich_text"
+        },
+        "id": {
+          "type": "string"
+        },
+        "visible_if": {
+          "type": "string"
+        },
+        "a11y": {
+          "$ref": "#/$defs/accessibility"
+        },
+        "weight": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "description": "Share of the parent container's main axis. Two children with weight 1 split a row in half; 2 and 1 split it two thirds to one third. Any component may carry it. Ignored unless the parent is a `container`, and ignored inside a scrolling container — a scrolling axis is unbounded, so there is nothing to divide."
+        },
+        "frame": {
+          "$ref": "#/$defs/frame"
+        },
+        "spans": {
+          "type": "array",
+          "minItems": 1,
+          "description": "Runs, rendered in order as one paragraph.",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "text"
+            ],
+            "properties": {
+              "text": {
+                "type": "string"
+              },
+              "style": {
+                "type": "string",
+                "description": "Overrides the paragraph style for this run."
+              },
+              "color": {
+                "type": "string",
+                "description": "Design token or #RRGGBB. Ignored on a linked run, which uses the theme's link colour."
+              },
+              "weight": {
+                "type": "string",
+                "description": "thin | light | normal | medium | semibold | bold | black, or 100-900."
+              },
+              "url": {
+                "type": "string",
+                "description": "Makes the run a link. Opened through the same HeimUrlLauncher and scheme policy as `open_url` — a link inside a paragraph is not a way around the allow-list."
+              }
+            }
+          }
+        },
+        "style": {
+          "type": "string",
+          "default": "bodyMedium",
+          "description": "Base style every span inherits unless it overrides it."
+        },
+        "color": {
+          "type": "string"
+        },
+        "align": {
+          "type": "string",
+          "enum": [
+            "START",
+            "CENTER",
+            "END",
+            "JUSTIFY"
+          ],
+          "default": "START"
+        },
+        "max_lines": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 0,
+          "description": "0 is unlimited."
         }
       }
     }

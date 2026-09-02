@@ -1704,6 +1704,44 @@ final class io.heimui.core.data.dto/HeimScreenResponseDto { // io.heimui.core.da
     }
 }
 
+final class io.heimui.core.data.dto/HeimTextSpanDto { // io.heimui.core.data.dto/HeimTextSpanDto|null[0]
+    constructor <init>(kotlin/String = ..., kotlin/String? = ..., kotlin/String? = ..., kotlin/String? = ..., kotlin/String? = ...) // io.heimui.core.data.dto/HeimTextSpanDto.<init>|<init>(kotlin.String;kotlin.String?;kotlin.String?;kotlin.String?;kotlin.String?){}[0]
+
+    final val color // io.heimui.core.data.dto/HeimTextSpanDto.color|{}color[0]
+        final fun <get-color>(): kotlin/String? // io.heimui.core.data.dto/HeimTextSpanDto.color.<get-color>|<get-color>(){}[0]
+    final val style // io.heimui.core.data.dto/HeimTextSpanDto.style|{}style[0]
+        final fun <get-style>(): kotlin/String? // io.heimui.core.data.dto/HeimTextSpanDto.style.<get-style>|<get-style>(){}[0]
+    final val text // io.heimui.core.data.dto/HeimTextSpanDto.text|{}text[0]
+        final fun <get-text>(): kotlin/String // io.heimui.core.data.dto/HeimTextSpanDto.text.<get-text>|<get-text>(){}[0]
+    final val url // io.heimui.core.data.dto/HeimTextSpanDto.url|{}url[0]
+        final fun <get-url>(): kotlin/String? // io.heimui.core.data.dto/HeimTextSpanDto.url.<get-url>|<get-url>(){}[0]
+    final val weight // io.heimui.core.data.dto/HeimTextSpanDto.weight|{}weight[0]
+        final fun <get-weight>(): kotlin/String? // io.heimui.core.data.dto/HeimTextSpanDto.weight.<get-weight>|<get-weight>(){}[0]
+
+    final fun component1(): kotlin/String // io.heimui.core.data.dto/HeimTextSpanDto.component1|component1(){}[0]
+    final fun component2(): kotlin/String? // io.heimui.core.data.dto/HeimTextSpanDto.component2|component2(){}[0]
+    final fun component3(): kotlin/String? // io.heimui.core.data.dto/HeimTextSpanDto.component3|component3(){}[0]
+    final fun component4(): kotlin/String? // io.heimui.core.data.dto/HeimTextSpanDto.component4|component4(){}[0]
+    final fun component5(): kotlin/String? // io.heimui.core.data.dto/HeimTextSpanDto.component5|component5(){}[0]
+    final fun copy(kotlin/String = ..., kotlin/String? = ..., kotlin/String? = ..., kotlin/String? = ..., kotlin/String? = ...): io.heimui.core.data.dto/HeimTextSpanDto // io.heimui.core.data.dto/HeimTextSpanDto.copy|copy(kotlin.String;kotlin.String?;kotlin.String?;kotlin.String?;kotlin.String?){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // io.heimui.core.data.dto/HeimTextSpanDto.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // io.heimui.core.data.dto/HeimTextSpanDto.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // io.heimui.core.data.dto/HeimTextSpanDto.toString|toString(){}[0]
+
+    final object $serializer : kotlinx.serialization.internal/GeneratedSerializer<io.heimui.core.data.dto/HeimTextSpanDto> { // io.heimui.core.data.dto/HeimTextSpanDto.$serializer|null[0]
+        final val descriptor // io.heimui.core.data.dto/HeimTextSpanDto.$serializer.descriptor|{}descriptor[0]
+            final fun <get-descriptor>(): kotlinx.serialization.descriptors/SerialDescriptor // io.heimui.core.data.dto/HeimTextSpanDto.$serializer.descriptor.<get-descriptor>|<get-descriptor>(){}[0]
+
+        final fun childSerializers(): kotlin/Array<kotlinx.serialization/KSerializer<*>> // io.heimui.core.data.dto/HeimTextSpanDto.$serializer.childSerializers|childSerializers(){}[0]
+        final fun deserialize(kotlinx.serialization.encoding/Decoder): io.heimui.core.data.dto/HeimTextSpanDto // io.heimui.core.data.dto/HeimTextSpanDto.$serializer.deserialize|deserialize(kotlinx.serialization.encoding.Decoder){}[0]
+        final fun serialize(kotlinx.serialization.encoding/Encoder, io.heimui.core.data.dto/HeimTextSpanDto) // io.heimui.core.data.dto/HeimTextSpanDto.$serializer.serialize|serialize(kotlinx.serialization.encoding.Encoder;io.heimui.core.data.dto.HeimTextSpanDto){}[0]
+    }
+
+    final object Companion { // io.heimui.core.data.dto/HeimTextSpanDto.Companion|null[0]
+        final fun serializer(): kotlinx.serialization/KSerializer<io.heimui.core.data.dto/HeimTextSpanDto> // io.heimui.core.data.dto/HeimTextSpanDto.Companion.serializer|serializer(){}[0]
+    }
+}
+
 final class io.heimui.core.data.dto/IconComponentDto : io.heimui.core.data.dto/HeimComponentDto { // io.heimui.core.data.dto/IconComponentDto|null[0]
     constructor <init>(kotlin/String = ..., kotlin/String? = ..., io.heimui.core.data.dto/HeimAccessibilityDto? = ..., kotlin/Float? = ..., io.heimui.core.domain.model.component/HeimSize = ..., kotlin/String = ..., kotlin/String? = ..., kotlin/Int = ...) // io.heimui.core.data.dto/IconComponentDto.<init>|<init>(kotlin.String;kotlin.String?;io.heimui.core.data.dto.HeimAccessibilityDto?;kotlin.Float?;io.heimui.core.domain.model.component.HeimSize;kotlin.String;kotlin.String?;kotlin.Int){}[0]
 
@@ -2080,6 +2118,61 @@ final class io.heimui.core.data.dto/RadioGroupComponentDto : io.heimui.core.data
         final val $childSerializers // io.heimui.core.data.dto/RadioGroupComponentDto.Companion.$childSerializers|{}$childSerializers[0]
 
         final fun serializer(): kotlinx.serialization/KSerializer<io.heimui.core.data.dto/RadioGroupComponentDto> // io.heimui.core.data.dto/RadioGroupComponentDto.Companion.serializer|serializer(){}[0]
+    }
+}
+
+final class io.heimui.core.data.dto/RichTextComponentDto : io.heimui.core.data.dto/HeimComponentDto { // io.heimui.core.data.dto/RichTextComponentDto|null[0]
+    constructor <init>(kotlin/String = ..., kotlin/String? = ..., io.heimui.core.data.dto/HeimAccessibilityDto? = ..., kotlin/Float? = ..., io.heimui.core.domain.model.component/HeimSize = ..., kotlin.collections/List<io.heimui.core.data.dto/HeimTextSpanDto> = ..., kotlin/String = ..., kotlin/String? = ..., io.heimui.core.data.dto/TextAlignDto = ..., kotlin/Int = ...) // io.heimui.core.data.dto/RichTextComponentDto.<init>|<init>(kotlin.String;kotlin.String?;io.heimui.core.data.dto.HeimAccessibilityDto?;kotlin.Float?;io.heimui.core.domain.model.component.HeimSize;kotlin.collections.List<io.heimui.core.data.dto.HeimTextSpanDto>;kotlin.String;kotlin.String?;io.heimui.core.data.dto.TextAlignDto;kotlin.Int){}[0]
+
+    final val a11y // io.heimui.core.data.dto/RichTextComponentDto.a11y|{}a11y[0]
+        final fun <get-a11y>(): io.heimui.core.data.dto/HeimAccessibilityDto? // io.heimui.core.data.dto/RichTextComponentDto.a11y.<get-a11y>|<get-a11y>(){}[0]
+    final val align // io.heimui.core.data.dto/RichTextComponentDto.align|{}align[0]
+        final fun <get-align>(): io.heimui.core.data.dto/TextAlignDto // io.heimui.core.data.dto/RichTextComponentDto.align.<get-align>|<get-align>(){}[0]
+    final val color // io.heimui.core.data.dto/RichTextComponentDto.color|{}color[0]
+        final fun <get-color>(): kotlin/String? // io.heimui.core.data.dto/RichTextComponentDto.color.<get-color>|<get-color>(){}[0]
+    final val frame // io.heimui.core.data.dto/RichTextComponentDto.frame|{}frame[0]
+        final fun <get-frame>(): io.heimui.core.domain.model.component/HeimSize // io.heimui.core.data.dto/RichTextComponentDto.frame.<get-frame>|<get-frame>(){}[0]
+    final val id // io.heimui.core.data.dto/RichTextComponentDto.id|{}id[0]
+        final fun <get-id>(): kotlin/String // io.heimui.core.data.dto/RichTextComponentDto.id.<get-id>|<get-id>(){}[0]
+    final val maxLines // io.heimui.core.data.dto/RichTextComponentDto.maxLines|{}maxLines[0]
+        final fun <get-maxLines>(): kotlin/Int // io.heimui.core.data.dto/RichTextComponentDto.maxLines.<get-maxLines>|<get-maxLines>(){}[0]
+    final val spans // io.heimui.core.data.dto/RichTextComponentDto.spans|{}spans[0]
+        final fun <get-spans>(): kotlin.collections/List<io.heimui.core.data.dto/HeimTextSpanDto> // io.heimui.core.data.dto/RichTextComponentDto.spans.<get-spans>|<get-spans>(){}[0]
+    final val style // io.heimui.core.data.dto/RichTextComponentDto.style|{}style[0]
+        final fun <get-style>(): kotlin/String // io.heimui.core.data.dto/RichTextComponentDto.style.<get-style>|<get-style>(){}[0]
+    final val visibleIf // io.heimui.core.data.dto/RichTextComponentDto.visibleIf|{}visibleIf[0]
+        final fun <get-visibleIf>(): kotlin/String? // io.heimui.core.data.dto/RichTextComponentDto.visibleIf.<get-visibleIf>|<get-visibleIf>(){}[0]
+    final val weight // io.heimui.core.data.dto/RichTextComponentDto.weight|{}weight[0]
+        final fun <get-weight>(): kotlin/Float? // io.heimui.core.data.dto/RichTextComponentDto.weight.<get-weight>|<get-weight>(){}[0]
+
+    final fun component1(): kotlin/String // io.heimui.core.data.dto/RichTextComponentDto.component1|component1(){}[0]
+    final fun component10(): kotlin/Int // io.heimui.core.data.dto/RichTextComponentDto.component10|component10(){}[0]
+    final fun component2(): kotlin/String? // io.heimui.core.data.dto/RichTextComponentDto.component2|component2(){}[0]
+    final fun component3(): io.heimui.core.data.dto/HeimAccessibilityDto? // io.heimui.core.data.dto/RichTextComponentDto.component3|component3(){}[0]
+    final fun component4(): kotlin/Float? // io.heimui.core.data.dto/RichTextComponentDto.component4|component4(){}[0]
+    final fun component5(): io.heimui.core.domain.model.component/HeimSize // io.heimui.core.data.dto/RichTextComponentDto.component5|component5(){}[0]
+    final fun component6(): kotlin.collections/List<io.heimui.core.data.dto/HeimTextSpanDto> // io.heimui.core.data.dto/RichTextComponentDto.component6|component6(){}[0]
+    final fun component7(): kotlin/String // io.heimui.core.data.dto/RichTextComponentDto.component7|component7(){}[0]
+    final fun component8(): kotlin/String? // io.heimui.core.data.dto/RichTextComponentDto.component8|component8(){}[0]
+    final fun component9(): io.heimui.core.data.dto/TextAlignDto // io.heimui.core.data.dto/RichTextComponentDto.component9|component9(){}[0]
+    final fun copy(kotlin/String = ..., kotlin/String? = ..., io.heimui.core.data.dto/HeimAccessibilityDto? = ..., kotlin/Float? = ..., io.heimui.core.domain.model.component/HeimSize = ..., kotlin.collections/List<io.heimui.core.data.dto/HeimTextSpanDto> = ..., kotlin/String = ..., kotlin/String? = ..., io.heimui.core.data.dto/TextAlignDto = ..., kotlin/Int = ...): io.heimui.core.data.dto/RichTextComponentDto // io.heimui.core.data.dto/RichTextComponentDto.copy|copy(kotlin.String;kotlin.String?;io.heimui.core.data.dto.HeimAccessibilityDto?;kotlin.Float?;io.heimui.core.domain.model.component.HeimSize;kotlin.collections.List<io.heimui.core.data.dto.HeimTextSpanDto>;kotlin.String;kotlin.String?;io.heimui.core.data.dto.TextAlignDto;kotlin.Int){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // io.heimui.core.data.dto/RichTextComponentDto.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // io.heimui.core.data.dto/RichTextComponentDto.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // io.heimui.core.data.dto/RichTextComponentDto.toString|toString(){}[0]
+
+    final object $serializer : kotlinx.serialization.internal/GeneratedSerializer<io.heimui.core.data.dto/RichTextComponentDto> { // io.heimui.core.data.dto/RichTextComponentDto.$serializer|null[0]
+        final val descriptor // io.heimui.core.data.dto/RichTextComponentDto.$serializer.descriptor|{}descriptor[0]
+            final fun <get-descriptor>(): kotlinx.serialization.descriptors/SerialDescriptor // io.heimui.core.data.dto/RichTextComponentDto.$serializer.descriptor.<get-descriptor>|<get-descriptor>(){}[0]
+
+        final fun childSerializers(): kotlin/Array<kotlinx.serialization/KSerializer<*>> // io.heimui.core.data.dto/RichTextComponentDto.$serializer.childSerializers|childSerializers(){}[0]
+        final fun deserialize(kotlinx.serialization.encoding/Decoder): io.heimui.core.data.dto/RichTextComponentDto // io.heimui.core.data.dto/RichTextComponentDto.$serializer.deserialize|deserialize(kotlinx.serialization.encoding.Decoder){}[0]
+        final fun serialize(kotlinx.serialization.encoding/Encoder, io.heimui.core.data.dto/RichTextComponentDto) // io.heimui.core.data.dto/RichTextComponentDto.$serializer.serialize|serialize(kotlinx.serialization.encoding.Encoder;io.heimui.core.data.dto.RichTextComponentDto){}[0]
+    }
+
+    final object Companion { // io.heimui.core.data.dto/RichTextComponentDto.Companion|null[0]
+        final val $childSerializers // io.heimui.core.data.dto/RichTextComponentDto.Companion.$childSerializers|{}$childSerializers[0]
+
+        final fun serializer(): kotlinx.serialization/KSerializer<io.heimui.core.data.dto/RichTextComponentDto> // io.heimui.core.data.dto/RichTextComponentDto.Companion.serializer|serializer(){}[0]
     }
 }
 
@@ -3453,6 +3546,31 @@ final class io.heimui.core.domain.model.component/HeimSize { // io.heimui.core.d
     }
 }
 
+final class io.heimui.core.domain.model.component/HeimTextSpan { // io.heimui.core.domain.model.component/HeimTextSpan|null[0]
+    constructor <init>(kotlin/String, kotlin/String? = ..., kotlin/String? = ..., kotlin/String? = ..., kotlin/String? = ...) // io.heimui.core.domain.model.component/HeimTextSpan.<init>|<init>(kotlin.String;kotlin.String?;kotlin.String?;kotlin.String?;kotlin.String?){}[0]
+
+    final val color // io.heimui.core.domain.model.component/HeimTextSpan.color|{}color[0]
+        final fun <get-color>(): kotlin/String? // io.heimui.core.domain.model.component/HeimTextSpan.color.<get-color>|<get-color>(){}[0]
+    final val style // io.heimui.core.domain.model.component/HeimTextSpan.style|{}style[0]
+        final fun <get-style>(): kotlin/String? // io.heimui.core.domain.model.component/HeimTextSpan.style.<get-style>|<get-style>(){}[0]
+    final val text // io.heimui.core.domain.model.component/HeimTextSpan.text|{}text[0]
+        final fun <get-text>(): kotlin/String // io.heimui.core.domain.model.component/HeimTextSpan.text.<get-text>|<get-text>(){}[0]
+    final val url // io.heimui.core.domain.model.component/HeimTextSpan.url|{}url[0]
+        final fun <get-url>(): kotlin/String? // io.heimui.core.domain.model.component/HeimTextSpan.url.<get-url>|<get-url>(){}[0]
+    final val weight // io.heimui.core.domain.model.component/HeimTextSpan.weight|{}weight[0]
+        final fun <get-weight>(): kotlin/String? // io.heimui.core.domain.model.component/HeimTextSpan.weight.<get-weight>|<get-weight>(){}[0]
+
+    final fun component1(): kotlin/String // io.heimui.core.domain.model.component/HeimTextSpan.component1|component1(){}[0]
+    final fun component2(): kotlin/String? // io.heimui.core.domain.model.component/HeimTextSpan.component2|component2(){}[0]
+    final fun component3(): kotlin/String? // io.heimui.core.domain.model.component/HeimTextSpan.component3|component3(){}[0]
+    final fun component4(): kotlin/String? // io.heimui.core.domain.model.component/HeimTextSpan.component4|component4(){}[0]
+    final fun component5(): kotlin/String? // io.heimui.core.domain.model.component/HeimTextSpan.component5|component5(){}[0]
+    final fun copy(kotlin/String = ..., kotlin/String? = ..., kotlin/String? = ..., kotlin/String? = ..., kotlin/String? = ...): io.heimui.core.domain.model.component/HeimTextSpan // io.heimui.core.domain.model.component/HeimTextSpan.copy|copy(kotlin.String;kotlin.String?;kotlin.String?;kotlin.String?;kotlin.String?){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // io.heimui.core.domain.model.component/HeimTextSpan.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // io.heimui.core.domain.model.component/HeimTextSpan.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // io.heimui.core.domain.model.component/HeimTextSpan.toString|toString(){}[0]
+}
+
 final class io.heimui.core.domain.model.component/IconComponent : io.heimui.core.domain.model.component/HeimComponent { // io.heimui.core.domain.model.component/IconComponent|null[0]
     constructor <init>(kotlin/String, kotlin/String? = ..., io.heimui.core.domain.model.accessibility/HeimAccessibility? = ..., kotlin/Float? = ..., io.heimui.core.domain.model.component/HeimSize = ..., kotlin/String, kotlin/String? = ..., kotlin/Int = ...) // io.heimui.core.domain.model.component/IconComponent.<init>|<init>(kotlin.String;kotlin.String?;io.heimui.core.domain.model.accessibility.HeimAccessibility?;kotlin.Float?;io.heimui.core.domain.model.component.HeimSize;kotlin.String;kotlin.String?;kotlin.Int){}[0]
 
@@ -3679,6 +3797,46 @@ final class io.heimui.core.domain.model.component/RadioGroupComponent : io.heimu
     final fun equals(kotlin/Any?): kotlin/Boolean // io.heimui.core.domain.model.component/RadioGroupComponent.equals|equals(kotlin.Any?){}[0]
     final fun hashCode(): kotlin/Int // io.heimui.core.domain.model.component/RadioGroupComponent.hashCode|hashCode(){}[0]
     final fun toString(): kotlin/String // io.heimui.core.domain.model.component/RadioGroupComponent.toString|toString(){}[0]
+}
+
+final class io.heimui.core.domain.model.component/RichTextComponent : io.heimui.core.domain.model.component/HeimComponent { // io.heimui.core.domain.model.component/RichTextComponent|null[0]
+    constructor <init>(kotlin/String, kotlin/String? = ..., io.heimui.core.domain.model.accessibility/HeimAccessibility? = ..., kotlin/Float? = ..., io.heimui.core.domain.model.component/HeimSize = ..., kotlin.collections/List<io.heimui.core.domain.model.component/HeimTextSpan> = ..., kotlin/String = ..., kotlin/String? = ..., io.heimui.core.domain.model.component/TextAlign = ..., kotlin/Int = ...) // io.heimui.core.domain.model.component/RichTextComponent.<init>|<init>(kotlin.String;kotlin.String?;io.heimui.core.domain.model.accessibility.HeimAccessibility?;kotlin.Float?;io.heimui.core.domain.model.component.HeimSize;kotlin.collections.List<io.heimui.core.domain.model.component.HeimTextSpan>;kotlin.String;kotlin.String?;io.heimui.core.domain.model.component.TextAlign;kotlin.Int){}[0]
+
+    final val a11y // io.heimui.core.domain.model.component/RichTextComponent.a11y|{}a11y[0]
+        final fun <get-a11y>(): io.heimui.core.domain.model.accessibility/HeimAccessibility? // io.heimui.core.domain.model.component/RichTextComponent.a11y.<get-a11y>|<get-a11y>(){}[0]
+    final val align // io.heimui.core.domain.model.component/RichTextComponent.align|{}align[0]
+        final fun <get-align>(): io.heimui.core.domain.model.component/TextAlign // io.heimui.core.domain.model.component/RichTextComponent.align.<get-align>|<get-align>(){}[0]
+    final val color // io.heimui.core.domain.model.component/RichTextComponent.color|{}color[0]
+        final fun <get-color>(): kotlin/String? // io.heimui.core.domain.model.component/RichTextComponent.color.<get-color>|<get-color>(){}[0]
+    final val frame // io.heimui.core.domain.model.component/RichTextComponent.frame|{}frame[0]
+        final fun <get-frame>(): io.heimui.core.domain.model.component/HeimSize // io.heimui.core.domain.model.component/RichTextComponent.frame.<get-frame>|<get-frame>(){}[0]
+    final val id // io.heimui.core.domain.model.component/RichTextComponent.id|{}id[0]
+        final fun <get-id>(): kotlin/String // io.heimui.core.domain.model.component/RichTextComponent.id.<get-id>|<get-id>(){}[0]
+    final val maxLines // io.heimui.core.domain.model.component/RichTextComponent.maxLines|{}maxLines[0]
+        final fun <get-maxLines>(): kotlin/Int // io.heimui.core.domain.model.component/RichTextComponent.maxLines.<get-maxLines>|<get-maxLines>(){}[0]
+    final val spans // io.heimui.core.domain.model.component/RichTextComponent.spans|{}spans[0]
+        final fun <get-spans>(): kotlin.collections/List<io.heimui.core.domain.model.component/HeimTextSpan> // io.heimui.core.domain.model.component/RichTextComponent.spans.<get-spans>|<get-spans>(){}[0]
+    final val style // io.heimui.core.domain.model.component/RichTextComponent.style|{}style[0]
+        final fun <get-style>(): kotlin/String // io.heimui.core.domain.model.component/RichTextComponent.style.<get-style>|<get-style>(){}[0]
+    final val visibleIf // io.heimui.core.domain.model.component/RichTextComponent.visibleIf|{}visibleIf[0]
+        final fun <get-visibleIf>(): kotlin/String? // io.heimui.core.domain.model.component/RichTextComponent.visibleIf.<get-visibleIf>|<get-visibleIf>(){}[0]
+    final val weight // io.heimui.core.domain.model.component/RichTextComponent.weight|{}weight[0]
+        final fun <get-weight>(): kotlin/Float? // io.heimui.core.domain.model.component/RichTextComponent.weight.<get-weight>|<get-weight>(){}[0]
+
+    final fun component1(): kotlin/String // io.heimui.core.domain.model.component/RichTextComponent.component1|component1(){}[0]
+    final fun component10(): kotlin/Int // io.heimui.core.domain.model.component/RichTextComponent.component10|component10(){}[0]
+    final fun component2(): kotlin/String? // io.heimui.core.domain.model.component/RichTextComponent.component2|component2(){}[0]
+    final fun component3(): io.heimui.core.domain.model.accessibility/HeimAccessibility? // io.heimui.core.domain.model.component/RichTextComponent.component3|component3(){}[0]
+    final fun component4(): kotlin/Float? // io.heimui.core.domain.model.component/RichTextComponent.component4|component4(){}[0]
+    final fun component5(): io.heimui.core.domain.model.component/HeimSize // io.heimui.core.domain.model.component/RichTextComponent.component5|component5(){}[0]
+    final fun component6(): kotlin.collections/List<io.heimui.core.domain.model.component/HeimTextSpan> // io.heimui.core.domain.model.component/RichTextComponent.component6|component6(){}[0]
+    final fun component7(): kotlin/String // io.heimui.core.domain.model.component/RichTextComponent.component7|component7(){}[0]
+    final fun component8(): kotlin/String? // io.heimui.core.domain.model.component/RichTextComponent.component8|component8(){}[0]
+    final fun component9(): io.heimui.core.domain.model.component/TextAlign // io.heimui.core.domain.model.component/RichTextComponent.component9|component9(){}[0]
+    final fun copy(kotlin/String = ..., kotlin/String? = ..., io.heimui.core.domain.model.accessibility/HeimAccessibility? = ..., kotlin/Float? = ..., io.heimui.core.domain.model.component/HeimSize = ..., kotlin.collections/List<io.heimui.core.domain.model.component/HeimTextSpan> = ..., kotlin/String = ..., kotlin/String? = ..., io.heimui.core.domain.model.component/TextAlign = ..., kotlin/Int = ...): io.heimui.core.domain.model.component/RichTextComponent // io.heimui.core.domain.model.component/RichTextComponent.copy|copy(kotlin.String;kotlin.String?;io.heimui.core.domain.model.accessibility.HeimAccessibility?;kotlin.Float?;io.heimui.core.domain.model.component.HeimSize;kotlin.collections.List<io.heimui.core.domain.model.component.HeimTextSpan>;kotlin.String;kotlin.String?;io.heimui.core.domain.model.component.TextAlign;kotlin.Int){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // io.heimui.core.domain.model.component/RichTextComponent.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // io.heimui.core.domain.model.component/RichTextComponent.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // io.heimui.core.domain.model.component/RichTextComponent.toString|toString(){}[0]
 }
 
 final class io.heimui.core.domain.model.component/SelectComponent : io.heimui.core.domain.model.component/HeimComponent { // io.heimui.core.domain.model.component/SelectComponent|null[0]
@@ -4277,6 +4435,8 @@ final val io.heimui.core.data.dto/io_heimui_core_data_dto_HeimOptionDto$stablepr
 final val io.heimui.core.data.dto/io_heimui_core_data_dto_HeimOptionDto_$serializer$stableprop // io.heimui.core.data.dto/io_heimui_core_data_dto_HeimOptionDto_$serializer$stableprop|#static{}io_heimui_core_data_dto_HeimOptionDto_$serializer$stableprop[0]
 final val io.heimui.core.data.dto/io_heimui_core_data_dto_HeimScreenResponseDto$stableprop // io.heimui.core.data.dto/io_heimui_core_data_dto_HeimScreenResponseDto$stableprop|#static{}io_heimui_core_data_dto_HeimScreenResponseDto$stableprop[0]
 final val io.heimui.core.data.dto/io_heimui_core_data_dto_HeimScreenResponseDto_$serializer$stableprop // io.heimui.core.data.dto/io_heimui_core_data_dto_HeimScreenResponseDto_$serializer$stableprop|#static{}io_heimui_core_data_dto_HeimScreenResponseDto_$serializer$stableprop[0]
+final val io.heimui.core.data.dto/io_heimui_core_data_dto_HeimTextSpanDto$stableprop // io.heimui.core.data.dto/io_heimui_core_data_dto_HeimTextSpanDto$stableprop|#static{}io_heimui_core_data_dto_HeimTextSpanDto$stableprop[0]
+final val io.heimui.core.data.dto/io_heimui_core_data_dto_HeimTextSpanDto_$serializer$stableprop // io.heimui.core.data.dto/io_heimui_core_data_dto_HeimTextSpanDto_$serializer$stableprop|#static{}io_heimui_core_data_dto_HeimTextSpanDto_$serializer$stableprop[0]
 final val io.heimui.core.data.dto/io_heimui_core_data_dto_IconComponentDto$stableprop // io.heimui.core.data.dto/io_heimui_core_data_dto_IconComponentDto$stableprop|#static{}io_heimui_core_data_dto_IconComponentDto$stableprop[0]
 final val io.heimui.core.data.dto/io_heimui_core_data_dto_IconComponentDto_$serializer$stableprop // io.heimui.core.data.dto/io_heimui_core_data_dto_IconComponentDto_$serializer$stableprop|#static{}io_heimui_core_data_dto_IconComponentDto_$serializer$stableprop[0]
 final val io.heimui.core.data.dto/io_heimui_core_data_dto_ImageComponentDto$stableprop // io.heimui.core.data.dto/io_heimui_core_data_dto_ImageComponentDto$stableprop|#static{}io_heimui_core_data_dto_ImageComponentDto$stableprop[0]
@@ -4293,6 +4453,8 @@ final val io.heimui.core.data.dto/io_heimui_core_data_dto_PaginationConfigDto$st
 final val io.heimui.core.data.dto/io_heimui_core_data_dto_PaginationConfigDto_$serializer$stableprop // io.heimui.core.data.dto/io_heimui_core_data_dto_PaginationConfigDto_$serializer$stableprop|#static{}io_heimui_core_data_dto_PaginationConfigDto_$serializer$stableprop[0]
 final val io.heimui.core.data.dto/io_heimui_core_data_dto_RadioGroupComponentDto$stableprop // io.heimui.core.data.dto/io_heimui_core_data_dto_RadioGroupComponentDto$stableprop|#static{}io_heimui_core_data_dto_RadioGroupComponentDto$stableprop[0]
 final val io.heimui.core.data.dto/io_heimui_core_data_dto_RadioGroupComponentDto_$serializer$stableprop // io.heimui.core.data.dto/io_heimui_core_data_dto_RadioGroupComponentDto_$serializer$stableprop|#static{}io_heimui_core_data_dto_RadioGroupComponentDto_$serializer$stableprop[0]
+final val io.heimui.core.data.dto/io_heimui_core_data_dto_RichTextComponentDto$stableprop // io.heimui.core.data.dto/io_heimui_core_data_dto_RichTextComponentDto$stableprop|#static{}io_heimui_core_data_dto_RichTextComponentDto$stableprop[0]
+final val io.heimui.core.data.dto/io_heimui_core_data_dto_RichTextComponentDto_$serializer$stableprop // io.heimui.core.data.dto/io_heimui_core_data_dto_RichTextComponentDto_$serializer$stableprop|#static{}io_heimui_core_data_dto_RichTextComponentDto_$serializer$stableprop[0]
 final val io.heimui.core.data.dto/io_heimui_core_data_dto_SelectComponentDto$stableprop // io.heimui.core.data.dto/io_heimui_core_data_dto_SelectComponentDto$stableprop|#static{}io_heimui_core_data_dto_SelectComponentDto$stableprop[0]
 final val io.heimui.core.data.dto/io_heimui_core_data_dto_SelectComponentDto_$serializer$stableprop // io.heimui.core.data.dto/io_heimui_core_data_dto_SelectComponentDto_$serializer$stableprop|#static{}io_heimui_core_data_dto_SelectComponentDto_$serializer$stableprop[0]
 final val io.heimui.core.data.dto/io_heimui_core_data_dto_SetStateActionDto$stableprop // io.heimui.core.data.dto/io_heimui_core_data_dto_SetStateActionDto$stableprop|#static{}io_heimui_core_data_dto_SetStateActionDto$stableprop[0]
@@ -4356,12 +4518,14 @@ final val io.heimui.core.domain.model.component/io_heimui_core_domain_model_comp
 final val io.heimui.core.domain.model.component/io_heimui_core_domain_model_component_HeimOption$stableprop // io.heimui.core.domain.model.component/io_heimui_core_domain_model_component_HeimOption$stableprop|#static{}io_heimui_core_domain_model_component_HeimOption$stableprop[0]
 final val io.heimui.core.domain.model.component/io_heimui_core_domain_model_component_HeimPadding$stableprop // io.heimui.core.domain.model.component/io_heimui_core_domain_model_component_HeimPadding$stableprop|#static{}io_heimui_core_domain_model_component_HeimPadding$stableprop[0]
 final val io.heimui.core.domain.model.component/io_heimui_core_domain_model_component_HeimSize$stableprop // io.heimui.core.domain.model.component/io_heimui_core_domain_model_component_HeimSize$stableprop|#static{}io_heimui_core_domain_model_component_HeimSize$stableprop[0]
+final val io.heimui.core.domain.model.component/io_heimui_core_domain_model_component_HeimTextSpan$stableprop // io.heimui.core.domain.model.component/io_heimui_core_domain_model_component_HeimTextSpan$stableprop|#static{}io_heimui_core_domain_model_component_HeimTextSpan$stableprop[0]
 final val io.heimui.core.domain.model.component/io_heimui_core_domain_model_component_IconComponent$stableprop // io.heimui.core.domain.model.component/io_heimui_core_domain_model_component_IconComponent$stableprop|#static{}io_heimui_core_domain_model_component_IconComponent$stableprop[0]
 final val io.heimui.core.domain.model.component/io_heimui_core_domain_model_component_ImageComponent$stableprop // io.heimui.core.domain.model.component/io_heimui_core_domain_model_component_ImageComponent$stableprop|#static{}io_heimui_core_domain_model_component_ImageComponent$stableprop[0]
 final val io.heimui.core.domain.model.component/io_heimui_core_domain_model_component_LazyColumnComponent$stableprop // io.heimui.core.domain.model.component/io_heimui_core_domain_model_component_LazyColumnComponent$stableprop|#static{}io_heimui_core_domain_model_component_LazyColumnComponent$stableprop[0]
 final val io.heimui.core.domain.model.component/io_heimui_core_domain_model_component_LazyRowComponent$stableprop // io.heimui.core.domain.model.component/io_heimui_core_domain_model_component_LazyRowComponent$stableprop|#static{}io_heimui_core_domain_model_component_LazyRowComponent$stableprop[0]
 final val io.heimui.core.domain.model.component/io_heimui_core_domain_model_component_PaginationConfig$stableprop // io.heimui.core.domain.model.component/io_heimui_core_domain_model_component_PaginationConfig$stableprop|#static{}io_heimui_core_domain_model_component_PaginationConfig$stableprop[0]
 final val io.heimui.core.domain.model.component/io_heimui_core_domain_model_component_RadioGroupComponent$stableprop // io.heimui.core.domain.model.component/io_heimui_core_domain_model_component_RadioGroupComponent$stableprop|#static{}io_heimui_core_domain_model_component_RadioGroupComponent$stableprop[0]
+final val io.heimui.core.domain.model.component/io_heimui_core_domain_model_component_RichTextComponent$stableprop // io.heimui.core.domain.model.component/io_heimui_core_domain_model_component_RichTextComponent$stableprop|#static{}io_heimui_core_domain_model_component_RichTextComponent$stableprop[0]
 final val io.heimui.core.domain.model.component/io_heimui_core_domain_model_component_SelectComponent$stableprop // io.heimui.core.domain.model.component/io_heimui_core_domain_model_component_SelectComponent$stableprop|#static{}io_heimui_core_domain_model_component_SelectComponent$stableprop[0]
 final val io.heimui.core.domain.model.component/io_heimui_core_domain_model_component_SpacerComponent$stableprop // io.heimui.core.domain.model.component/io_heimui_core_domain_model_component_SpacerComponent$stableprop|#static{}io_heimui_core_domain_model_component_SpacerComponent$stableprop[0]
 final val io.heimui.core.domain.model.component/io_heimui_core_domain_model_component_SwitchComponent$stableprop // io.heimui.core.domain.model.component/io_heimui_core_domain_model_component_SwitchComponent$stableprop|#static{}io_heimui_core_domain_model_component_SwitchComponent$stableprop[0]
@@ -4497,6 +4661,8 @@ final fun io.heimui.core.data.dto/io_heimui_core_data_dto_HeimOptionDto$stablepr
 final fun io.heimui.core.data.dto/io_heimui_core_data_dto_HeimOptionDto_$serializer$stableprop_getter(): kotlin/Int // io.heimui.core.data.dto/io_heimui_core_data_dto_HeimOptionDto_$serializer$stableprop_getter|io_heimui_core_data_dto_HeimOptionDto_$serializer$stableprop_getter(){}[0]
 final fun io.heimui.core.data.dto/io_heimui_core_data_dto_HeimScreenResponseDto$stableprop_getter(): kotlin/Int // io.heimui.core.data.dto/io_heimui_core_data_dto_HeimScreenResponseDto$stableprop_getter|io_heimui_core_data_dto_HeimScreenResponseDto$stableprop_getter(){}[0]
 final fun io.heimui.core.data.dto/io_heimui_core_data_dto_HeimScreenResponseDto_$serializer$stableprop_getter(): kotlin/Int // io.heimui.core.data.dto/io_heimui_core_data_dto_HeimScreenResponseDto_$serializer$stableprop_getter|io_heimui_core_data_dto_HeimScreenResponseDto_$serializer$stableprop_getter(){}[0]
+final fun io.heimui.core.data.dto/io_heimui_core_data_dto_HeimTextSpanDto$stableprop_getter(): kotlin/Int // io.heimui.core.data.dto/io_heimui_core_data_dto_HeimTextSpanDto$stableprop_getter|io_heimui_core_data_dto_HeimTextSpanDto$stableprop_getter(){}[0]
+final fun io.heimui.core.data.dto/io_heimui_core_data_dto_HeimTextSpanDto_$serializer$stableprop_getter(): kotlin/Int // io.heimui.core.data.dto/io_heimui_core_data_dto_HeimTextSpanDto_$serializer$stableprop_getter|io_heimui_core_data_dto_HeimTextSpanDto_$serializer$stableprop_getter(){}[0]
 final fun io.heimui.core.data.dto/io_heimui_core_data_dto_IconComponentDto$stableprop_getter(): kotlin/Int // io.heimui.core.data.dto/io_heimui_core_data_dto_IconComponentDto$stableprop_getter|io_heimui_core_data_dto_IconComponentDto$stableprop_getter(){}[0]
 final fun io.heimui.core.data.dto/io_heimui_core_data_dto_IconComponentDto_$serializer$stableprop_getter(): kotlin/Int // io.heimui.core.data.dto/io_heimui_core_data_dto_IconComponentDto_$serializer$stableprop_getter|io_heimui_core_data_dto_IconComponentDto_$serializer$stableprop_getter(){}[0]
 final fun io.heimui.core.data.dto/io_heimui_core_data_dto_ImageComponentDto$stableprop_getter(): kotlin/Int // io.heimui.core.data.dto/io_heimui_core_data_dto_ImageComponentDto$stableprop_getter|io_heimui_core_data_dto_ImageComponentDto$stableprop_getter(){}[0]
@@ -4513,6 +4679,8 @@ final fun io.heimui.core.data.dto/io_heimui_core_data_dto_PaginationConfigDto$st
 final fun io.heimui.core.data.dto/io_heimui_core_data_dto_PaginationConfigDto_$serializer$stableprop_getter(): kotlin/Int // io.heimui.core.data.dto/io_heimui_core_data_dto_PaginationConfigDto_$serializer$stableprop_getter|io_heimui_core_data_dto_PaginationConfigDto_$serializer$stableprop_getter(){}[0]
 final fun io.heimui.core.data.dto/io_heimui_core_data_dto_RadioGroupComponentDto$stableprop_getter(): kotlin/Int // io.heimui.core.data.dto/io_heimui_core_data_dto_RadioGroupComponentDto$stableprop_getter|io_heimui_core_data_dto_RadioGroupComponentDto$stableprop_getter(){}[0]
 final fun io.heimui.core.data.dto/io_heimui_core_data_dto_RadioGroupComponentDto_$serializer$stableprop_getter(): kotlin/Int // io.heimui.core.data.dto/io_heimui_core_data_dto_RadioGroupComponentDto_$serializer$stableprop_getter|io_heimui_core_data_dto_RadioGroupComponentDto_$serializer$stableprop_getter(){}[0]
+final fun io.heimui.core.data.dto/io_heimui_core_data_dto_RichTextComponentDto$stableprop_getter(): kotlin/Int // io.heimui.core.data.dto/io_heimui_core_data_dto_RichTextComponentDto$stableprop_getter|io_heimui_core_data_dto_RichTextComponentDto$stableprop_getter(){}[0]
+final fun io.heimui.core.data.dto/io_heimui_core_data_dto_RichTextComponentDto_$serializer$stableprop_getter(): kotlin/Int // io.heimui.core.data.dto/io_heimui_core_data_dto_RichTextComponentDto_$serializer$stableprop_getter|io_heimui_core_data_dto_RichTextComponentDto_$serializer$stableprop_getter(){}[0]
 final fun io.heimui.core.data.dto/io_heimui_core_data_dto_SelectComponentDto$stableprop_getter(): kotlin/Int // io.heimui.core.data.dto/io_heimui_core_data_dto_SelectComponentDto$stableprop_getter|io_heimui_core_data_dto_SelectComponentDto$stableprop_getter(){}[0]
 final fun io.heimui.core.data.dto/io_heimui_core_data_dto_SelectComponentDto_$serializer$stableprop_getter(): kotlin/Int // io.heimui.core.data.dto/io_heimui_core_data_dto_SelectComponentDto_$serializer$stableprop_getter|io_heimui_core_data_dto_SelectComponentDto_$serializer$stableprop_getter(){}[0]
 final fun io.heimui.core.data.dto/io_heimui_core_data_dto_SetStateActionDto$stableprop_getter(): kotlin/Int // io.heimui.core.data.dto/io_heimui_core_data_dto_SetStateActionDto$stableprop_getter|io_heimui_core_data_dto_SetStateActionDto$stableprop_getter(){}[0]
@@ -4578,12 +4746,14 @@ final fun io.heimui.core.domain.model.component/io_heimui_core_domain_model_comp
 final fun io.heimui.core.domain.model.component/io_heimui_core_domain_model_component_HeimOption$stableprop_getter(): kotlin/Int // io.heimui.core.domain.model.component/io_heimui_core_domain_model_component_HeimOption$stableprop_getter|io_heimui_core_domain_model_component_HeimOption$stableprop_getter(){}[0]
 final fun io.heimui.core.domain.model.component/io_heimui_core_domain_model_component_HeimPadding$stableprop_getter(): kotlin/Int // io.heimui.core.domain.model.component/io_heimui_core_domain_model_component_HeimPadding$stableprop_getter|io_heimui_core_domain_model_component_HeimPadding$stableprop_getter(){}[0]
 final fun io.heimui.core.domain.model.component/io_heimui_core_domain_model_component_HeimSize$stableprop_getter(): kotlin/Int // io.heimui.core.domain.model.component/io_heimui_core_domain_model_component_HeimSize$stableprop_getter|io_heimui_core_domain_model_component_HeimSize$stableprop_getter(){}[0]
+final fun io.heimui.core.domain.model.component/io_heimui_core_domain_model_component_HeimTextSpan$stableprop_getter(): kotlin/Int // io.heimui.core.domain.model.component/io_heimui_core_domain_model_component_HeimTextSpan$stableprop_getter|io_heimui_core_domain_model_component_HeimTextSpan$stableprop_getter(){}[0]
 final fun io.heimui.core.domain.model.component/io_heimui_core_domain_model_component_IconComponent$stableprop_getter(): kotlin/Int // io.heimui.core.domain.model.component/io_heimui_core_domain_model_component_IconComponent$stableprop_getter|io_heimui_core_domain_model_component_IconComponent$stableprop_getter(){}[0]
 final fun io.heimui.core.domain.model.component/io_heimui_core_domain_model_component_ImageComponent$stableprop_getter(): kotlin/Int // io.heimui.core.domain.model.component/io_heimui_core_domain_model_component_ImageComponent$stableprop_getter|io_heimui_core_domain_model_component_ImageComponent$stableprop_getter(){}[0]
 final fun io.heimui.core.domain.model.component/io_heimui_core_domain_model_component_LazyColumnComponent$stableprop_getter(): kotlin/Int // io.heimui.core.domain.model.component/io_heimui_core_domain_model_component_LazyColumnComponent$stableprop_getter|io_heimui_core_domain_model_component_LazyColumnComponent$stableprop_getter(){}[0]
 final fun io.heimui.core.domain.model.component/io_heimui_core_domain_model_component_LazyRowComponent$stableprop_getter(): kotlin/Int // io.heimui.core.domain.model.component/io_heimui_core_domain_model_component_LazyRowComponent$stableprop_getter|io_heimui_core_domain_model_component_LazyRowComponent$stableprop_getter(){}[0]
 final fun io.heimui.core.domain.model.component/io_heimui_core_domain_model_component_PaginationConfig$stableprop_getter(): kotlin/Int // io.heimui.core.domain.model.component/io_heimui_core_domain_model_component_PaginationConfig$stableprop_getter|io_heimui_core_domain_model_component_PaginationConfig$stableprop_getter(){}[0]
 final fun io.heimui.core.domain.model.component/io_heimui_core_domain_model_component_RadioGroupComponent$stableprop_getter(): kotlin/Int // io.heimui.core.domain.model.component/io_heimui_core_domain_model_component_RadioGroupComponent$stableprop_getter|io_heimui_core_domain_model_component_RadioGroupComponent$stableprop_getter(){}[0]
+final fun io.heimui.core.domain.model.component/io_heimui_core_domain_model_component_RichTextComponent$stableprop_getter(): kotlin/Int // io.heimui.core.domain.model.component/io_heimui_core_domain_model_component_RichTextComponent$stableprop_getter|io_heimui_core_domain_model_component_RichTextComponent$stableprop_getter(){}[0]
 final fun io.heimui.core.domain.model.component/io_heimui_core_domain_model_component_SelectComponent$stableprop_getter(): kotlin/Int // io.heimui.core.domain.model.component/io_heimui_core_domain_model_component_SelectComponent$stableprop_getter|io_heimui_core_domain_model_component_SelectComponent$stableprop_getter(){}[0]
 final fun io.heimui.core.domain.model.component/io_heimui_core_domain_model_component_SpacerComponent$stableprop_getter(): kotlin/Int // io.heimui.core.domain.model.component/io_heimui_core_domain_model_component_SpacerComponent$stableprop_getter|io_heimui_core_domain_model_component_SpacerComponent$stableprop_getter(){}[0]
 final fun io.heimui.core.domain.model.component/io_heimui_core_domain_model_component_SwitchComponent$stableprop_getter(): kotlin/Int // io.heimui.core.domain.model.component/io_heimui_core_domain_model_component_SwitchComponent$stableprop_getter|io_heimui_core_domain_model_component_SwitchComponent$stableprop_getter(){}[0]

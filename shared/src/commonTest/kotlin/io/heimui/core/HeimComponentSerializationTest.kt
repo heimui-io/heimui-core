@@ -10,6 +10,7 @@ import io.heimui.core.domain.model.accessibility.AccessibilityRole
 import io.heimui.core.domain.model.component.HeimArrangement
 import io.heimui.core.domain.model.component.CheckboxComponent
 import io.heimui.core.domain.model.component.ChipComponent
+import io.heimui.core.domain.model.component.RichTextComponent
 import io.heimui.core.domain.model.component.ChipVariant
 import io.heimui.core.domain.model.component.LazyRowComponent
 import io.heimui.core.domain.model.component.DatePickerComponent
@@ -381,6 +382,30 @@ class HeimComponentSerializationTest {
         assertNull(chips[3].stateKey)
         assertEquals(ChipVariant.ASSIST, chips[3].variant)
         assertEquals(1, chips[3].actions.size)
+    }
+
+    @Test
+    fun `rich text keeps its runs and drops the ones that render nothing`() {
+        val rich = HeimJson.decodeScreen(
+            """
+            {"id":"s","root":{"type":"rich_text","id":"legal","style":"bodySmall","spans":[
+              {"text":"I accept the "},
+              {"text":"terms","weight":"bold","url":"https://example.com/terms"},
+              {"text":""},
+              {"text":" and the "},
+              {"text":"privacy policy","url":"  "}
+            ]}}
+            """.trimIndent()
+        ).toDomain().root as RichTextComponent
+
+        // The empty run is dropped: it renders nothing and would only add a stray range.
+        assertEquals(4, rich.spans.size)
+        assertEquals("bold", rich.spans[1].weight)
+        assertEquals("https://example.com/terms", rich.spans[1].url)
+
+        // A blank url is not a link. Rendering it as one gives the user something to tap that
+        // goes nowhere, which reads as broken rather than as plain text.
+        assertNull(rich.spans[3].url)
     }
 
 }

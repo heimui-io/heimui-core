@@ -303,6 +303,42 @@ public data class ChipComponent(
     val actions: List<HeimAction> = emptyList()
 ) : HeimComponent
 
+/**
+ * One styled run inside a [RichTextComponent].
+ *
+ * @property url makes the run a link. It is opened through the host's `HeimUrlLauncher` under the
+ *   same scheme policy as `open_url` — a link in a paragraph is not a loophole around it.
+ */
+public data class HeimTextSpan(
+    val text: String,
+    val style: String? = null,
+    val color: String? = null,
+    val weight: String? = null,
+    val url: String? = null
+)
+
+/**
+ * Text made of styled runs: one paragraph mixing weights, colours and links.
+ *
+ * Exists for the sentence `text` cannot express — "I accept the [terms]" with only the brackets
+ * linked. Three separate components would break the line where the sentence should flow.
+ *
+ * @property style the base text style every span inherits unless it overrides it.
+ * @property maxLines 0 means unlimited.
+ */
+public data class RichTextComponent(
+    override val id: String,
+    override val visibleIf: String? = null,
+    override val a11y: HeimAccessibility? = null,
+    override val weight: Float? = null,
+    override val frame: HeimSize = HeimSize.None,
+    val spans: List<HeimTextSpan> = emptyList(),
+    val style: String = "bodyMedium",
+    val color: String? = null,
+    val align: TextAlign = TextAlign.START,
+    val maxLines: Int = 0
+) : HeimComponent
+
 /** Compact pill-shaped label, for statuses, counts and tags. */
 public data class BadgeComponent(
     override val id: String,

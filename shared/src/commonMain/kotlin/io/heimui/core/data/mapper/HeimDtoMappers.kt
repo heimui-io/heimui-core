@@ -9,6 +9,8 @@ import io.heimui.core.data.dto.ButtonComponentDto
 import io.heimui.core.data.dto.ButtonVariantDto
 import io.heimui.core.data.dto.CardComponentDto
 import io.heimui.core.data.dto.ChipComponentDto
+import io.heimui.core.data.dto.HeimTextSpanDto
+import io.heimui.core.data.dto.RichTextComponentDto
 import io.heimui.core.data.dto.ChipVariantDto
 import io.heimui.core.data.dto.CheckboxComponentDto
 import io.heimui.core.data.dto.DatePickerComponentDto
@@ -73,6 +75,8 @@ import io.heimui.core.domain.model.component.ButtonComponent
 import io.heimui.core.domain.model.component.ButtonVariant
 import io.heimui.core.domain.model.component.CardComponent
 import io.heimui.core.domain.model.component.ChipComponent
+import io.heimui.core.domain.model.component.HeimTextSpan
+import io.heimui.core.domain.model.component.RichTextComponent
 import io.heimui.core.domain.model.component.ChipVariant
 import io.heimui.core.domain.model.component.CheckboxComponent
 import io.heimui.core.domain.model.component.DatePickerComponent
@@ -310,6 +314,24 @@ internal fun HeimComponentDto.toDomain(
             actions = actions.map { it.toDomain() },
             child = child.toDomain(depth = depth + 1)
         )
+        is RichTextComponentDto -> RichTextComponent(
+            id = id,
+            visibleIf = visibleIf,
+            a11y = a11y?.toDomain(),
+            weight = weight?.takeIf { it > 0f },
+            frame = frame.sanitized(),
+            // A span with no text renders nothing and would only add an empty annotation range.
+            spans = spans.filter { it.text.isNotEmpty() }.map { it.toDomain() },
+            style = style,
+            color = color,
+            align = when (align) {
+                TextAlignDto.START -> TextAlign.START
+                TextAlignDto.CENTER -> TextAlign.CENTER
+                TextAlignDto.END -> TextAlign.END
+                TextAlignDto.JUSTIFY -> TextAlign.JUSTIFY
+            },
+            maxLines = maxOf(0, maxLines)
+        )
         is ChipComponentDto -> ChipComponent(
             id = id,
             visibleIf = visibleIf,
@@ -546,6 +568,7 @@ private fun List<HeimComponentDto>.mapDeduplicated(
                 is RadioGroupComponent -> child.copy(id = "${child.id}_$index")
                 is SelectComponent -> child.copy(id = "${child.id}_$index")
                 is DatePickerComponent -> child.copy(id = "${child.id}_$index")
+                is RichTextComponent -> child.copy(id = "${child.id}_$index")
                 is ChipComponent -> child.copy(id = "${child.id}_$index")
                 is UnknownComponent -> child.copy(id = "${child.id}_$index")
             }
@@ -573,6 +596,7 @@ private fun HeimComponent.withId(newId: String): HeimComponent = when (this) {
     is RadioGroupComponent -> copy(id = newId)
     is SelectComponent -> copy(id = newId)
     is DatePickerComponent -> copy(id = newId)
+    is RichTextComponent -> copy(id = newId)
     is ChipComponent -> copy(id = newId)
     is UnknownComponent -> copy(id = newId)
 }
@@ -634,6 +658,16 @@ internal fun String.isIsoDate(): Boolean =
         substring(0, 4).all { it.isDigit() } &&
         substring(5, 7).all { it.isDigit() } &&
         substring(8, 10).all { it.isDigit() }
+
+internal fun HeimTextSpanDto.toDomain(): HeimTextSpan = HeimTextSpan(
+    text = text,
+    style = style,
+    color = color,
+    weight = weight,
+    // A blank url is not a link. Rendering it as one would give the user something to tap that
+    // goes nowhere, which reads as a broken link rather than as plain text.
+    url = url?.trim()?.takeIf { it.isNotEmpty() }
+)
 
 internal fun HeimAccessibilityDto.toDomain() = HeimAccessibility(
     contentDescription = contentDescription,

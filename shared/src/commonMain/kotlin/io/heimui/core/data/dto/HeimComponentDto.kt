@@ -261,6 +261,45 @@ public data class ChipComponentDto(
     val actions: List<HeimActionDto> = emptyList()
 ) : HeimComponentDto
 
+/**
+ * One run of text inside a [RichTextComponentDto].
+ *
+ * A [url] turns the span into a link. It goes through the same `HeimUrlLauncher` and scheme
+ * policy as `open_url`, so a payload cannot smuggle `javascript:` or `intent://` into a paragraph
+ * just because it wrote it as a link instead of an action.
+ */
+@Serializable
+public data class HeimTextSpanDto(
+    val text: String = "",
+    val style: String? = null,
+    val color: String? = null,
+    val weight: String? = null,
+    val url: String? = null
+)
+
+/**
+ * Text made of styled runs, where one paragraph can mix weights, colours and links.
+ *
+ * The component a regulated onboarding needs and `text` cannot express: "I accept the
+ * [terms and conditions]" with only the bracketed part linked. Splitting it into three components
+ * puts a line break where the sentence should flow, and inlining HTML would hand the payload a
+ * renderer it should never have.
+ */
+@Serializable
+@SerialName("rich_text")
+public data class RichTextComponentDto(
+    override val id: String = "",
+    @SerialName("visible_if") override val visibleIf: String? = null,
+    override val a11y: HeimAccessibilityDto? = null,
+    override val weight: Float? = null,
+    override val frame: SizeSpec = HeimSize.None,
+    val spans: List<HeimTextSpanDto> = emptyList(),
+    val style: String = "bodyMedium",
+    val color: String? = null,
+    val align: TextAlignDto = TextAlignDto.START,
+    @SerialName("max_lines") @Serializable(with = LenientIntSerializer::class) val maxLines: Int = 0
+) : HeimComponentDto
+
 @Serializable
 @SerialName("badge")
 public data class BadgeComponentDto(
