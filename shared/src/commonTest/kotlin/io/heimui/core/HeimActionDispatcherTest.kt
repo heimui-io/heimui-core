@@ -103,35 +103,38 @@ class HeimActionDispatcherTest {
 
     @Test
     fun `tracking carries nested provider blocks verbatim`() {
-        // The exact shape a real design system uses: one block per analytics provider, because
-        // each names the same click differently. The SDK must carry all of it without knowing
-        // that "amplitude" or "eventAction" mean anything.
+        // One block per analytics provider, because each names the same interaction differently.
+        // The SDK must carry all of it without knowing that "warehouse" or "attributes" mean
+        // anything — the moment it knows, every new provider is a new SDK release.
         val screen = HeimJson.decodeScreen(
             """
             {"id":"s","root":{"type":"button","id":"b","title":"x","actions":[
-              {"type":"navigate","screen_id":"shopfront","tracking":{
-                "analytics":{"eventName":"categorias","eventAction":"click",
-                             "attributes":{"event_category":"home","interaction":"event"}},
-                "amplitude":{"event":"click categoria home","properties":[{"key":"event_id","value":7}]}
+              {"type":"navigate","screen_id":"catalog","tracking":{
+                "primary":{"name":"select_category",
+                           "params":{"category_id":"audio","position":2}},
+                "warehouse":{"event":"catalog.category.selected",
+                             "attributes":[{"key":"surface","value":"home"}]}
               }}]}}
             """.trimIndent()
         ).toDomain()
 
         val tracking = (screen.root as ButtonComponent).actions.single().tracking!!
 
-        val analytics = assertIs<HeimValue.Obj>(tracking["analytics"]).fields
-        assertEquals(HeimValue.Str("categorias"), analytics["eventName"])
-        assertEquals(HeimValue.Str("click"), analytics["eventAction"])
+        val primary = assertIs<HeimValue.Obj>(tracking["primary"]).fields
+        assertEquals(HeimValue.Str("select_category"), primary["name"])
         assertEquals(
-            HeimValue.Str("home"),
-            assertIs<HeimValue.Obj>(analytics["attributes"]).fields["event_category"]
+            HeimValue.Str("audio"),
+            assertIs<HeimValue.Obj>(primary["params"]).fields["category_id"]
         )
 
-        // Arrays survive too, so a provider that wants a list of key/value pairs is expressible.
-        val props = assertIs<HeimValue.Arr>(
-            assertIs<HeimValue.Obj>(tracking["amplitude"]).fields["properties"]
+        // Arrays survive too, so a provider wanting a list of key/value pairs is expressible.
+        val attributes = assertIs<HeimValue.Arr>(
+            assertIs<HeimValue.Obj>(tracking["warehouse"]).fields["attributes"]
         ).items
-        assertEquals(HeimValue.Int64(7), assertIs<HeimValue.Obj>(props.single()).fields["value"])
+        assertEquals(
+            HeimValue.Str("surface"),
+            assertIs<HeimValue.Obj>(attributes.single()).fields["key"]
+        )
     }
 
 }

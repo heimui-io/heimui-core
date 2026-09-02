@@ -35,8 +35,8 @@ kotlin {
         iosSimulatorArm64()
     ).forEach { iosTarget ->
         iosTarget.binaries.framework {
-            // Not "Shared": that is the KMP wizard default, so it is the name most likely to
-            // collide with a framework the host app already links.
+            // The framework name is global to the host app's link step, so a generic one risks
+            // colliding with something else it already links.
             baseName = "HeimUI"
             isStatic = true
         }

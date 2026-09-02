@@ -1,12 +1,9 @@
 package io.heimui.core.presentation.designsystem
 
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Shapes
 import androidx.compose.material3.Typography
-import androidx.compose.material3.darkColorScheme
-import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.runtime.ProvidableCompositionLocal
@@ -67,9 +64,8 @@ public val LocalHeimShowDiagnostics: ProvidableCompositionLocal<Boolean> =
  * }
  * ```
  *
- * @param darkTheme whether to use the dark palette. Defaults to the system setting.
  * @param colorScheme overrides the Material 3 palette. `null` uses the platform default for
- *   [darkTheme].
+ *   the enclosing MaterialTheme.
  * @param typography overrides the Material 3 type scale.
  * @param shapes overrides the Material 3 shape scale. SDK surfaces such as the error card and
  *   dialogs read it, so supplying it keeps them consistent with the host app.
@@ -98,7 +94,6 @@ public val LocalHeimShowDiagnostics: ProvidableCompositionLocal<Boolean> =
  */
 @Composable
 public fun HeimTheme(
-    darkTheme: Boolean = isSystemInDarkTheme(),
     colorScheme: ColorScheme? = null,
     typography: Typography? = null,
     shapes: Shapes? = null,
@@ -132,15 +127,19 @@ public fun HeimTheme(
     customComponentRegistry: HeimCustomComponentRegistry = remember { HeimCustomComponentRegistry() },
     content: @Composable () -> Unit
 ) {
-    val defaultColorScheme = if (darkTheme) {
-        darkColorScheme()
-    } else {
-        lightColorScheme()
-    }
-
-    val finalColorScheme = colorScheme ?: defaultColorScheme
-    val finalTypography = typography ?: Typography()
-    val finalShapes = shapes ?: Shapes()
+    // Null means "inherit", not "use ours".
+    //
+    // An app that already has a theme wraps HeimUI in it, and expects server-driven screens to
+    // look like the rest of the app without restating the palette at the call site. Falling back
+    // to a scheme of our own threw the host's theme away, and every integration had to hand-copy
+    // `colorScheme = MaterialTheme.colorScheme` back in to undo it.
+    //
+    // Outside any MaterialTheme these resolve to Material's own defaults, so standalone use still
+    // works — and a library imposing a brand on an app that did not ask for one was never a
+    // defensible default.
+    val finalColorScheme = colorScheme ?: MaterialTheme.colorScheme
+    val finalTypography = typography ?: MaterialTheme.typography
+    val finalShapes = shapes ?: MaterialTheme.shapes
     val uriHandler = LocalUriHandler.current
     val effectiveUrlLauncher = urlLauncher ?: remember(uriHandler, urlPolicy, telemetryObserver) {
         ComposeUriUrlLauncher(
