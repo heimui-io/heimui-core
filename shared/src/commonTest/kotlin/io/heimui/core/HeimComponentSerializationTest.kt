@@ -8,7 +8,11 @@ import io.heimui.core.data.serialization.HeimJson
 import io.heimui.core.data.mapper.toDomain
 import io.heimui.core.domain.model.accessibility.AccessibilityRole
 import io.heimui.core.domain.model.component.HeimArrangement
+import io.heimui.core.domain.model.component.CheckboxComponent
+import io.heimui.core.domain.model.component.DatePickerComponent
 import io.heimui.core.domain.model.component.HeimPadding
+import io.heimui.core.domain.model.component.RadioGroupComponent
+import io.heimui.core.domain.model.component.SelectComponent
 import io.heimui.core.domain.model.component.HeimSize
 import io.heimui.core.domain.model.component.*
 import kotlinx.serialization.json.Json
@@ -298,6 +302,46 @@ class HeimComponentSerializationTest {
         // Absent and malformed both mean "size yourself".
         assertEquals(HeimSize.None, frameOf("""{"type":"card","id":"c"}"""))
         assertEquals(HeimSize.None, frameOf("""{"type":"card","id":"c","frame":"tall"}"""))
+    }
+
+    @Test
+    fun `the form components a real KYC needs round-trip`() {
+        val screen = HeimJson.decodeScreen(
+            """
+            {"id":"kyc","root":{"type":"container","id":"c","children":[
+              {"type":"checkbox","id":"terms","state_key":"accepted","label":"I accept",
+               "initial_checked":true},
+              {"type":"radio_group","id":"doc","state_key":"doc_type","label":"Document",
+               "options":[{"value":"cc","label":"Cedula"},{"value":"","label":"broken"},
+                          {"value":"passport"}],
+               "initial_value":"cc"},
+              {"type":"select","id":"country","state_key":"country","placeholder":"Pick one",
+               "options":[{"value":"CO","label":"Colombia"}]},
+              {"type":"date_picker","id":"dob","state_key":"birth_date","label":"Born",
+               "initial_value":"1990-03-15","min_date":"1900-01-01","max_date":"not-a-date"}
+            ]}}
+            """.trimIndent()
+        ).toDomain()
+
+        val children = (screen.root as ContainerComponent).children
+
+        assertEquals(true, assertIs<CheckboxComponent>(children[0]).initialChecked)
+
+        val radio = assertIs<RadioGroupComponent>(children[1])
+        // A blank value could never be stored or submitted, so it is dropped rather than rendered
+        // as a choice that silently does nothing when picked.
+        assertEquals(listOf("cc", "passport"), radio.options.map { it.value })
+        // A missing label falls back to the value, so the option is at least selectable.
+        assertEquals("passport", radio.options[1].label)
+
+        assertEquals("Colombia", assertIs<SelectComponent>(children[2]).options.single().label)
+
+        val date = assertIs<DatePickerComponent>(children[3])
+        assertEquals("1990-03-15", date.initialValue)
+        assertEquals("1900-01-01", date.minDate)
+        // A malformed bound is dropped, not honoured: keeping it would make every date invalid
+        // and read as a broken picker rather than a bad payload.
+        assertNull(date.maxDate)
     }
 
 }

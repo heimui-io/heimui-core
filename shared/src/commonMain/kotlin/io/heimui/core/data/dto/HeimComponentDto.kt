@@ -272,6 +272,91 @@ public data class TextFieldComponentDto(
     @SerialName("helper_text") val helperText: String? = null
 ) : HeimComponentDto
 
+/**
+ * One choice in a `radio_group` or a `select`.
+ *
+ * [value] is what lands in form state and travels to the backend; [label] is what the user reads.
+ * Keeping them separate is what lets the label be translated without the stored value changing.
+ */
+@Serializable
+public data class HeimOptionDto(
+    val value: String = "",
+    val label: String = ""
+)
+
+@Serializable
+@SerialName("checkbox")
+public data class CheckboxComponentDto(
+    override val id: String = "",
+    @SerialName("visible_if") override val visibleIf: String? = null,
+    override val a11y: HeimAccessibilityDto? = null,
+    override val weight: Float? = null,
+    override val frame: SizeSpec = HeimSize.None,
+    @SerialName("state_key") val stateKey: String = "",
+    val label: String = "",
+    @SerialName("initial_checked") @Serializable(with = LenientBooleanSerializer::class) val initialChecked: Boolean = false,
+    @SerialName("validation_rules") val validationRules: List<ValidationRuleDto> = emptyList(),
+    @SerialName("on_check_actions") val onCheckActions: List<HeimActionDto> = emptyList()
+) : HeimComponentDto
+
+@Serializable
+@SerialName("radio_group")
+public data class RadioGroupComponentDto(
+    override val id: String = "",
+    @SerialName("visible_if") override val visibleIf: String? = null,
+    override val a11y: HeimAccessibilityDto? = null,
+    override val weight: Float? = null,
+    override val frame: SizeSpec = HeimSize.None,
+    @SerialName("state_key") val stateKey: String = "",
+    val label: String? = null,
+    val options: List<HeimOptionDto> = emptyList(),
+    @SerialName("initial_value") val initialValue: String = "",
+    @SerialName("validation_rules") val validationRules: List<ValidationRuleDto> = emptyList(),
+    @SerialName("on_select_actions") val onSelectActions: List<HeimActionDto> = emptyList()
+) : HeimComponentDto
+
+@Serializable
+@SerialName("select")
+public data class SelectComponentDto(
+    override val id: String = "",
+    @SerialName("visible_if") override val visibleIf: String? = null,
+    override val a11y: HeimAccessibilityDto? = null,
+    override val weight: Float? = null,
+    override val frame: SizeSpec = HeimSize.None,
+    @SerialName("state_key") val stateKey: String = "",
+    val label: String? = null,
+    val placeholder: String? = null,
+    val options: List<HeimOptionDto> = emptyList(),
+    @SerialName("initial_value") val initialValue: String = "",
+    @SerialName("validation_rules") val validationRules: List<ValidationRuleDto> = emptyList(),
+    @SerialName("on_select_actions") val onSelectActions: List<HeimActionDto> = emptyList()
+) : HeimComponentDto
+
+/**
+ * Date input. State is stored as ISO-8601 `YYYY-MM-DD`.
+ *
+ * ISO rather than a localised string on purpose: the value travels to a backend, and `15/03/2024`
+ * is 15 March in Bogotá and nothing at all in a parser expecting month first. The *display* is
+ * localised by the client; the stored value never is.
+ */
+@Serializable
+@SerialName("date_picker")
+public data class DatePickerComponentDto(
+    override val id: String = "",
+    @SerialName("visible_if") override val visibleIf: String? = null,
+    override val a11y: HeimAccessibilityDto? = null,
+    override val weight: Float? = null,
+    override val frame: SizeSpec = HeimSize.None,
+    @SerialName("state_key") val stateKey: String = "",
+    val label: String? = null,
+    val placeholder: String? = null,
+    @SerialName("initial_value") val initialValue: String = "",
+    @SerialName("min_date") val minDate: String? = null,
+    @SerialName("max_date") val maxDate: String? = null,
+    @SerialName("validation_rules") val validationRules: List<ValidationRuleDto> = emptyList(),
+    @SerialName("on_select_actions") val onSelectActions: List<HeimActionDto> = emptyList()
+) : HeimComponentDto
+
 @Serializable
 @SerialName("switch")
 public data class SwitchComponentDto(

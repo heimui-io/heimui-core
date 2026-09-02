@@ -32,7 +32,15 @@ import io.heimui.core.domain.model.component.TextFieldComponent
 import io.heimui.core.domain.model.component.UnknownComponent
 import io.heimui.core.presentation.component.HeimBadgeRenderer
 import io.heimui.core.presentation.component.heimSize
+import io.heimui.core.domain.model.component.CheckboxComponent
+import io.heimui.core.domain.model.component.DatePickerComponent
+import io.heimui.core.domain.model.component.RadioGroupComponent
+import io.heimui.core.domain.model.component.SelectComponent
 import io.heimui.core.presentation.component.HeimBoxRenderer
+import io.heimui.core.presentation.component.HeimCheckboxRenderer
+import io.heimui.core.presentation.component.HeimDatePickerRenderer
+import io.heimui.core.presentation.component.HeimRadioGroupRenderer
+import io.heimui.core.presentation.component.HeimSelectRenderer
 import io.heimui.core.presentation.component.HeimButtonRenderer
 import io.heimui.core.presentation.component.HeimCardRenderer
 import io.heimui.core.presentation.component.HeimContainerRenderer
@@ -171,6 +179,30 @@ public fun HeimRenderer(
             stateManager = stateManager,
             modifier = modifier
         )
+        is CheckboxComponent -> HeimCheckboxRenderer(
+            component = component,
+            stateManager = stateManager,
+            modifier = modifier
+        )
+
+        is RadioGroupComponent -> HeimRadioGroupRenderer(
+            component = component,
+            stateManager = stateManager,
+            modifier = modifier
+        )
+
+        is SelectComponent -> HeimSelectRenderer(
+            component = component,
+            stateManager = stateManager,
+            modifier = modifier
+        )
+
+        is DatePickerComponent -> HeimDatePickerRenderer(
+            component = component,
+            stateManager = stateManager,
+            modifier = modifier
+        )
+
         is SwitchComponent -> HeimSwitchRenderer(
             component = component,
             stateManager = stateManager,

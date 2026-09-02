@@ -10,7 +10,19 @@ plugins {
 }
 
 group = "io.heimui"
-version = "0.0.1-alpha"
+
+/**
+ * The published version.
+ *
+ * Overridable so a local build can be consumed alongside a released one. Without this, testing an
+ * unreleased change means overwriting `0.0.1-alpha` in the local Maven cache with something that
+ * is not what the coordinate says — and every project on the machine silently picks it up.
+ *
+ *   ./gradlew publishToMavenLocal                              → 0.0.1-alpha
+ *   ./gradlew publishToMavenLocal -Pheimui.version=0.0.2-alpha → 0.0.2-alpha
+ *   ./gradlew publishLocal                                     → 0.0.1-alpha-LOCAL
+ */
+version = (findProperty("heimui.version") as String?) ?: "0.0.1-alpha"
 
 kotlin {
     // Forces an explicit visibility modifier and return type on every public declaration.
@@ -56,8 +68,10 @@ kotlin {
     
     sourceSets {
         androidMain.dependencies {
-            implementation(libs.compose.uiToolingPreview)
-            implementation(compose.uiTooling)
+            // Deliberately absent: `ui-tooling` and `ui-tooling-preview`. The SDK declares no
+            // @Preview of its own, and an `implementation` dependency in a KMP library publishes
+            // as `runtime` scope — so every consumer's *release* APK was carrying the Compose
+            // inspector. Tooling belongs in the app's `debugImplementation`, not in a library.
             implementation(libs.ktor.client.okhttp)
         }
         iosMain.dependencies {
@@ -100,6 +114,30 @@ kotlin {
 
 dependencies {
     androidRuntimeClasspath(libs.compose.uiTooling)
+}
+
+/**
+ * Publishes under a `-LOCAL` suffix so a consumer can point at an unreleased build explicitly.
+ *
+ * The suffix is the point. Overwriting the released coordinate leaves no way to tell which build
+ * a failure came from, and no way back except a clean of `~/.m2` — a suffix makes the choice
+ * visible in the consumer's `build.gradle.kts` instead of hidden in a cache.
+ */
+val publishLocal by tasks.registering {
+    group = "publishing"
+    description = "Publishes to mavenLocal as <version>-LOCAL, alongside any released build."
+    dependsOn(tasks.named("publishToMavenLocal"))
+    doLast {
+        logger.lifecycle("Published io.heimui:heimui-core:$version to mavenLocal")
+    }
+}
+
+// The suffix has to be applied before the publication is configured, so it is decided here rather
+// than inside the task's action -- a task cannot change the version it is publishing.
+if (gradle.startParameter.taskNames.any { it.endsWith("publishLocal") } &&
+    findProperty("heimui.version") == null
+) {
+    version = "$version-LOCAL"
 }
 
 publishing {

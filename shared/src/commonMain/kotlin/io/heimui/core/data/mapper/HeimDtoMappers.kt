@@ -8,6 +8,11 @@ import io.heimui.core.data.dto.BoxComponentDto
 import io.heimui.core.data.dto.ButtonComponentDto
 import io.heimui.core.data.dto.ButtonVariantDto
 import io.heimui.core.data.dto.CardComponentDto
+import io.heimui.core.data.dto.CheckboxComponentDto
+import io.heimui.core.data.dto.DatePickerComponentDto
+import io.heimui.core.data.dto.HeimOptionDto
+import io.heimui.core.data.dto.RadioGroupComponentDto
+import io.heimui.core.data.dto.SelectComponentDto
 import io.heimui.core.data.dto.ContainerComponentDto
 import io.heimui.core.data.dto.ContentScaleDto
 import io.heimui.core.data.dto.CustomActionDto
@@ -65,6 +70,11 @@ import io.heimui.core.domain.model.component.BoxComponent
 import io.heimui.core.domain.model.component.ButtonComponent
 import io.heimui.core.domain.model.component.ButtonVariant
 import io.heimui.core.domain.model.component.CardComponent
+import io.heimui.core.domain.model.component.CheckboxComponent
+import io.heimui.core.domain.model.component.DatePickerComponent
+import io.heimui.core.domain.model.component.HeimOption
+import io.heimui.core.domain.model.component.RadioGroupComponent
+import io.heimui.core.domain.model.component.SelectComponent
 import io.heimui.core.domain.model.component.ContainerComponent
 import io.heimui.core.domain.model.component.ContentScale
 import io.heimui.core.domain.model.component.CustomComponent
@@ -352,6 +362,64 @@ internal fun HeimComponentDto.toDomain(
             validationRules = validationRules.map { it.toDomain() },
             helperText = helperText
         )
+        is CheckboxComponentDto -> CheckboxComponent(
+            id = id,
+            visibleIf = visibleIf,
+            a11y = a11y?.toDomain(),
+            weight = weight?.takeIf { it > 0f },
+            frame = frame.sanitized(),
+            stateKey = stateKey,
+            label = label,
+            initialChecked = initialChecked,
+            validationRules = validationRules.map { it.toDomain() },
+            onCheckActions = onCheckActions.map { it.toDomain() }
+        )
+        is RadioGroupComponentDto -> RadioGroupComponent(
+            id = id,
+            visibleIf = visibleIf,
+            a11y = a11y?.toDomain(),
+            weight = weight?.takeIf { it > 0f },
+            frame = frame.sanitized(),
+            stateKey = stateKey,
+            label = label,
+            // An option with no value cannot be stored or submitted, so it is dropped rather
+            // than rendered as a choice that silently does nothing when picked.
+            options = options.mapNotNull { it.toDomain() },
+            initialValue = initialValue,
+            validationRules = validationRules.map { it.toDomain() },
+            onSelectActions = onSelectActions.map { it.toDomain() }
+        )
+        is SelectComponentDto -> SelectComponent(
+            id = id,
+            visibleIf = visibleIf,
+            a11y = a11y?.toDomain(),
+            weight = weight?.takeIf { it > 0f },
+            frame = frame.sanitized(),
+            stateKey = stateKey,
+            label = label,
+            placeholder = placeholder,
+            options = options.mapNotNull { it.toDomain() },
+            initialValue = initialValue,
+            validationRules = validationRules.map { it.toDomain() },
+            onSelectActions = onSelectActions.map { it.toDomain() }
+        )
+        is DatePickerComponentDto -> DatePickerComponent(
+            id = id,
+            visibleIf = visibleIf,
+            a11y = a11y?.toDomain(),
+            weight = weight?.takeIf { it > 0f },
+            frame = frame.sanitized(),
+            stateKey = stateKey,
+            label = label,
+            placeholder = placeholder,
+            // Anything that is not an ISO date is dropped rather than shown: a malformed bound
+            // would silently make every date invalid, which looks like a broken picker.
+            initialValue = initialValue.takeIf { it.isIsoDate() }.orEmpty(),
+            minDate = minDate?.takeIf { it.isIsoDate() },
+            maxDate = maxDate?.takeIf { it.isIsoDate() },
+            validationRules = validationRules.map { it.toDomain() },
+            onSelectActions = onSelectActions.map { it.toDomain() }
+        )
         is SwitchComponentDto -> SwitchComponent(
             id = id,
             visibleIf = visibleIf,
@@ -453,6 +521,10 @@ private fun List<HeimComponentDto>.mapDeduplicated(
                 is LazyColumnComponent -> child.copy(id = "${child.id}_$index")
                 is LazyRowComponent -> child.copy(id = "${child.id}_$index")
                 is CustomComponent -> child.copy(id = "${child.id}_$index")
+                is CheckboxComponent -> child.copy(id = "${child.id}_$index")
+                is RadioGroupComponent -> child.copy(id = "${child.id}_$index")
+                is SelectComponent -> child.copy(id = "${child.id}_$index")
+                is DatePickerComponent -> child.copy(id = "${child.id}_$index")
                 is UnknownComponent -> child.copy(id = "${child.id}_$index")
             }
         }
@@ -475,6 +547,10 @@ private fun HeimComponent.withId(newId: String): HeimComponent = when (this) {
     is LazyColumnComponent -> copy(id = newId)
     is LazyRowComponent -> copy(id = newId)
     is CustomComponent -> copy(id = newId)
+    is CheckboxComponent -> copy(id = newId)
+    is RadioGroupComponent -> copy(id = newId)
+    is SelectComponent -> copy(id = newId)
+    is DatePickerComponent -> copy(id = newId)
     is UnknownComponent -> copy(id = newId)
 }
 
@@ -523,6 +599,19 @@ internal fun HeimActionDto.toDomain(): HeimAction {
     }
 }
 
+/** Drops an option that could never be stored: a blank value is not a choice. */
+internal fun HeimOptionDto.toDomain(): HeimOption? =
+    value.trim().takeIf { it.isNotEmpty() }?.let {
+        HeimOption(value = it, label = label.ifBlank { it })
+    }
+
+/** `YYYY-MM-DD`, checked structurally. Full calendar validity is the picker's job. */
+internal fun String.isIsoDate(): Boolean =
+    length == 10 && this[4] == '-' && this[7] == '-' &&
+        substring(0, 4).all { it.isDigit() } &&
+        substring(5, 7).all { it.isDigit() } &&
+        substring(8, 10).all { it.isDigit() }
+
 internal fun HeimAccessibilityDto.toDomain() = HeimAccessibility(
     contentDescription = contentDescription,
     role = role?.let {
@@ -550,7 +639,9 @@ internal fun ValidationRuleDto.toDomain() = ValidationRule(
         ValidationTypeDto.CUSTOM -> ValidationType.CUSTOM
     },
     value = value,
-    errorMessage = errorMessage
+    // A rule with no message still blocks submission — that is the part protecting the backend —
+    // but says nothing useful to the user. Naming the rule beats an empty bubble.
+    errorMessage = errorMessage.ifBlank { "Invalid value" }
 )
 
 internal fun JsonObject.toMapHeimValue(): Map<String, HeimValue> {

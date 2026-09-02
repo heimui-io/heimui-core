@@ -339,6 +339,84 @@ public data class TextFieldComponent(
     val helperText: String? = null
 ) : HeimComponent
 
+/**
+ * One choice in a [RadioGroupComponent] or a [SelectComponent].
+ *
+ * [value] is stored and submitted; [label] is read. Separate so the label can be translated
+ * without the stored value moving underneath the backend.
+ */
+public data class HeimOption(
+    val value: String,
+    val label: String
+)
+
+/** Single on/off choice bound to [stateKey]. Unlike a switch, it reads as "I agree", not "on". */
+public data class CheckboxComponent(
+    override val id: String,
+    override val visibleIf: String? = null,
+    override val a11y: HeimAccessibility? = null,
+    override val weight: Float? = null,
+    override val frame: HeimSize = HeimSize.None,
+    val stateKey: String,
+    val label: String,
+    val initialChecked: Boolean = false,
+    val validationRules: List<ValidationRule> = emptyList(),
+    val onCheckActions: List<HeimAction> = emptyList()
+) : HeimComponent
+
+/** One of [options], all visible at once. Use it under about five choices; above that, a select. */
+public data class RadioGroupComponent(
+    override val id: String,
+    override val visibleIf: String? = null,
+    override val a11y: HeimAccessibility? = null,
+    override val weight: Float? = null,
+    override val frame: HeimSize = HeimSize.None,
+    val stateKey: String,
+    val label: String? = null,
+    val options: List<HeimOption> = emptyList(),
+    val initialValue: String = "",
+    val validationRules: List<ValidationRule> = emptyList(),
+    val onSelectActions: List<HeimAction> = emptyList()
+) : HeimComponent
+
+/** One of [options], revealed on demand. The right shape for a country or document-type list. */
+public data class SelectComponent(
+    override val id: String,
+    override val visibleIf: String? = null,
+    override val a11y: HeimAccessibility? = null,
+    override val weight: Float? = null,
+    override val frame: HeimSize = HeimSize.None,
+    val stateKey: String,
+    val label: String? = null,
+    val placeholder: String? = null,
+    val options: List<HeimOption> = emptyList(),
+    val initialValue: String = "",
+    val validationRules: List<ValidationRule> = emptyList(),
+    val onSelectActions: List<HeimAction> = emptyList()
+) : HeimComponent
+
+/**
+ * Date input. State holds ISO-8601 `YYYY-MM-DD`; the field shows the user's own format.
+ *
+ * @property minDate earliest selectable date, ISO. Null leaves it open.
+ * @property maxDate latest selectable date, ISO. Null leaves it open.
+ */
+public data class DatePickerComponent(
+    override val id: String,
+    override val visibleIf: String? = null,
+    override val a11y: HeimAccessibility? = null,
+    override val weight: Float? = null,
+    override val frame: HeimSize = HeimSize.None,
+    val stateKey: String,
+    val label: String? = null,
+    val placeholder: String? = null,
+    val initialValue: String = "",
+    val minDate: String? = null,
+    val maxDate: String? = null,
+    val validationRules: List<ValidationRule> = emptyList(),
+    val onSelectActions: List<HeimAction> = emptyList()
+) : HeimComponent
+
 /** Boolean toggle bound to [stateKey], dispatching [onCheckActions] on every change. */
 public data class SwitchComponent(
     override val id: String,

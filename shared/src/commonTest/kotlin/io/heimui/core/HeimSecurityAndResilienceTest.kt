@@ -11,6 +11,7 @@ import io.heimui.core.domain.model.action.UnknownAction
 import io.heimui.core.domain.model.component.ButtonComponent
 import io.heimui.core.domain.model.component.ContainerComponent
 import io.heimui.core.domain.model.component.HeimPadding
+import io.heimui.core.domain.model.component.TextFieldComponent
 import io.heimui.core.domain.model.component.LazyColumnComponent
 import io.heimui.core.domain.model.component.TextComponent
 import io.heimui.core.domain.model.component.UnknownComponent
@@ -229,4 +230,20 @@ class HeimSecurityAndResilienceTest {
             authTokenProvider = { "Bearer SECRET_USER_TOKEN" }
         )
     }
+    @Test
+    fun `a validation rule missing its message costs the rule and not the screen`() {
+        // It used to cost the screen: `error_message` was required, so one forgotten string in
+        // one rule failed the whole payload — every field, every button, all of it.
+        val screen = HeimJson.decodeScreen(
+            """{"id":"s","root":{"type":"text_field","id":"f","state_key":"name",
+                 "validation_rules":[{"type":"REQUIRED"}]}}"""
+        ).toDomain()
+
+        val field = assertIs<TextFieldComponent>(screen.root)
+        assertEquals(1, field.validationRules.size)
+        // The rule still blocks submission; only the explanation is missing, so it gets a generic
+        // one rather than an empty bubble.
+        assertEquals("Invalid value", field.validationRules.single().errorMessage)
+    }
+
 }
