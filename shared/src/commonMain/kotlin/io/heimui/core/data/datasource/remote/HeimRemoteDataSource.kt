@@ -304,6 +304,26 @@ internal class HeimRemoteDataSource(
     return endpoint
   }
 
+  /**
+   * The URL a screen resolves to, which is also what identifies it in the cache.
+   *
+   * Exposed so the repository keys its cache by exactly what it fetched, rather than by
+   * `screenId` alone. Those are not the same thing: `product_detail?sku=x1` and `?sku=x2` share a
+   * screen id and are different resources, and two origins can both serve a `products`. Keying by
+   * the id collapsed all of them onto one entry, so opening a second product showed the first for
+   * an instant — and sent the first one's ETag to ask about the second.
+   */
+  internal fun screenCacheKey(screenId: String, queryParams: Map<String, String>): String {
+    val base = buildUrl("/screens/$screenId")
+    if (queryParams.isEmpty()) return base
+    // Sorted, so two callers passing the same parameters in a different order share one entry
+    // rather than quietly caching the same screen twice.
+    val query = queryParams.entries
+        .sortedBy { it.key }
+        .joinToString("&") { "${it.key}=${it.value}" }
+    return "$base?$query"
+  }
+
   private fun buildUrl(path: String): String {
     val cleanBase = baseUrl.trimEnd('/')
     val cleanPath = if (path.startsWith("/")) path else "/$path"

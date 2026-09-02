@@ -76,29 +76,6 @@ public enum class InputType {
 }
 
 /**
- * Linear layout. Stacks [children] along [direction].
- *
- * ### Padding here scrolls with the content
- * A container's [padding] is applied to the container's own box, *inside* the scroll viewport.
- * The first child therefore starts `start` dp in and that gap scrolls away with everything else.
- *
- * That is the right behaviour for a form or a page, and the wrong one for a chip strip or a
- * carousel, where the row should scroll edge to edge while keeping a fixed inset at both ends.
- * For those use [LazyRowComponent], whose padding becomes Compose's `contentPadding` and so sits
- * outside the scrolling area. This is the same distinction other design systems draw by naming
- * the two separately — a `padding` that clips and an `insets` that does not.
- *
- * ### Scrolling
- * Both axes scroll by default. Set [scrollable] to `false` when nesting inside another scroller
- * on the same axis, which would otherwise fail to measure against infinite constraints.
- *
- * @property direction axis the children are laid out along.
- * @property alignment cross-axis alignment of the children.
- * @property padding inner padding in dp, per side. Negative values are clamped to 0.
- * @property spacing gap between children in dp. Negative values are clamped to 0.
- * @property backgroundColor design token or `#RRGGBB` hex. `null` is transparent.
- */
-/**
  * How children are distributed along a container's own axis.
  *
  * Distinct from `alignment`, which positions them across the *other* axis. A vertical container's
@@ -123,6 +100,29 @@ public enum class HeimArrangement {
     SPACE_EVENLY,
 }
 
+/**
+ * Linear layout. Stacks [children] along [direction].
+ *
+ * ### Padding here scrolls with the content
+ * A container's [padding] is applied to the container's own box, *inside* the scroll viewport.
+ * The first child therefore starts `start` dp in and that gap scrolls away with everything else.
+ *
+ * That is the right behaviour for a form or a page, and the wrong one for a chip strip or a
+ * carousel, where the row should scroll edge to edge while keeping a fixed inset at both ends.
+ * For those use [LazyRowComponent], whose padding becomes Compose's `contentPadding` and so sits
+ * outside the scrolling area. This is the same distinction other design systems draw by naming
+ * the two separately — a `padding` that clips and an `insets` that does not.
+ *
+ * ### Scrolling
+ * Both axes scroll by default. Set [scrollable] to `false` when nesting inside another scroller
+ * on the same axis, which would otherwise fail to measure against infinite constraints.
+ *
+ * @property direction axis the children are laid out along.
+ * @property alignment cross-axis alignment of the children.
+ * @property padding inner padding in dp, per side. Negative values are clamped to 0.
+ * @property spacing gap between children in dp. Negative values are clamped to 0.
+ * @property backgroundColor design token or `#RRGGBB` hex. `null` is transparent.
+ */
 public data class ContainerComponent(
     override val id: String,
     override val visibleIf: String? = null,
@@ -133,6 +133,12 @@ public data class ContainerComponent(
     val padding: HeimPadding = HeimPadding.None,
     val spacing: Int = 0,
     val backgroundColor: String? = null,
+    /** Corner radius in dp. 0 is square. */
+    val cornerRadius: Int = 0,
+    /** Design token or `#RRGGBB`. Null draws no border, whatever [borderWidth] says. */
+    val borderColor: String? = null,
+    /** Border thickness in dp. Ignored without a [borderColor]. */
+    val borderWidth: Int = 1,
     /**
      * Whether the container scrolls along [direction].
      *
@@ -162,6 +168,12 @@ public data class BoxComponent(
     val contentAlignment: Alignment = Alignment.CENTER,
     val padding: HeimPadding = HeimPadding.None,
     val backgroundColor: String? = null,
+    /** Corner radius in dp. 0 is square. */
+    val cornerRadius: Int = 0,
+    /** Design token or `#RRGGBB`. Null draws no border, whatever [borderWidth] says. */
+    val borderColor: String? = null,
+    /** Border thickness in dp. Ignored without a [borderColor]. */
+    val borderWidth: Int = 1,
     override val weight: Float? = null,
     override val frame: HeimSize = HeimSize.None,
     val children: List<HeimComponent> = emptyList()

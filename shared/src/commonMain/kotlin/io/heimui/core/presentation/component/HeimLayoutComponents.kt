@@ -1,6 +1,10 @@
 package io.heimui.core.presentation.component
 
 import androidx.compose.foundation.background
+import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.draw.clip
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.ui.Alignment
 import androidx.compose.foundation.layout.Box
@@ -51,7 +55,12 @@ internal fun HeimContainerRenderer(
 
     val containerModifier = modifier
         .fillMaxWidth()
-        .background(bgColor)
+        .heimSurface(
+            backgroundColor = component.backgroundColor,
+            cornerRadius = component.cornerRadius,
+            borderColor = component.borderColor,
+            borderWidth = component.borderWidth,
+        )
         .heimPadding(component.padding)
         .heimAccessibility(component.a11y, componentId = component.id)
 
@@ -158,14 +167,17 @@ internal fun HeimBoxRenderer(
     onAction: (HeimAction) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val bgColor = heimColor(component.backgroundColor, Color.Transparent)
-
     Box(
         modifier = modifier
             .fillMaxWidth()
-            // Background before padding, so the colour fills the padded area rather than being
-            // inset by it — the same order the container uses.
-            .background(bgColor)
+            // Surface before padding, so the colour and border frame the padded area rather than
+            // being inset by it — the same order the container uses.
+            .heimSurface(
+                backgroundColor = component.backgroundColor,
+                cornerRadius = component.cornerRadius,
+                borderColor = component.borderColor,
+                borderWidth = component.borderWidth,
+            )
             .heimPadding(component.padding)
             .heimAccessibility(component.a11y, componentId = component.id),
         contentAlignment = HeimTokenResolver.resolveBoxAlignment(component.contentAlignment)
@@ -270,4 +282,27 @@ internal fun heimHorizontalArrangement(arrangement: HeimArrangement, spacing: In
         HeimArrangement.SPACE_AROUND -> Arrangement.SpaceAround
         HeimArrangement.SPACE_EVENLY -> Arrangement.SpaceEvenly
     }
+}
+
+/**
+ * Background, rounded corners and border, in the order they have to be applied.
+ *
+ * Clip before background, or a rounded container paints square corners underneath its own clip.
+ * Border last, or it is drawn inside the clip and loses half its width to it.
+ */
+@Composable
+private fun Modifier.heimSurface(
+    backgroundColor: String?,
+    cornerRadius: Int,
+    borderColor: String?,
+    borderWidth: Int,
+): Modifier {
+    val shape = if (cornerRadius > 0) RoundedCornerShape(cornerRadius.dp) else RectangleShape
+    var m = this
+    if (cornerRadius > 0) m = m.clip(shape)
+    m = m.background(heimColor(backgroundColor, Color.Transparent), shape)
+    if (borderColor != null && borderWidth > 0) {
+        m = m.border(borderWidth.dp, heimColor(borderColor, Color.Transparent), shape)
+    }
+    return m
 }

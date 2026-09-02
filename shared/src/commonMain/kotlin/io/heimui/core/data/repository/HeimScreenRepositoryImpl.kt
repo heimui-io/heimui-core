@@ -36,7 +36,10 @@ internal class HeimScreenRepositoryImpl(
         screenId: String,
         queryParams: Map<String, String>
     ): Flow<HeimScreenResult> = flow {
-        val cachedEntry = cacheDataSource.getScreen(screenId)
+        // Keyed by the URL actually fetched, not by the screen id. Deriving it from the data
+        // source is what keeps the two from drifting apart.
+        val cacheKey = remoteDataSource.screenCacheKey(screenId, queryParams)
+        val cachedEntry = cacheDataSource.getScreen(cacheKey)
 
         // Cached content is only trusted if it still carries a signature we can re-verify.
         // A cache is attacker-writable on a rooted/jailbroken device, so rendering it with
@@ -46,7 +49,7 @@ internal class HeimScreenRepositoryImpl(
             !verifySignatures -> cachedEntry
             isCachedEntryTrusted(cachedEntry.signature, cachedEntry.rawBytes) -> cachedEntry
             else -> {
-                cacheDataSource.clear(screenId)
+                cacheDataSource.clear(cacheKey)
                 null
             }
         }
@@ -64,7 +67,7 @@ internal class HeimScreenRepositoryImpl(
                     return@flow
                 }
                 cacheDataSource.saveScreen(
-                    screenId = screenId,
+                    screenId = cacheKey,
                     screen = remote.screen,
                     etag = remote.etag,
                     signature = remote.signature,

@@ -33,7 +33,10 @@ class HeimStorageDriverTest {
 
         // 1. Save screen
         cacheDataSource.saveScreen("profile_screen", screenDto, etag = "etag_abc123")
-        assertEquals(1, mockDisk.size)
+        // Two keys: the screen, and the index the cache keeps to know what to evict first. The
+        // driver interface has no way to enumerate keys, so the bound is tracked in a document of
+        // its own rather than by asking every implementor for a listing API.
+        assertEquals(2, mockDisk.size)
 
         // 2. Retrieve screen
         val cached = cacheDataSource.getScreen("profile_screen")

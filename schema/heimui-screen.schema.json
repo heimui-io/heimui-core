@@ -526,6 +526,22 @@
         },
         "frame": {
           "$ref": "#/$defs/frame"
+        },
+        "corner_radius": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 0,
+          "description": "Corner radius in dp. 0 is square."
+        },
+        "border_color": {
+          "type": "string",
+          "description": "Design token or #RRGGBB. Absent draws no border, whatever border_width says."
+        },
+        "border_width": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 1,
+          "description": "Border thickness in dp. Ignored without a border_color."
         }
       }
     },
@@ -580,6 +596,22 @@
         },
         "frame": {
           "$ref": "#/$defs/frame"
+        },
+        "corner_radius": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 0,
+          "description": "Corner radius in dp. 0 is square."
+        },
+        "border_color": {
+          "type": "string",
+          "description": "Design token or #RRGGBB. Absent draws no border, whatever border_width says."
+        },
+        "border_width": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 1,
+          "description": "Border thickness in dp. Ignored without a border_color."
         }
       }
     },

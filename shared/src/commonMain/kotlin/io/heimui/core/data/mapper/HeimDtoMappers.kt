@@ -181,6 +181,9 @@ internal fun HeimComponentDto.toDomain(
             padding = padding.clampedToZero(),
             spacing = maxOf(0, spacing),
             backgroundColor = backgroundColor,
+            cornerRadius = maxOf(0, cornerRadius),
+            borderColor = borderColor,
+            borderWidth = maxOf(0, borderWidth),
             scrollable = scrollable,
             children = children.mapDeduplicated(depth = depth + 1, report = report)
         )

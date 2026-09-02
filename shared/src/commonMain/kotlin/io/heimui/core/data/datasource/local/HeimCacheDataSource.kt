@@ -8,6 +8,8 @@ import io.heimui.core.domain.port.InMemoryStorageDriver
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.builtins.ListSerializer
+import kotlinx.serialization.builtins.serializer
 import kotlinx.serialization.json.Json
 
 /** Schema version of the cache envelope. Bumped whenever [CachedScreenEntry] changes shape. */
@@ -45,8 +47,21 @@ public class DriverBackedHeimCacheDataSource(
     private val json: Json = HeimJson.instance,
     private val clock: HeimClock = HeimClock.System,
     /** Entries older than this are dropped. Null disables expiry. */
-    private val ttlMillis: Long? = DEFAULT_TTL_MILLIS
+    private val ttlMillis: Long? = DEFAULT_TTL_MILLIS,
+    /**
+     * How many screens to keep. The oldest is dropped when the limit is reached.
+     *
+     * A bound is necessary, not decorative. Entries are keyed by the URL fetched, so a catalogue
+     * browsed through a hundred products leaves a hundred entries — on the user's device, in
+     * storage they did not agree to spend. Time alone does not bound that: a TTL only removes what
+     * nobody came back for, and says nothing about how much accumulates in the meantime.
+     */
+    private val maxEntries: Int = DEFAULT_MAX_ENTRIES
 ) : HeimCacheDataSource {
+
+    // Writes are read-modify-write across two keys, so they have to be serialised even though the
+    // driver itself is thread-safe.
+    private val mutex = Mutex()
 
     override suspend fun getScreen(screenId: String): CachedScreenEntry? {
         val raw = driver.get(screenId) ?: return null
@@ -58,11 +73,11 @@ public class DriverBackedHeimCacheDataSource(
         // A cache written by an older SDK may decode into a different shape; drop it rather than
         // rendering a half-populated entry.
         if (entry == null || entry.schemaVersion != HEIM_CACHE_SCHEMA_VERSION) {
-            driver.delete(screenId)
+            evict(screenId)
             return null
         }
         if (entry.isExpired(clock.nowMillis(), ttlMillis)) {
-            driver.delete(screenId)
+            evict(screenId)
             return null
         }
         return entry
@@ -82,16 +97,73 @@ public class DriverBackedHeimCacheDataSource(
             signature = signature,
             rawJson = rawBytes?.decodeToString()
         )
-        driver.put(screenId, json.encodeToString(CachedScreenEntry.serializer(), entry))
+        mutex.withLock {
+            driver.put(screenId, json.encodeToString(CachedScreenEntry.serializer(), entry))
+            touchAndTrim(screenId)
+        }
     }
 
-    override suspend fun clear(screenId: String): Unit = driver.delete(screenId)
+    override suspend fun clear(screenId: String): Unit = mutex.withLock { evict(screenId) }
 
-    override suspend fun clearAll(): Unit = driver.clear()
+    override suspend fun clearAll(): Unit = mutex.withLock {
+        driver.clear()
+    }
+
+    private suspend fun evict(key: String) {
+        driver.delete(key)
+        val index = readIndex()
+        if (index.remove(key)) writeIndex(index)
+    }
+
+    /**
+     * Records the key as most recently written and drops the oldest beyond [maxEntries].
+     *
+     * The index is kept as its own document because [HeimStorageDriver] is four methods and none
+     * of them enumerates keys — asking implementors for a listing API would make the simplest
+     * possible driver harder to write, for a need only this class has.
+     */
+    private suspend fun touchAndTrim(key: String) {
+        val index = readIndex()
+        index.remove(key)
+        index.add(key)
+        while (index.size > maxEntries) {
+            driver.delete(index.removeAt(0))
+        }
+        writeIndex(index)
+    }
+
+    private suspend fun readIndex(): MutableList<String> {
+        val raw = driver.get(INDEX_KEY) ?: return mutableListOf()
+        return try {
+            json.decodeFromString(ListSerializer(String.serializer()), raw).toMutableList()
+        } catch (_: Throwable) {
+            // A corrupt index costs eviction ordering, not correctness: entries still expire by
+            // TTL. Starting over beats refusing to cache.
+            mutableListOf()
+        }
+    }
+
+    private suspend fun writeIndex(index: List<String>) {
+        // An empty index is litter, not state. Leaving the document behind means clearing the last
+        // screen still leaves something in the user's storage.
+        if (index.isEmpty()) {
+            driver.delete(INDEX_KEY)
+            return
+        }
+        driver.put(INDEX_KEY, json.encodeToString(ListSerializer(String.serializer()), index))
+    }
 
     public companion object {
         /** 7 days: long enough to be useful offline, short enough not to serve last month's UI. */
         public const val DEFAULT_TTL_MILLIS: Long = 7L * 24 * 60 * 60 * 1000
+
+        /**
+         * Enough for a deep session without the cache becoming a place things accumulate.
+         * A payload is kilobytes, so this is single-digit megabytes at worst.
+         */
+        public const val DEFAULT_MAX_ENTRIES: Int = 60
+
+        private const val INDEX_KEY = "heim_cache_index"
     }
 }
 
