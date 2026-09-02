@@ -8,6 +8,8 @@ import androidx.compose.material3.Typography
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.staticCompositionLocalOf
+import androidx.compose.runtime.ProvidableCompositionLocal
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalUriHandler
@@ -36,6 +38,15 @@ import io.heimui.core.presentation.tracking.NoOpHeimTrackingDispatcher
 import io.heimui.core.presentation.state.HeimFormDraftStorage
 import io.heimui.core.presentation.state.LocalHeimFormDraftStorage
 import io.heimui.core.presentation.validation.LocalHeimValidatorRegistry
+
+
+/**
+ * Whether components that cannot be rendered draw a visible placeholder.
+ *
+ * Off outside development. See `HeimTheme`'s `showDiagnostics` for why.
+ */
+public val LocalHeimShowDiagnostics: ProvidableCompositionLocal<Boolean> =
+    staticCompositionLocalOf { false }
 
 /**
  * Installs the theme and every pluggable contract HeimUI renderers read from the composition.
@@ -108,6 +119,16 @@ public fun HeimTheme(
      * reporting on itself — this is the product reporting on the user, with names the payload owns.
      */
     trackingDispatcher: HeimTrackingDispatcher = NoOpHeimTrackingDispatcher,
+    /**
+     * Draws a visible placeholder where a component could not be rendered.
+     *
+     * Off by default, and that is deliberate: a user seeing a red "unknown component" box learns
+     * nothing, reads the screen as broken, and is shown an internal id. Unknown types are still
+     * reported as telemetry either way — this only decides whether they are also drawn.
+     *
+     * Turn it on in debug builds, where seeing the box is the point.
+     */
+    showDiagnostics: Boolean = false,
     customComponentRegistry: HeimCustomComponentRegistry = remember { HeimCustomComponentRegistry() },
     content: @Composable () -> Unit
 ) {
@@ -140,6 +161,7 @@ public fun HeimTheme(
         LocalHeimActionDispatcher provides actionDispatcher,
         LocalHeimTelemetryObserver provides telemetryObserver,
         LocalHeimTrackingDispatcher provides trackingDispatcher,
+        LocalHeimShowDiagnostics provides showDiagnostics,
         LocalHeimCustomComponentRegistry provides customComponentRegistry,
         LocalHeimValidatorRegistry provides validatorRegistry,
         LocalHeimFormDraftStorage provides formDraftStorage
