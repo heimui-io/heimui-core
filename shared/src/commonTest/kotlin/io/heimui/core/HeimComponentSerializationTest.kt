@@ -9,6 +9,9 @@ import io.heimui.core.data.mapper.toDomain
 import io.heimui.core.domain.model.accessibility.AccessibilityRole
 import io.heimui.core.domain.model.component.HeimArrangement
 import io.heimui.core.domain.model.component.CheckboxComponent
+import io.heimui.core.domain.model.component.ChipComponent
+import io.heimui.core.domain.model.component.ChipVariant
+import io.heimui.core.domain.model.component.LazyRowComponent
 import io.heimui.core.domain.model.component.DatePickerComponent
 import io.heimui.core.domain.model.component.HeimPadding
 import io.heimui.core.domain.model.component.RadioGroupComponent
@@ -342,6 +345,42 @@ class HeimComponentSerializationTest {
         // A malformed bound is dropped, not honoured: keeping it would make every date invalid
         // and read as a broken picker rather than a bad payload.
         assertNull(date.maxDate)
+    }
+
+    @Test
+    fun `a chip is an action or a single choice or a toggle depending on what it binds`() {
+        val row = HeimJson.decodeScreen(
+            """
+            {"id":"s","root":{"type":"lazy_row","id":"strip","items":[
+              {"type":"chip","id":"all","label":"All","variant":"FILTER",
+               "state_key":"category","value":"all","icon":" Widgets "},
+              {"type":"chip","id":"deals","label":"Deals","variant":"FILTER",
+               "state_key":"category","value":"deals"},
+              {"type":"chip","id":"instock","label":"In stock","variant":"FILTER",
+               "state_key":"in_stock"},
+              {"type":"chip","id":"help","label":"Help",
+               "actions":[{"type":"open_url","url":"https://example.com"}]}
+            ]}}
+            """.trimIndent()
+        ).toDomain()
+
+        val chips = (row.root as LazyRowComponent).items.map { assertIs<ChipComponent>(it) }
+
+        // Sharing a key with distinct values makes them one choice.
+        assertEquals("category", chips[0].stateKey)
+        assertEquals(listOf("all", "deals"), chips.take(2).map { it.value })
+        // Trimmed, or the name would never match the provider's lookup.
+        assertEquals("Widgets", chips[0].icon)
+
+        // A key with no value is an independent on/off.
+        assertEquals("in_stock", chips[2].stateKey)
+        assertNull(chips[2].value)
+
+        // Neither: a plain action chip, and ASSIST by default so a screen reader announces an
+        // action rather than a selection state it does not have.
+        assertNull(chips[3].stateKey)
+        assertEquals(ChipVariant.ASSIST, chips[3].variant)
+        assertEquals(1, chips[3].actions.size)
     }
 
 }

@@ -127,17 +127,33 @@ val publishLocal by tasks.registering {
     group = "publishing"
     description = "Publishes to mavenLocal as <version>-LOCAL, alongside any released build."
     dependsOn(tasks.named("publishToMavenLocal"))
-    doLast {
-        logger.lifecycle("Published io.heimui:heimui-core:$version to mavenLocal")
-    }
+
+    // The coordinate is captured now, not read inside the action. The configuration cache cannot
+    // serialise a reference back into the build script, and reading `version` at execution time
+    // is exactly that.
+    val coordinate = "io.heimui:heimui-core:$version"
+    doLast { println("Published $coordinate to mavenLocal") }
 }
 
 // The suffix has to be applied before the publication is configured, so it is decided here rather
 // than inside the task's action -- a task cannot change the version it is publishing.
-if (gradle.startParameter.taskNames.any { it.endsWith("publishLocal") } &&
-    findProperty("heimui.version") == null
-) {
-    version = "$version-LOCAL"
+run {
+    val requested = gradle.startParameter.taskNames
+    val wantsLocal = requested.any { it.substringAfterLast(':') == "publishLocal" }
+    val wantsRelease = requested.any { it.substringAfterLast(':') == "publishToMavenLocal" }
+
+    // Both in one invocation is a trap, and it bit once already: the version is a single value
+    // for the whole build, so `publishToMavenLocal publishLocal` published *both* under -LOCAL
+    // and left the release coordinate silently stale. Failing beats publishing the wrong thing
+    // under the right name.
+    require(!(wantsLocal && wantsRelease)) {
+        "Run `publishLocal` and `publishToMavenLocal` separately. A build has one version, so " +
+            "asking for both publishes each of them as -LOCAL and leaves $version stale."
+    }
+
+    if (wantsLocal && findProperty("heimui.version") == null) {
+        version = "$version-LOCAL"
+    }
 }
 
 publishing {

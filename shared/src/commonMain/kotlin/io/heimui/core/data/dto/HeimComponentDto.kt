@@ -225,6 +225,43 @@ public data class CardComponentDto(
 ) : HeimComponentDto
 
 @Serializable
+public enum class ChipVariantDto {
+    @SerialName("ASSIST") ASSIST,
+    @SerialName("FILTER") FILTER
+}
+
+/**
+ * A compact, tappable label — a category pill, a tag, a filter.
+ *
+ * Distinct from `badge`, which is decoration and cannot be tapped, and from `button`, which is
+ * the wrong size and shape for a strip of them. It is the most common thing an SDUI payload wants
+ * that neither of the other two can express.
+ *
+ * Bind it to state and it becomes a filter:
+ * - `state_key` **with** `value` — one of a group, like a radio. Chips sharing a key are mutually
+ *   exclusive, and tapping the selected one clears it.
+ * - `state_key` **without** `value` — an independent on/off, for a multi-select row.
+ *
+ * Leave `state_key` out and it is a plain action chip.
+ */
+@Serializable
+@SerialName("chip")
+public data class ChipComponentDto(
+    override val id: String = "",
+    @SerialName("visible_if") override val visibleIf: String? = null,
+    override val a11y: HeimAccessibilityDto? = null,
+    override val weight: Float? = null,
+    override val frame: SizeSpec = HeimSize.None,
+    val label: String = "",
+    val icon: String? = null,
+    val variant: ChipVariantDto = ChipVariantDto.ASSIST,
+    @SerialName("state_key") val stateKey: String? = null,
+    val value: String? = null,
+    @SerialName("is_enabled") @Serializable(with = LenientBooleanSerializer::class) val isEnabled: Boolean = true,
+    val actions: List<HeimActionDto> = emptyList()
+) : HeimComponentDto
+
+@Serializable
 @SerialName("badge")
 public data class BadgeComponentDto(
     override val id: String = "",

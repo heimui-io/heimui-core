@@ -10,7 +10,11 @@ import androidx.compose.foundation.interaction.PressInteraction
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.selection.toggleable
+import androidx.compose.material3.AssistChip
 import androidx.compose.material3.Checkbox
+import androidx.compose.material3.FilterChip
+import androidx.compose.material3.FilterChipDefaults
+import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.DropdownMenuItem
@@ -37,11 +41,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
 import io.heimui.core.domain.model.component.CheckboxComponent
+import io.heimui.core.domain.model.component.ChipComponent
+import io.heimui.core.domain.model.component.ChipVariant
 import io.heimui.core.domain.model.component.DatePickerComponent
 import io.heimui.core.domain.model.component.RadioGroupComponent
 import io.heimui.core.domain.model.component.SelectComponent
 import io.heimui.core.presentation.accessibility.heimAccessibility
 import io.heimui.core.presentation.action.LocalHeimActionRunner
+import io.heimui.core.presentation.designsystem.LocalHeimIconProvider
 import io.heimui.core.presentation.state.HeimStateManager
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.TimeZone
@@ -345,3 +352,72 @@ private fun LocalDate.toUtcMillis(): Long =
 
 private fun Long.toUtcLocalDate(): LocalDate =
     Instant.fromEpochMilliseconds(this).toLocalDateTime(TimeZone.UTC).date
+
+@Composable
+internal fun HeimChipRenderer(
+    component: ChipComponent,
+    stateManager: HeimStateManager,
+    modifier: Modifier = Modifier,
+) {
+    val actionRunner = LocalHeimActionRunner.current
+    val iconProvider = LocalHeimIconProvider.current
+    val formState by stateManager.formState.collectAsState()
+
+    val stored = component.stateKey?.let { formState[it] }
+    val isSelected = when {
+        component.stateKey == null -> false
+        // With a value, the chips sharing a key are one choice: this one is on when the stored
+        // value is its own.
+        component.value != null -> stored == component.value
+        // Without one, the chip is its own on/off.
+        else -> stored?.toBooleanStrictOrNull() ?: false
+    }
+
+    val onClick = {
+        component.stateKey?.let { key ->
+            val next = when {
+                // Tapping the selected chip clears the group. A single-choice row with no way to
+                // undo traps the user on their first tap.
+                component.value != null -> if (isSelected) "" else component.value
+                else -> (!isSelected).toString()
+            }
+            stateManager.updateValue(key, next)
+        }
+        actionRunner.run(component.actions)
+    }
+
+    val label: @Composable () -> Unit = { Text(component.label) }
+    val leadingIcon: (@Composable () -> Unit)? = component.icon?.let { name ->
+        {
+            iconProvider.RenderIcon(
+                name = name,
+                tint = LocalContentColor.current,
+                size = FilterChipDefaults.IconSize,
+                modifier = Modifier,
+            )
+        }
+    }
+    val chipModifier = modifier.heimAccessibility(component.a11y, componentId = component.id)
+
+    when (component.variant) {
+        // A filter chip announces itself as selected or not; an assist chip announces an action.
+        // Using one for the other is the difference between a screen reader saying "selected" and
+        // saying nothing at all.
+        ChipVariant.FILTER -> FilterChip(
+            selected = isSelected,
+            onClick = onClick,
+            label = label,
+            enabled = component.isEnabled,
+            leadingIcon = leadingIcon,
+            modifier = chipModifier,
+        )
+
+        ChipVariant.ASSIST -> AssistChip(
+            onClick = onClick,
+            label = label,
+            enabled = component.isEnabled,
+            leadingIcon = leadingIcon,
+            modifier = chipModifier,
+        )
+    }
+}

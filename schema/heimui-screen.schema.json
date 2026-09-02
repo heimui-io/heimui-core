@@ -351,6 +351,21 @@
           "then": {
             "$ref": "#/$defs/date_picker"
           }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "chip"
+              }
+            },
+            "required": [
+              "type"
+            ]
+          },
+          "then": {
+            "$ref": "#/$defs/chip"
+          }
         }
       ]
     },
@@ -2269,6 +2284,72 @@
           }
         },
         "on_select_actions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/action"
+          }
+        }
+      }
+    },
+    "chip": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "type",
+        "label"
+      ],
+      "description": "A compact tappable label — a category pill, a tag, a filter. Fills the gap between `badge`, which is decoration and cannot be tapped, and `button`, which is the wrong shape for a strip of them. Put a row of them in a `lazy_row` so they scroll edge to edge while keeping their inset.",
+      "properties": {
+        "type": {
+          "const": "chip"
+        },
+        "id": {
+          "type": "string"
+        },
+        "visible_if": {
+          "type": "string"
+        },
+        "a11y": {
+          "$ref": "#/$defs/accessibility"
+        },
+        "weight": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "description": "Share of the parent container's main axis. Two children with weight 1 split a row in half; 2 and 1 split it two thirds to one third. Any component may carry it. Ignored unless the parent is a `container`, and ignored inside a scrolling container — a scrolling axis is unbounded, so there is nothing to divide."
+        },
+        "frame": {
+          "$ref": "#/$defs/frame"
+        },
+        "label": {
+          "type": "string",
+          "minLength": 1
+        },
+        "icon": {
+          "type": "string",
+          "description": "Icon name, resolved by the app's HeimIconProvider."
+        },
+        "variant": {
+          "type": "string",
+          "enum": [
+            "ASSIST",
+            "FILTER"
+          ],
+          "default": "ASSIST",
+          "description": "FILTER announces itself as selected or not to a screen reader; ASSIST announces an action. Using one for the other is the difference between hearing 'selected' and hearing nothing."
+        },
+        "state_key": {
+          "type": "string",
+          "description": "Binds the chip to form state. With `value`, chips sharing a key behave as one choice and tapping the selected one clears it. Without `value`, the chip is an independent on/off for a multi-select row. Omit both for a plain action chip."
+        },
+        "value": {
+          "type": "string",
+          "description": "This chip's value within its group. Requires `state_key`."
+        },
+        "is_enabled": {
+          "type": "boolean",
+          "default": true
+        },
+        "actions": {
           "type": "array",
           "items": {
             "$ref": "#/$defs/action"

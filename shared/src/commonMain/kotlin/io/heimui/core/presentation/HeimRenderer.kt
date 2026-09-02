@@ -33,11 +33,13 @@ import io.heimui.core.domain.model.component.UnknownComponent
 import io.heimui.core.presentation.component.HeimBadgeRenderer
 import io.heimui.core.presentation.component.heimSize
 import io.heimui.core.domain.model.component.CheckboxComponent
+import io.heimui.core.domain.model.component.ChipComponent
 import io.heimui.core.domain.model.component.DatePickerComponent
 import io.heimui.core.domain.model.component.RadioGroupComponent
 import io.heimui.core.domain.model.component.SelectComponent
 import io.heimui.core.presentation.component.HeimBoxRenderer
 import io.heimui.core.presentation.component.HeimCheckboxRenderer
+import io.heimui.core.presentation.component.HeimChipRenderer
 import io.heimui.core.presentation.component.HeimDatePickerRenderer
 import io.heimui.core.presentation.component.HeimRadioGroupRenderer
 import io.heimui.core.presentation.component.HeimSelectRenderer
@@ -179,6 +181,12 @@ public fun HeimRenderer(
             stateManager = stateManager,
             modifier = modifier
         )
+        is ChipComponent -> HeimChipRenderer(
+            component = component,
+            stateManager = stateManager,
+            modifier = modifier
+        )
+
         is CheckboxComponent -> HeimCheckboxRenderer(
             component = component,
             stateManager = stateManager,

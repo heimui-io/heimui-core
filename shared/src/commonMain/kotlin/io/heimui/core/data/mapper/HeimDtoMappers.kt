@@ -8,6 +8,8 @@ import io.heimui.core.data.dto.BoxComponentDto
 import io.heimui.core.data.dto.ButtonComponentDto
 import io.heimui.core.data.dto.ButtonVariantDto
 import io.heimui.core.data.dto.CardComponentDto
+import io.heimui.core.data.dto.ChipComponentDto
+import io.heimui.core.data.dto.ChipVariantDto
 import io.heimui.core.data.dto.CheckboxComponentDto
 import io.heimui.core.data.dto.DatePickerComponentDto
 import io.heimui.core.data.dto.HeimOptionDto
@@ -70,6 +72,8 @@ import io.heimui.core.domain.model.component.BoxComponent
 import io.heimui.core.domain.model.component.ButtonComponent
 import io.heimui.core.domain.model.component.ButtonVariant
 import io.heimui.core.domain.model.component.CardComponent
+import io.heimui.core.domain.model.component.ChipComponent
+import io.heimui.core.domain.model.component.ChipVariant
 import io.heimui.core.domain.model.component.CheckboxComponent
 import io.heimui.core.domain.model.component.DatePickerComponent
 import io.heimui.core.domain.model.component.HeimOption
@@ -306,6 +310,23 @@ internal fun HeimComponentDto.toDomain(
             actions = actions.map { it.toDomain() },
             child = child.toDomain(depth = depth + 1)
         )
+        is ChipComponentDto -> ChipComponent(
+            id = id,
+            visibleIf = visibleIf,
+            a11y = a11y?.toDomain(),
+            weight = weight?.takeIf { it > 0f },
+            frame = frame.sanitized(),
+            label = label,
+            icon = icon?.trim()?.takeIf { it.isNotEmpty() },
+            variant = when (variant) {
+                ChipVariantDto.ASSIST -> ChipVariant.ASSIST
+                ChipVariantDto.FILTER -> ChipVariant.FILTER
+            },
+            stateKey = stateKey?.trim()?.takeIf { it.isNotEmpty() },
+            value = value,
+            isEnabled = isEnabled,
+            actions = actions.map { it.toDomain() }
+        )
         is BadgeComponentDto -> BadgeComponent(
             id = id,
             visibleIf = visibleIf,
@@ -525,6 +546,7 @@ private fun List<HeimComponentDto>.mapDeduplicated(
                 is RadioGroupComponent -> child.copy(id = "${child.id}_$index")
                 is SelectComponent -> child.copy(id = "${child.id}_$index")
                 is DatePickerComponent -> child.copy(id = "${child.id}_$index")
+                is ChipComponent -> child.copy(id = "${child.id}_$index")
                 is UnknownComponent -> child.copy(id = "${child.id}_$index")
             }
         }
@@ -551,6 +573,7 @@ private fun HeimComponent.withId(newId: String): HeimComponent = when (this) {
     is RadioGroupComponent -> copy(id = newId)
     is SelectComponent -> copy(id = newId)
     is DatePickerComponent -> copy(id = newId)
+    is ChipComponent -> copy(id = newId)
     is UnknownComponent -> copy(id = newId)
 }
 

@@ -276,6 +276,33 @@ public data class CardComponent(
     val child: HeimComponent
 ) : HeimComponent
 
+/** How a chip reads: an action to take, or a filter that can be on. */
+public enum class ChipVariant { ASSIST, FILTER }
+
+/**
+ * Compact tappable label — a category pill, a tag, a filter.
+ *
+ * Fills the gap between [BadgeComponent], which cannot be tapped, and [ButtonComponent], which is
+ * the wrong shape for a strip of them.
+ *
+ * @property stateKey binds it to form state. With [value] the chips sharing a key behave as one
+ *   choice; without it the chip is an independent on/off. Null makes it a plain action chip.
+ */
+public data class ChipComponent(
+    override val id: String,
+    override val visibleIf: String? = null,
+    override val a11y: HeimAccessibility? = null,
+    override val weight: Float? = null,
+    override val frame: HeimSize = HeimSize.None,
+    val label: String,
+    val icon: String? = null,
+    val variant: ChipVariant = ChipVariant.ASSIST,
+    val stateKey: String? = null,
+    val value: String? = null,
+    val isEnabled: Boolean = true,
+    val actions: List<HeimAction> = emptyList()
+) : HeimComponent
+
 /** Compact pill-shaped label, for statuses, counts and tags. */
 public data class BadgeComponent(
     override val id: String,

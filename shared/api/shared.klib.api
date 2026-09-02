@@ -82,6 +82,22 @@ final enum class io.heimui.core.data.dto/ButtonVariantDto : kotlin/Enum<io.heimu
     }
 }
 
+final enum class io.heimui.core.data.dto/ChipVariantDto : kotlin/Enum<io.heimui.core.data.dto/ChipVariantDto> { // io.heimui.core.data.dto/ChipVariantDto|null[0]
+    enum entry ASSIST // io.heimui.core.data.dto/ChipVariantDto.ASSIST|null[0]
+    enum entry FILTER // io.heimui.core.data.dto/ChipVariantDto.FILTER|null[0]
+
+    final val entries // io.heimui.core.data.dto/ChipVariantDto.entries|#static{}entries[0]
+        final fun <get-entries>(): kotlin.enums/EnumEntries<io.heimui.core.data.dto/ChipVariantDto> // io.heimui.core.data.dto/ChipVariantDto.entries.<get-entries>|<get-entries>#static(){}[0]
+
+    final fun valueOf(kotlin/String): io.heimui.core.data.dto/ChipVariantDto // io.heimui.core.data.dto/ChipVariantDto.valueOf|valueOf#static(kotlin.String){}[0]
+    final fun values(): kotlin/Array<io.heimui.core.data.dto/ChipVariantDto> // io.heimui.core.data.dto/ChipVariantDto.values|values#static(){}[0]
+
+    final object Companion : kotlinx.serialization.internal/SerializerFactory { // io.heimui.core.data.dto/ChipVariantDto.Companion|null[0]
+        final fun serializer(): kotlinx.serialization/KSerializer<io.heimui.core.data.dto/ChipVariantDto> // io.heimui.core.data.dto/ChipVariantDto.Companion.serializer|serializer(){}[0]
+        final fun serializer(kotlin/Array<out kotlinx.serialization/KSerializer<*>>...): kotlinx.serialization/KSerializer<*> // io.heimui.core.data.dto/ChipVariantDto.Companion.serializer|serializer(kotlin.Array<out|kotlinx.serialization.KSerializer<*>>...){}[0]
+    }
+}
+
 final enum class io.heimui.core.data.dto/ContentScaleDto : kotlin/Enum<io.heimui.core.data.dto/ContentScaleDto> { // io.heimui.core.data.dto/ContentScaleDto|null[0]
     enum entry CROP // io.heimui.core.data.dto/ContentScaleDto.CROP|null[0]
     enum entry FILL_BOUNDS // io.heimui.core.data.dto/ContentScaleDto.FILL_BOUNDS|null[0]
@@ -213,6 +229,17 @@ final enum class io.heimui.core.domain.model.component/ButtonVariant : kotlin/En
 
     final fun valueOf(kotlin/String): io.heimui.core.domain.model.component/ButtonVariant // io.heimui.core.domain.model.component/ButtonVariant.valueOf|valueOf#static(kotlin.String){}[0]
     final fun values(): kotlin/Array<io.heimui.core.domain.model.component/ButtonVariant> // io.heimui.core.domain.model.component/ButtonVariant.values|values#static(){}[0]
+}
+
+final enum class io.heimui.core.domain.model.component/ChipVariant : kotlin/Enum<io.heimui.core.domain.model.component/ChipVariant> { // io.heimui.core.domain.model.component/ChipVariant|null[0]
+    enum entry ASSIST // io.heimui.core.domain.model.component/ChipVariant.ASSIST|null[0]
+    enum entry FILTER // io.heimui.core.domain.model.component/ChipVariant.FILTER|null[0]
+
+    final val entries // io.heimui.core.domain.model.component/ChipVariant.entries|#static{}entries[0]
+        final fun <get-entries>(): kotlin.enums/EnumEntries<io.heimui.core.domain.model.component/ChipVariant> // io.heimui.core.domain.model.component/ChipVariant.entries.<get-entries>|<get-entries>#static(){}[0]
+
+    final fun valueOf(kotlin/String): io.heimui.core.domain.model.component/ChipVariant // io.heimui.core.domain.model.component/ChipVariant.valueOf|valueOf#static(kotlin.String){}[0]
+    final fun values(): kotlin/Array<io.heimui.core.domain.model.component/ChipVariant> // io.heimui.core.domain.model.component/ChipVariant.values|values#static(){}[0]
 }
 
 final enum class io.heimui.core.domain.model.component/ContentScale : kotlin/Enum<io.heimui.core.domain.model.component/ContentScale> { // io.heimui.core.domain.model.component/ContentScale|null[0]
@@ -1250,6 +1277,67 @@ final class io.heimui.core.data.dto/CheckboxComponentDto : io.heimui.core.data.d
         final val $childSerializers // io.heimui.core.data.dto/CheckboxComponentDto.Companion.$childSerializers|{}$childSerializers[0]
 
         final fun serializer(): kotlinx.serialization/KSerializer<io.heimui.core.data.dto/CheckboxComponentDto> // io.heimui.core.data.dto/CheckboxComponentDto.Companion.serializer|serializer(){}[0]
+    }
+}
+
+final class io.heimui.core.data.dto/ChipComponentDto : io.heimui.core.data.dto/HeimComponentDto { // io.heimui.core.data.dto/ChipComponentDto|null[0]
+    constructor <init>(kotlin/String = ..., kotlin/String? = ..., io.heimui.core.data.dto/HeimAccessibilityDto? = ..., kotlin/Float? = ..., io.heimui.core.domain.model.component/HeimSize = ..., kotlin/String = ..., kotlin/String? = ..., io.heimui.core.data.dto/ChipVariantDto = ..., kotlin/String? = ..., kotlin/String? = ..., kotlin/Boolean = ..., kotlin.collections/List<io.heimui.core.data.dto/HeimActionDto> = ...) // io.heimui.core.data.dto/ChipComponentDto.<init>|<init>(kotlin.String;kotlin.String?;io.heimui.core.data.dto.HeimAccessibilityDto?;kotlin.Float?;io.heimui.core.domain.model.component.HeimSize;kotlin.String;kotlin.String?;io.heimui.core.data.dto.ChipVariantDto;kotlin.String?;kotlin.String?;kotlin.Boolean;kotlin.collections.List<io.heimui.core.data.dto.HeimActionDto>){}[0]
+
+    final val a11y // io.heimui.core.data.dto/ChipComponentDto.a11y|{}a11y[0]
+        final fun <get-a11y>(): io.heimui.core.data.dto/HeimAccessibilityDto? // io.heimui.core.data.dto/ChipComponentDto.a11y.<get-a11y>|<get-a11y>(){}[0]
+    final val actions // io.heimui.core.data.dto/ChipComponentDto.actions|{}actions[0]
+        final fun <get-actions>(): kotlin.collections/List<io.heimui.core.data.dto/HeimActionDto> // io.heimui.core.data.dto/ChipComponentDto.actions.<get-actions>|<get-actions>(){}[0]
+    final val frame // io.heimui.core.data.dto/ChipComponentDto.frame|{}frame[0]
+        final fun <get-frame>(): io.heimui.core.domain.model.component/HeimSize // io.heimui.core.data.dto/ChipComponentDto.frame.<get-frame>|<get-frame>(){}[0]
+    final val icon // io.heimui.core.data.dto/ChipComponentDto.icon|{}icon[0]
+        final fun <get-icon>(): kotlin/String? // io.heimui.core.data.dto/ChipComponentDto.icon.<get-icon>|<get-icon>(){}[0]
+    final val id // io.heimui.core.data.dto/ChipComponentDto.id|{}id[0]
+        final fun <get-id>(): kotlin/String // io.heimui.core.data.dto/ChipComponentDto.id.<get-id>|<get-id>(){}[0]
+    final val isEnabled // io.heimui.core.data.dto/ChipComponentDto.isEnabled|{}isEnabled[0]
+        final fun <get-isEnabled>(): kotlin/Boolean // io.heimui.core.data.dto/ChipComponentDto.isEnabled.<get-isEnabled>|<get-isEnabled>(){}[0]
+    final val label // io.heimui.core.data.dto/ChipComponentDto.label|{}label[0]
+        final fun <get-label>(): kotlin/String // io.heimui.core.data.dto/ChipComponentDto.label.<get-label>|<get-label>(){}[0]
+    final val stateKey // io.heimui.core.data.dto/ChipComponentDto.stateKey|{}stateKey[0]
+        final fun <get-stateKey>(): kotlin/String? // io.heimui.core.data.dto/ChipComponentDto.stateKey.<get-stateKey>|<get-stateKey>(){}[0]
+    final val value // io.heimui.core.data.dto/ChipComponentDto.value|{}value[0]
+        final fun <get-value>(): kotlin/String? // io.heimui.core.data.dto/ChipComponentDto.value.<get-value>|<get-value>(){}[0]
+    final val variant // io.heimui.core.data.dto/ChipComponentDto.variant|{}variant[0]
+        final fun <get-variant>(): io.heimui.core.data.dto/ChipVariantDto // io.heimui.core.data.dto/ChipComponentDto.variant.<get-variant>|<get-variant>(){}[0]
+    final val visibleIf // io.heimui.core.data.dto/ChipComponentDto.visibleIf|{}visibleIf[0]
+        final fun <get-visibleIf>(): kotlin/String? // io.heimui.core.data.dto/ChipComponentDto.visibleIf.<get-visibleIf>|<get-visibleIf>(){}[0]
+    final val weight // io.heimui.core.data.dto/ChipComponentDto.weight|{}weight[0]
+        final fun <get-weight>(): kotlin/Float? // io.heimui.core.data.dto/ChipComponentDto.weight.<get-weight>|<get-weight>(){}[0]
+
+    final fun component1(): kotlin/String // io.heimui.core.data.dto/ChipComponentDto.component1|component1(){}[0]
+    final fun component10(): kotlin/String? // io.heimui.core.data.dto/ChipComponentDto.component10|component10(){}[0]
+    final fun component11(): kotlin/Boolean // io.heimui.core.data.dto/ChipComponentDto.component11|component11(){}[0]
+    final fun component12(): kotlin.collections/List<io.heimui.core.data.dto/HeimActionDto> // io.heimui.core.data.dto/ChipComponentDto.component12|component12(){}[0]
+    final fun component2(): kotlin/String? // io.heimui.core.data.dto/ChipComponentDto.component2|component2(){}[0]
+    final fun component3(): io.heimui.core.data.dto/HeimAccessibilityDto? // io.heimui.core.data.dto/ChipComponentDto.component3|component3(){}[0]
+    final fun component4(): kotlin/Float? // io.heimui.core.data.dto/ChipComponentDto.component4|component4(){}[0]
+    final fun component5(): io.heimui.core.domain.model.component/HeimSize // io.heimui.core.data.dto/ChipComponentDto.component5|component5(){}[0]
+    final fun component6(): kotlin/String // io.heimui.core.data.dto/ChipComponentDto.component6|component6(){}[0]
+    final fun component7(): kotlin/String? // io.heimui.core.data.dto/ChipComponentDto.component7|component7(){}[0]
+    final fun component8(): io.heimui.core.data.dto/ChipVariantDto // io.heimui.core.data.dto/ChipComponentDto.component8|component8(){}[0]
+    final fun component9(): kotlin/String? // io.heimui.core.data.dto/ChipComponentDto.component9|component9(){}[0]
+    final fun copy(kotlin/String = ..., kotlin/String? = ..., io.heimui.core.data.dto/HeimAccessibilityDto? = ..., kotlin/Float? = ..., io.heimui.core.domain.model.component/HeimSize = ..., kotlin/String = ..., kotlin/String? = ..., io.heimui.core.data.dto/ChipVariantDto = ..., kotlin/String? = ..., kotlin/String? = ..., kotlin/Boolean = ..., kotlin.collections/List<io.heimui.core.data.dto/HeimActionDto> = ...): io.heimui.core.data.dto/ChipComponentDto // io.heimui.core.data.dto/ChipComponentDto.copy|copy(kotlin.String;kotlin.String?;io.heimui.core.data.dto.HeimAccessibilityDto?;kotlin.Float?;io.heimui.core.domain.model.component.HeimSize;kotlin.String;kotlin.String?;io.heimui.core.data.dto.ChipVariantDto;kotlin.String?;kotlin.String?;kotlin.Boolean;kotlin.collections.List<io.heimui.core.data.dto.HeimActionDto>){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // io.heimui.core.data.dto/ChipComponentDto.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // io.heimui.core.data.dto/ChipComponentDto.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // io.heimui.core.data.dto/ChipComponentDto.toString|toString(){}[0]
+
+    final object $serializer : kotlinx.serialization.internal/GeneratedSerializer<io.heimui.core.data.dto/ChipComponentDto> { // io.heimui.core.data.dto/ChipComponentDto.$serializer|null[0]
+        final val descriptor // io.heimui.core.data.dto/ChipComponentDto.$serializer.descriptor|{}descriptor[0]
+            final fun <get-descriptor>(): kotlinx.serialization.descriptors/SerialDescriptor // io.heimui.core.data.dto/ChipComponentDto.$serializer.descriptor.<get-descriptor>|<get-descriptor>(){}[0]
+
+        final fun childSerializers(): kotlin/Array<kotlinx.serialization/KSerializer<*>> // io.heimui.core.data.dto/ChipComponentDto.$serializer.childSerializers|childSerializers(){}[0]
+        final fun deserialize(kotlinx.serialization.encoding/Decoder): io.heimui.core.data.dto/ChipComponentDto // io.heimui.core.data.dto/ChipComponentDto.$serializer.deserialize|deserialize(kotlinx.serialization.encoding.Decoder){}[0]
+        final fun serialize(kotlinx.serialization.encoding/Encoder, io.heimui.core.data.dto/ChipComponentDto) // io.heimui.core.data.dto/ChipComponentDto.$serializer.serialize|serialize(kotlinx.serialization.encoding.Encoder;io.heimui.core.data.dto.ChipComponentDto){}[0]
+    }
+
+    final object Companion { // io.heimui.core.data.dto/ChipComponentDto.Companion|null[0]
+        final val $childSerializers // io.heimui.core.data.dto/ChipComponentDto.Companion.$childSerializers|{}$childSerializers[0]
+
+        final fun serializer(): kotlinx.serialization/KSerializer<io.heimui.core.data.dto/ChipComponentDto> // io.heimui.core.data.dto/ChipComponentDto.Companion.serializer|serializer(){}[0]
     }
 }
 
@@ -3078,6 +3166,52 @@ final class io.heimui.core.domain.model.component/CheckboxComponent : io.heimui.
     final fun toString(): kotlin/String // io.heimui.core.domain.model.component/CheckboxComponent.toString|toString(){}[0]
 }
 
+final class io.heimui.core.domain.model.component/ChipComponent : io.heimui.core.domain.model.component/HeimComponent { // io.heimui.core.domain.model.component/ChipComponent|null[0]
+    constructor <init>(kotlin/String, kotlin/String? = ..., io.heimui.core.domain.model.accessibility/HeimAccessibility? = ..., kotlin/Float? = ..., io.heimui.core.domain.model.component/HeimSize = ..., kotlin/String, kotlin/String? = ..., io.heimui.core.domain.model.component/ChipVariant = ..., kotlin/String? = ..., kotlin/String? = ..., kotlin/Boolean = ..., kotlin.collections/List<io.heimui.core.domain.model.action/HeimAction> = ...) // io.heimui.core.domain.model.component/ChipComponent.<init>|<init>(kotlin.String;kotlin.String?;io.heimui.core.domain.model.accessibility.HeimAccessibility?;kotlin.Float?;io.heimui.core.domain.model.component.HeimSize;kotlin.String;kotlin.String?;io.heimui.core.domain.model.component.ChipVariant;kotlin.String?;kotlin.String?;kotlin.Boolean;kotlin.collections.List<io.heimui.core.domain.model.action.HeimAction>){}[0]
+
+    final val a11y // io.heimui.core.domain.model.component/ChipComponent.a11y|{}a11y[0]
+        final fun <get-a11y>(): io.heimui.core.domain.model.accessibility/HeimAccessibility? // io.heimui.core.domain.model.component/ChipComponent.a11y.<get-a11y>|<get-a11y>(){}[0]
+    final val actions // io.heimui.core.domain.model.component/ChipComponent.actions|{}actions[0]
+        final fun <get-actions>(): kotlin.collections/List<io.heimui.core.domain.model.action/HeimAction> // io.heimui.core.domain.model.component/ChipComponent.actions.<get-actions>|<get-actions>(){}[0]
+    final val frame // io.heimui.core.domain.model.component/ChipComponent.frame|{}frame[0]
+        final fun <get-frame>(): io.heimui.core.domain.model.component/HeimSize // io.heimui.core.domain.model.component/ChipComponent.frame.<get-frame>|<get-frame>(){}[0]
+    final val icon // io.heimui.core.domain.model.component/ChipComponent.icon|{}icon[0]
+        final fun <get-icon>(): kotlin/String? // io.heimui.core.domain.model.component/ChipComponent.icon.<get-icon>|<get-icon>(){}[0]
+    final val id // io.heimui.core.domain.model.component/ChipComponent.id|{}id[0]
+        final fun <get-id>(): kotlin/String // io.heimui.core.domain.model.component/ChipComponent.id.<get-id>|<get-id>(){}[0]
+    final val isEnabled // io.heimui.core.domain.model.component/ChipComponent.isEnabled|{}isEnabled[0]
+        final fun <get-isEnabled>(): kotlin/Boolean // io.heimui.core.domain.model.component/ChipComponent.isEnabled.<get-isEnabled>|<get-isEnabled>(){}[0]
+    final val label // io.heimui.core.domain.model.component/ChipComponent.label|{}label[0]
+        final fun <get-label>(): kotlin/String // io.heimui.core.domain.model.component/ChipComponent.label.<get-label>|<get-label>(){}[0]
+    final val stateKey // io.heimui.core.domain.model.component/ChipComponent.stateKey|{}stateKey[0]
+        final fun <get-stateKey>(): kotlin/String? // io.heimui.core.domain.model.component/ChipComponent.stateKey.<get-stateKey>|<get-stateKey>(){}[0]
+    final val value // io.heimui.core.domain.model.component/ChipComponent.value|{}value[0]
+        final fun <get-value>(): kotlin/String? // io.heimui.core.domain.model.component/ChipComponent.value.<get-value>|<get-value>(){}[0]
+    final val variant // io.heimui.core.domain.model.component/ChipComponent.variant|{}variant[0]
+        final fun <get-variant>(): io.heimui.core.domain.model.component/ChipVariant // io.heimui.core.domain.model.component/ChipComponent.variant.<get-variant>|<get-variant>(){}[0]
+    final val visibleIf // io.heimui.core.domain.model.component/ChipComponent.visibleIf|{}visibleIf[0]
+        final fun <get-visibleIf>(): kotlin/String? // io.heimui.core.domain.model.component/ChipComponent.visibleIf.<get-visibleIf>|<get-visibleIf>(){}[0]
+    final val weight // io.heimui.core.domain.model.component/ChipComponent.weight|{}weight[0]
+        final fun <get-weight>(): kotlin/Float? // io.heimui.core.domain.model.component/ChipComponent.weight.<get-weight>|<get-weight>(){}[0]
+
+    final fun component1(): kotlin/String // io.heimui.core.domain.model.component/ChipComponent.component1|component1(){}[0]
+    final fun component10(): kotlin/String? // io.heimui.core.domain.model.component/ChipComponent.component10|component10(){}[0]
+    final fun component11(): kotlin/Boolean // io.heimui.core.domain.model.component/ChipComponent.component11|component11(){}[0]
+    final fun component12(): kotlin.collections/List<io.heimui.core.domain.model.action/HeimAction> // io.heimui.core.domain.model.component/ChipComponent.component12|component12(){}[0]
+    final fun component2(): kotlin/String? // io.heimui.core.domain.model.component/ChipComponent.component2|component2(){}[0]
+    final fun component3(): io.heimui.core.domain.model.accessibility/HeimAccessibility? // io.heimui.core.domain.model.component/ChipComponent.component3|component3(){}[0]
+    final fun component4(): kotlin/Float? // io.heimui.core.domain.model.component/ChipComponent.component4|component4(){}[0]
+    final fun component5(): io.heimui.core.domain.model.component/HeimSize // io.heimui.core.domain.model.component/ChipComponent.component5|component5(){}[0]
+    final fun component6(): kotlin/String // io.heimui.core.domain.model.component/ChipComponent.component6|component6(){}[0]
+    final fun component7(): kotlin/String? // io.heimui.core.domain.model.component/ChipComponent.component7|component7(){}[0]
+    final fun component8(): io.heimui.core.domain.model.component/ChipVariant // io.heimui.core.domain.model.component/ChipComponent.component8|component8(){}[0]
+    final fun component9(): kotlin/String? // io.heimui.core.domain.model.component/ChipComponent.component9|component9(){}[0]
+    final fun copy(kotlin/String = ..., kotlin/String? = ..., io.heimui.core.domain.model.accessibility/HeimAccessibility? = ..., kotlin/Float? = ..., io.heimui.core.domain.model.component/HeimSize = ..., kotlin/String = ..., kotlin/String? = ..., io.heimui.core.domain.model.component/ChipVariant = ..., kotlin/String? = ..., kotlin/String? = ..., kotlin/Boolean = ..., kotlin.collections/List<io.heimui.core.domain.model.action/HeimAction> = ...): io.heimui.core.domain.model.component/ChipComponent // io.heimui.core.domain.model.component/ChipComponent.copy|copy(kotlin.String;kotlin.String?;io.heimui.core.domain.model.accessibility.HeimAccessibility?;kotlin.Float?;io.heimui.core.domain.model.component.HeimSize;kotlin.String;kotlin.String?;io.heimui.core.domain.model.component.ChipVariant;kotlin.String?;kotlin.String?;kotlin.Boolean;kotlin.collections.List<io.heimui.core.domain.model.action.HeimAction>){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // io.heimui.core.domain.model.component/ChipComponent.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // io.heimui.core.domain.model.component/ChipComponent.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // io.heimui.core.domain.model.component/ChipComponent.toString|toString(){}[0]
+}
+
 final class io.heimui.core.domain.model.component/ContainerComponent : io.heimui.core.domain.model.component/HeimComponent { // io.heimui.core.domain.model.component/ContainerComponent|null[0]
     constructor <init>(kotlin/String, kotlin/String? = ..., io.heimui.core.domain.model.accessibility/HeimAccessibility? = ..., io.heimui.core.domain.model.component/Direction = ..., io.heimui.core.domain.model.component/Alignment = ..., io.heimui.core.domain.model.component/HeimArrangement = ..., io.heimui.core.domain.model.component/HeimPadding = ..., kotlin/Int = ..., kotlin/String? = ..., kotlin/Boolean = ..., kotlin/Float? = ..., io.heimui.core.domain.model.component/HeimSize = ..., kotlin.collections/List<io.heimui.core.domain.model.component/HeimComponent> = ...) // io.heimui.core.domain.model.component/ContainerComponent.<init>|<init>(kotlin.String;kotlin.String?;io.heimui.core.domain.model.accessibility.HeimAccessibility?;io.heimui.core.domain.model.component.Direction;io.heimui.core.domain.model.component.Alignment;io.heimui.core.domain.model.component.HeimArrangement;io.heimui.core.domain.model.component.HeimPadding;kotlin.Int;kotlin.String?;kotlin.Boolean;kotlin.Float?;io.heimui.core.domain.model.component.HeimSize;kotlin.collections.List<io.heimui.core.domain.model.component.HeimComponent>){}[0]
 
@@ -4123,6 +4257,8 @@ final val io.heimui.core.data.dto/io_heimui_core_data_dto_CardComponentDto$stabl
 final val io.heimui.core.data.dto/io_heimui_core_data_dto_CardComponentDto_$serializer$stableprop // io.heimui.core.data.dto/io_heimui_core_data_dto_CardComponentDto_$serializer$stableprop|#static{}io_heimui_core_data_dto_CardComponentDto_$serializer$stableprop[0]
 final val io.heimui.core.data.dto/io_heimui_core_data_dto_CheckboxComponentDto$stableprop // io.heimui.core.data.dto/io_heimui_core_data_dto_CheckboxComponentDto$stableprop|#static{}io_heimui_core_data_dto_CheckboxComponentDto$stableprop[0]
 final val io.heimui.core.data.dto/io_heimui_core_data_dto_CheckboxComponentDto_$serializer$stableprop // io.heimui.core.data.dto/io_heimui_core_data_dto_CheckboxComponentDto_$serializer$stableprop|#static{}io_heimui_core_data_dto_CheckboxComponentDto_$serializer$stableprop[0]
+final val io.heimui.core.data.dto/io_heimui_core_data_dto_ChipComponentDto$stableprop // io.heimui.core.data.dto/io_heimui_core_data_dto_ChipComponentDto$stableprop|#static{}io_heimui_core_data_dto_ChipComponentDto$stableprop[0]
+final val io.heimui.core.data.dto/io_heimui_core_data_dto_ChipComponentDto_$serializer$stableprop // io.heimui.core.data.dto/io_heimui_core_data_dto_ChipComponentDto_$serializer$stableprop|#static{}io_heimui_core_data_dto_ChipComponentDto_$serializer$stableprop[0]
 final val io.heimui.core.data.dto/io_heimui_core_data_dto_ContainerComponentDto$stableprop // io.heimui.core.data.dto/io_heimui_core_data_dto_ContainerComponentDto$stableprop|#static{}io_heimui_core_data_dto_ContainerComponentDto$stableprop[0]
 final val io.heimui.core.data.dto/io_heimui_core_data_dto_ContainerComponentDto_$serializer$stableprop // io.heimui.core.data.dto/io_heimui_core_data_dto_ContainerComponentDto_$serializer$stableprop|#static{}io_heimui_core_data_dto_ContainerComponentDto_$serializer$stableprop[0]
 final val io.heimui.core.data.dto/io_heimui_core_data_dto_CustomActionDto$stableprop // io.heimui.core.data.dto/io_heimui_core_data_dto_CustomActionDto$stableprop|#static{}io_heimui_core_data_dto_CustomActionDto$stableprop[0]
@@ -4212,6 +4348,7 @@ final val io.heimui.core.domain.model.component/io_heimui_core_domain_model_comp
 final val io.heimui.core.domain.model.component/io_heimui_core_domain_model_component_ButtonComponent$stableprop // io.heimui.core.domain.model.component/io_heimui_core_domain_model_component_ButtonComponent$stableprop|#static{}io_heimui_core_domain_model_component_ButtonComponent$stableprop[0]
 final val io.heimui.core.domain.model.component/io_heimui_core_domain_model_component_CardComponent$stableprop // io.heimui.core.domain.model.component/io_heimui_core_domain_model_component_CardComponent$stableprop|#static{}io_heimui_core_domain_model_component_CardComponent$stableprop[0]
 final val io.heimui.core.domain.model.component/io_heimui_core_domain_model_component_CheckboxComponent$stableprop // io.heimui.core.domain.model.component/io_heimui_core_domain_model_component_CheckboxComponent$stableprop|#static{}io_heimui_core_domain_model_component_CheckboxComponent$stableprop[0]
+final val io.heimui.core.domain.model.component/io_heimui_core_domain_model_component_ChipComponent$stableprop // io.heimui.core.domain.model.component/io_heimui_core_domain_model_component_ChipComponent$stableprop|#static{}io_heimui_core_domain_model_component_ChipComponent$stableprop[0]
 final val io.heimui.core.domain.model.component/io_heimui_core_domain_model_component_ContainerComponent$stableprop // io.heimui.core.domain.model.component/io_heimui_core_domain_model_component_ContainerComponent$stableprop|#static{}io_heimui_core_domain_model_component_ContainerComponent$stableprop[0]
 final val io.heimui.core.domain.model.component/io_heimui_core_domain_model_component_CustomComponent$stableprop // io.heimui.core.domain.model.component/io_heimui_core_domain_model_component_CustomComponent$stableprop|#static{}io_heimui_core_domain_model_component_CustomComponent$stableprop[0]
 final val io.heimui.core.domain.model.component/io_heimui_core_domain_model_component_DatePickerComponent$stableprop // io.heimui.core.domain.model.component/io_heimui_core_domain_model_component_DatePickerComponent$stableprop|#static{}io_heimui_core_domain_model_component_DatePickerComponent$stableprop[0]
@@ -4338,6 +4475,8 @@ final fun io.heimui.core.data.dto/io_heimui_core_data_dto_CardComponentDto$stabl
 final fun io.heimui.core.data.dto/io_heimui_core_data_dto_CardComponentDto_$serializer$stableprop_getter(): kotlin/Int // io.heimui.core.data.dto/io_heimui_core_data_dto_CardComponentDto_$serializer$stableprop_getter|io_heimui_core_data_dto_CardComponentDto_$serializer$stableprop_getter(){}[0]
 final fun io.heimui.core.data.dto/io_heimui_core_data_dto_CheckboxComponentDto$stableprop_getter(): kotlin/Int // io.heimui.core.data.dto/io_heimui_core_data_dto_CheckboxComponentDto$stableprop_getter|io_heimui_core_data_dto_CheckboxComponentDto$stableprop_getter(){}[0]
 final fun io.heimui.core.data.dto/io_heimui_core_data_dto_CheckboxComponentDto_$serializer$stableprop_getter(): kotlin/Int // io.heimui.core.data.dto/io_heimui_core_data_dto_CheckboxComponentDto_$serializer$stableprop_getter|io_heimui_core_data_dto_CheckboxComponentDto_$serializer$stableprop_getter(){}[0]
+final fun io.heimui.core.data.dto/io_heimui_core_data_dto_ChipComponentDto$stableprop_getter(): kotlin/Int // io.heimui.core.data.dto/io_heimui_core_data_dto_ChipComponentDto$stableprop_getter|io_heimui_core_data_dto_ChipComponentDto$stableprop_getter(){}[0]
+final fun io.heimui.core.data.dto/io_heimui_core_data_dto_ChipComponentDto_$serializer$stableprop_getter(): kotlin/Int // io.heimui.core.data.dto/io_heimui_core_data_dto_ChipComponentDto_$serializer$stableprop_getter|io_heimui_core_data_dto_ChipComponentDto_$serializer$stableprop_getter(){}[0]
 final fun io.heimui.core.data.dto/io_heimui_core_data_dto_ContainerComponentDto$stableprop_getter(): kotlin/Int // io.heimui.core.data.dto/io_heimui_core_data_dto_ContainerComponentDto$stableprop_getter|io_heimui_core_data_dto_ContainerComponentDto$stableprop_getter(){}[0]
 final fun io.heimui.core.data.dto/io_heimui_core_data_dto_ContainerComponentDto_$serializer$stableprop_getter(): kotlin/Int // io.heimui.core.data.dto/io_heimui_core_data_dto_ContainerComponentDto_$serializer$stableprop_getter|io_heimui_core_data_dto_ContainerComponentDto_$serializer$stableprop_getter(){}[0]
 final fun io.heimui.core.data.dto/io_heimui_core_data_dto_CustomActionDto$stableprop_getter(): kotlin/Int // io.heimui.core.data.dto/io_heimui_core_data_dto_CustomActionDto$stableprop_getter|io_heimui_core_data_dto_CustomActionDto$stableprop_getter(){}[0]
@@ -4429,6 +4568,7 @@ final fun io.heimui.core.domain.model.component/io_heimui_core_domain_model_comp
 final fun io.heimui.core.domain.model.component/io_heimui_core_domain_model_component_ButtonComponent$stableprop_getter(): kotlin/Int // io.heimui.core.domain.model.component/io_heimui_core_domain_model_component_ButtonComponent$stableprop_getter|io_heimui_core_domain_model_component_ButtonComponent$stableprop_getter(){}[0]
 final fun io.heimui.core.domain.model.component/io_heimui_core_domain_model_component_CardComponent$stableprop_getter(): kotlin/Int // io.heimui.core.domain.model.component/io_heimui_core_domain_model_component_CardComponent$stableprop_getter|io_heimui_core_domain_model_component_CardComponent$stableprop_getter(){}[0]
 final fun io.heimui.core.domain.model.component/io_heimui_core_domain_model_component_CheckboxComponent$stableprop_getter(): kotlin/Int // io.heimui.core.domain.model.component/io_heimui_core_domain_model_component_CheckboxComponent$stableprop_getter|io_heimui_core_domain_model_component_CheckboxComponent$stableprop_getter(){}[0]
+final fun io.heimui.core.domain.model.component/io_heimui_core_domain_model_component_ChipComponent$stableprop_getter(): kotlin/Int // io.heimui.core.domain.model.component/io_heimui_core_domain_model_component_ChipComponent$stableprop_getter|io_heimui_core_domain_model_component_ChipComponent$stableprop_getter(){}[0]
 final fun io.heimui.core.domain.model.component/io_heimui_core_domain_model_component_ContainerComponent$stableprop_getter(): kotlin/Int // io.heimui.core.domain.model.component/io_heimui_core_domain_model_component_ContainerComponent$stableprop_getter|io_heimui_core_domain_model_component_ContainerComponent$stableprop_getter(){}[0]
 final fun io.heimui.core.domain.model.component/io_heimui_core_domain_model_component_CustomComponent$stableprop_getter(): kotlin/Int // io.heimui.core.domain.model.component/io_heimui_core_domain_model_component_CustomComponent$stableprop_getter|io_heimui_core_domain_model_component_CustomComponent$stableprop_getter(){}[0]
 final fun io.heimui.core.domain.model.component/io_heimui_core_domain_model_component_DatePickerComponent$stableprop_getter(): kotlin/Int // io.heimui.core.domain.model.component/io_heimui_core_domain_model_component_DatePickerComponent$stableprop_getter|io_heimui_core_domain_model_component_DatePickerComponent$stableprop_getter(){}[0]
