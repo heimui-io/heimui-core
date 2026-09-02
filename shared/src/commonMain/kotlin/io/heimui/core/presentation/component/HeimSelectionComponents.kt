@@ -329,10 +329,10 @@ internal fun HeimDatePickerRenderer(
                         showDialog = false
                         actionRunner.run(component.onSelectActions)
                     },
-                ) { Text("OK") }
+                ) { Text(component.confirmText) }
             },
             dismissButton = {
-                TextButton(onClick = { showDialog = false }) { Text("Cancel") }
+                TextButton(onClick = { showDialog = false }) { Text(component.dismissText) }
             },
         ) {
             DatePicker(state = state)

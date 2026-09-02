@@ -60,7 +60,7 @@ internal fun HeimContainerRenderer(
     // a Lazy list or another scrolling column throws on infinite max-height constraints.
     val insideScroller = LocalInsideVerticalScroller.current
     val shouldScroll = component.direction == Direction.VERTICAL &&
-        component.scrollable &&
+        component.scrollable != false &&
         !insideScroller
 
     val scrolledModifier = if (shouldScroll) {
@@ -112,7 +112,9 @@ internal fun HeimContainerRenderer(
             // explicit weight in the payload outranks a flag nobody set, so weight wins and the
             // row does not scroll. Without this the default silently defeated every weight.
             val hasWeightedChild = component.children.any { it.weight != null }
-            val horizontalModifier = if (component.scrollable && !hasWeightedChild) {
+            // Opt-in, unlike the vertical axis: unbounded width stops text from wrapping, so a
+            // row only scrolls when the payload actually asked for it.
+            val horizontalModifier = if (component.scrollable == true && !hasWeightedChild) {
                 containerModifier.horizontalScroll(rememberScrollState())
             } else {
                 containerModifier

@@ -133,8 +133,19 @@ public data class ContainerComponent(
     val padding: HeimPadding = HeimPadding.None,
     val spacing: Int = 0,
     val backgroundColor: String? = null,
-    /** Scrolls along [direction] by default; set false when nesting inside another scroller. */
-    val scrollable: Boolean = true,
+    /**
+     * Whether the container scrolls along [direction].
+     *
+     * Defaults differ per axis, and deliberately. A vertical container scrolls unless told not
+     * to: content taller than the screen is the common case and clipping it strands the user.
+     *
+     * A horizontal one does **not**. A scrolling axis is measured as unbounded, and unbounded
+     * width stops text from ever wrapping — so defaulting horizontal rows to scrollable silently
+     * broke every card with a title and a description beside an icon. Overflowing horizontally is
+     * the rarer case and is better asked for explicitly; a chip strip usually wants `lazy_row`
+     * anyway, whose padding stays outside the scroll.
+     */
+    val scrollable: Boolean? = null,
     override val weight: Float? = null,
     override val frame: HeimSize = HeimSize.None,
     val children: List<HeimComponent> = emptyList()
@@ -476,6 +487,16 @@ public data class DatePickerComponent(
     val initialValue: String = "",
     val minDate: String? = null,
     val maxDate: String? = null,
+    /**
+     * Labels for the picker's buttons.
+     *
+     * Supplied by the payload because the SDK cannot ship translations for languages it has never
+     * heard of. Material localises the rest of the dialog from the device locale, which left two
+     * English words sitting inside an otherwise Spanish sheet — the server already knows the
+     * reader's language from `Accept-Language`, so it is the right place to answer this.
+     */
+    val confirmText: String = "OK",
+    val dismissText: String = "Cancel",
     val validationRules: List<ValidationRule> = emptyList(),
     val onSelectActions: List<HeimAction> = emptyList()
 ) : HeimComponent

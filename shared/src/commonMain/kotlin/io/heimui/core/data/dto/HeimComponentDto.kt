@@ -1,6 +1,7 @@
 package io.heimui.core.data.dto
 
 import io.heimui.core.data.serialization.LenientBooleanSerializer
+import io.heimui.core.data.serialization.LenientNullableBooleanSerializer
 import io.heimui.core.data.serialization.LenientIntSerializer
 import io.heimui.core.data.serialization.LenientNullableFloatSerializer
 import io.heimui.core.data.serialization.LenientNullableIntSerializer
@@ -116,7 +117,7 @@ public data class ContainerComponentDto(
     val padding: PaddingSpec = HeimPadding.None,
     @Serializable(with = LenientIntSerializer::class) val spacing: Int = 0,
     @SerialName("background_color") val backgroundColor: String? = null,
-    @Serializable(with = LenientBooleanSerializer::class) val scrollable: Boolean = true,
+    @SerialName("scrollable") @Serializable(with = LenientNullableBooleanSerializer::class) val scrollable: Boolean? = null,
     override val weight: Float? = null,
     override val frame: SizeSpec = HeimSize.None,
     val children: List<HeimComponentDto> = emptyList()
@@ -429,6 +430,8 @@ public data class DatePickerComponentDto(
     @SerialName("initial_value") val initialValue: String = "",
     @SerialName("min_date") val minDate: String? = null,
     @SerialName("max_date") val maxDate: String? = null,
+    @SerialName("confirm_text") val confirmText: String = "OK",
+    @SerialName("dismiss_text") val dismissText: String = "Cancel",
     @SerialName("validation_rules") val validationRules: List<ValidationRuleDto> = emptyList(),
     @SerialName("on_select_actions") val onSelectActions: List<HeimActionDto> = emptyList()
 ) : HeimComponentDto

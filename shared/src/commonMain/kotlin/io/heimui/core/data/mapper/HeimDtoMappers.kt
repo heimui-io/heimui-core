@@ -460,6 +460,8 @@ internal fun HeimComponentDto.toDomain(
             initialValue = initialValue.takeIf { it.isIsoDate() }.orEmpty(),
             minDate = minDate?.takeIf { it.isIsoDate() },
             maxDate = maxDate?.takeIf { it.isIsoDate() },
+            confirmText = confirmText.ifBlank { "OK" },
+            dismissText = dismissText.ifBlank { "Cancel" },
             validationRules = validationRules.map { it.toDomain() },
             onSelectActions = onSelectActions.map { it.toDomain() }
         )

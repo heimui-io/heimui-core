@@ -7,6 +7,7 @@ import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
 import kotlinx.serialization.json.JsonDecoder
+import kotlinx.serialization.json.JsonNull
 import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.jsonPrimitive
 
@@ -77,5 +78,32 @@ internal object LenientBooleanSerializer : KSerializer<Boolean> {
         val jsonDecoder = decoder as? JsonDecoder ?: return decoder.decodeBoolean()
         val content = jsonDecoder.decodeJsonElement().jsonPrimitive.content
         return content.equals("true", ignoreCase = true) || content == "1"
+    }
+}
+
+/**
+ * Same tolerance as [LenientBooleanSerializer], but keeps `null` distinguishable from `false`.
+ *
+ * Needed where the default depends on context — a container's `scrollable` means one thing on the
+ * vertical axis and another on the horizontal, so "unset" has to survive deserialization.
+ */
+internal object LenientNullableBooleanSerializer : KSerializer<Boolean?> {
+    override val descriptor: SerialDescriptor =
+        PrimitiveSerialDescriptor("LenientNullableBoolean", PrimitiveKind.BOOLEAN)
+
+    override fun serialize(encoder: Encoder, value: Boolean?) {
+        if (value == null) encoder.encodeNull() else encoder.encodeBoolean(value)
+    }
+
+    override fun deserialize(decoder: Decoder): Boolean? {
+        val jsonDecoder = decoder as? JsonDecoder ?: return decoder.decodeBoolean()
+        val element = jsonDecoder.decodeJsonElement()
+        if (element is JsonNull) return null
+        val content = (element as? JsonPrimitive)?.content ?: return null
+        return when (content.lowercase()) {
+            "true", "1" -> true
+            "false", "0" -> false
+            else -> null
+        }
     }
 }

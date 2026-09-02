@@ -408,4 +408,24 @@ class HeimComponentSerializationTest {
         assertNull(rich.spans[3].url)
     }
 
+    @Test
+    fun `a horizontal container does not scroll unless the payload asks`() {
+        fun scrollableOf(json: String) =
+            (HeimJson.decodeScreen("""{"id":"s","root":$json}""").toDomain().root
+                as ContainerComponent).scrollable
+
+        // Unset stays unset, so the renderer can pick a default per axis. Vertical scrolls (content
+        // taller than the screen is the common case); horizontal does not, because a scrolling axis
+        // measures as unbounded and unbounded width stops text from ever wrapping — which silently
+        // broke every card with a description beside an icon.
+        assertNull(scrollableOf("""{"type":"container","id":"c","direction":"HORIZONTAL"}"""))
+        assertNull(scrollableOf("""{"type":"container","id":"c","direction":"VERTICAL"}"""))
+
+        // Explicit still wins, in both directions.
+        assertEquals(true, scrollableOf("""{"type":"container","id":"c","scrollable":true}"""))
+        assertEquals(false, scrollableOf("""{"type":"container","id":"c","scrollable":false}"""))
+        // The usual backend bug: a boolean sent as a string.
+        assertEquals(true, scrollableOf("""{"type":"container","id":"c","scrollable":"true"}"""))
+    }
+
 }
