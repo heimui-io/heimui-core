@@ -384,28 +384,6 @@
         }
       ]
     },
-    "common": {
-      "id": {
-        "type": "string",
-        "description": "Unique within its sibling list. Duplicates are disambiguated by the client, but relying on that is a bug: the id is also the test tag and the list key."
-      },
-      "visible_if": {
-        "type": [
-          "string",
-          "null"
-        ],
-        "description": "Client-side visibility expression: \"is_admin\", \"plan == 'PREMIUM'\", \"age >= 18\", \"!hidden\". Evaluated against form state. An unresolved key evaluates to false. NOT an authorization mechanism: the payload already reached the device.",
-        "examples": [
-          "is_accepted",
-          "state.plan == 'PREMIUM'",
-          "age >= 18",
-          "!is_guest"
-        ]
-      },
-      "a11y": {
-        "$ref": "#/$defs/accessibility"
-      }
-    },
     "accessibility": {
       "type": [
         "object",
@@ -457,10 +435,10 @@
           "const": "container"
         },
         "id": {
-          "$ref": "#/$defs/common/id"
+          "$ref": "#/$defs/component_id"
         },
         "visible_if": {
-          "$ref": "#/$defs/common/visible_if"
+          "$ref": "#/$defs/visible_if"
         },
         "a11y": {
           "$ref": "#/$defs/accessibility"
@@ -557,10 +535,10 @@
           "const": "box"
         },
         "id": {
-          "$ref": "#/$defs/common/id"
+          "$ref": "#/$defs/component_id"
         },
         "visible_if": {
-          "$ref": "#/$defs/common/visible_if"
+          "$ref": "#/$defs/visible_if"
         },
         "a11y": {
           "$ref": "#/$defs/accessibility"
@@ -627,10 +605,10 @@
           "const": "lazy_column"
         },
         "id": {
-          "$ref": "#/$defs/common/id"
+          "$ref": "#/$defs/component_id"
         },
         "visible_if": {
-          "$ref": "#/$defs/common/visible_if"
+          "$ref": "#/$defs/visible_if"
         },
         "a11y": {
           "$ref": "#/$defs/accessibility"
@@ -701,10 +679,10 @@
           "const": "lazy_row"
         },
         "id": {
-          "$ref": "#/$defs/common/id"
+          "$ref": "#/$defs/component_id"
         },
         "visible_if": {
-          "$ref": "#/$defs/common/visible_if"
+          "$ref": "#/$defs/visible_if"
         },
         "a11y": {
           "$ref": "#/$defs/accessibility"
@@ -806,10 +784,10 @@
           "const": "text"
         },
         "id": {
-          "$ref": "#/$defs/common/id"
+          "$ref": "#/$defs/component_id"
         },
         "visible_if": {
-          "$ref": "#/$defs/common/visible_if"
+          "$ref": "#/$defs/visible_if"
         },
         "a11y": {
           "$ref": "#/$defs/accessibility"
@@ -863,10 +841,10 @@
           "const": "image"
         },
         "id": {
-          "$ref": "#/$defs/common/id"
+          "$ref": "#/$defs/component_id"
         },
         "visible_if": {
-          "$ref": "#/$defs/common/visible_if"
+          "$ref": "#/$defs/visible_if"
         },
         "a11y": {
           "$ref": "#/$defs/accessibility"
@@ -934,10 +912,10 @@
           "const": "card"
         },
         "id": {
-          "$ref": "#/$defs/common/id"
+          "$ref": "#/$defs/component_id"
         },
         "visible_if": {
-          "$ref": "#/$defs/common/visible_if"
+          "$ref": "#/$defs/visible_if"
         },
         "a11y": {
           "$ref": "#/$defs/accessibility"
@@ -995,10 +973,10 @@
           "const": "badge"
         },
         "id": {
-          "$ref": "#/$defs/common/id"
+          "$ref": "#/$defs/component_id"
         },
         "visible_if": {
-          "$ref": "#/$defs/common/visible_if"
+          "$ref": "#/$defs/visible_if"
         },
         "a11y": {
           "$ref": "#/$defs/accessibility"
@@ -1043,10 +1021,10 @@
           "const": "button"
         },
         "id": {
-          "$ref": "#/$defs/common/id"
+          "$ref": "#/$defs/component_id"
         },
         "visible_if": {
-          "$ref": "#/$defs/common/visible_if"
+          "$ref": "#/$defs/visible_if"
         },
         "a11y": {
           "$ref": "#/$defs/accessibility"
@@ -1109,10 +1087,10 @@
           "const": "text_field"
         },
         "id": {
-          "$ref": "#/$defs/common/id"
+          "$ref": "#/$defs/component_id"
         },
         "visible_if": {
-          "$ref": "#/$defs/common/visible_if"
+          "$ref": "#/$defs/visible_if"
         },
         "a11y": {
           "$ref": "#/$defs/accessibility"
@@ -1183,10 +1161,10 @@
           "const": "switch"
         },
         "id": {
-          "$ref": "#/$defs/common/id"
+          "$ref": "#/$defs/component_id"
         },
         "visible_if": {
-          "$ref": "#/$defs/common/visible_if"
+          "$ref": "#/$defs/visible_if"
         },
         "a11y": {
           "$ref": "#/$defs/accessibility"
@@ -1230,10 +1208,10 @@
           "const": "icon"
         },
         "id": {
-          "$ref": "#/$defs/common/id"
+          "$ref": "#/$defs/component_id"
         },
         "visible_if": {
-          "$ref": "#/$defs/common/visible_if"
+          "$ref": "#/$defs/visible_if"
         },
         "a11y": {
           "$ref": "#/$defs/accessibility"
@@ -1286,10 +1264,10 @@
           "const": "spacer"
         },
         "id": {
-          "$ref": "#/$defs/common/id"
+          "$ref": "#/$defs/component_id"
         },
         "visible_if": {
-          "$ref": "#/$defs/common/visible_if"
+          "$ref": "#/$defs/visible_if"
         },
         "a11y": {
           "$ref": "#/$defs/accessibility"
@@ -1326,10 +1304,10 @@
           "const": "divider"
         },
         "id": {
-          "$ref": "#/$defs/common/id"
+          "$ref": "#/$defs/component_id"
         },
         "visible_if": {
-          "$ref": "#/$defs/common/visible_if"
+          "$ref": "#/$defs/visible_if"
         },
         "a11y": {
           "$ref": "#/$defs/accessibility"
@@ -1365,10 +1343,10 @@
           "const": "custom"
         },
         "id": {
-          "$ref": "#/$defs/common/id"
+          "$ref": "#/$defs/component_id"
         },
         "visible_if": {
-          "$ref": "#/$defs/common/visible_if"
+          "$ref": "#/$defs/visible_if"
         },
         "a11y": {
           "$ref": "#/$defs/accessibility"
@@ -2428,6 +2406,23 @@
           "description": "0 is unlimited."
         }
       }
+    },
+    "component_id": {
+      "type": "string",
+      "description": "Unique within its sibling list. Duplicates are disambiguated by the client, but relying on that is a bug: the id is also the test tag and the list key."
+    },
+    "visible_if": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "Client-side visibility expression: \"is_admin\", \"plan == 'PREMIUM'\", \"age >= 18\", \"!hidden\". Evaluated against form state. An unresolved key evaluates to false. NOT an authorization mechanism: the payload already reached the device.",
+      "examples": [
+        "is_accepted",
+        "state.plan == 'PREMIUM'",
+        "age >= 18",
+        "!is_guest"
+      ]
     }
   }
 }
