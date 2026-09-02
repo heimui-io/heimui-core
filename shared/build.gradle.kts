@@ -18,11 +18,15 @@ group = "io.heimui"
  * unreleased change means overwriting `0.0.1-alpha` in the local Maven cache with something that
  * is not what the coordinate says — and every project on the machine silently picks it up.
  *
- *   ./gradlew publishToMavenLocal                              → 0.0.1-alpha
- *   ./gradlew publishToMavenLocal -Pheimui.version=0.0.2-alpha → 0.0.2-alpha
- *   ./gradlew publishLocal                                     → 0.0.1-alpha-LOCAL
+ *   ./gradlew publishToMavenLocal                                → 0.0.1-alpha-1
+ *   ./gradlew publishToMavenLocal -Pheimui.version=0.0.1-alpha-2 → 0.0.1-alpha-2
+ *   ./gradlew publishLocal                                       → 0.0.1-alpha-1-LOCAL
+ *
+ * The `-alpha-N` suffix is ordered by both Maven and Gradle: alpha-1 sorts before alpha-2, and
+ * every alpha sorts before the eventual 0.0.1 release. A bare `-alpha` would leave nowhere to go
+ * for the second one.
  */
-version = (findProperty("heimui.version") as String?) ?: "0.0.1-alpha"
+version = (findProperty("heimui.version") as String?) ?: "0.0.1-alpha-1"
 
 kotlin {
     // Forces an explicit visibility modifier and return type on every public declaration.

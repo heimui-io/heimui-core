@@ -8,6 +8,7 @@ import io.heimui.core.data.serialization.HeimJson
 import io.heimui.core.data.mapper.toDomain
 import io.heimui.core.domain.model.accessibility.AccessibilityRole
 import io.heimui.core.domain.model.component.HeimArrangement
+import io.heimui.core.domain.model.component.BoxComponent
 import io.heimui.core.domain.model.component.CheckboxComponent
 import io.heimui.core.domain.model.component.ChipComponent
 import io.heimui.core.domain.model.component.RichTextComponent
@@ -426,6 +427,39 @@ class HeimComponentSerializationTest {
         assertEquals(false, scrollableOf("""{"type":"container","id":"c","scrollable":false}"""))
         // The usual backend bug: a boolean sent as a string.
         assertEquals(true, scrollableOf("""{"type":"container","id":"c","scrollable":"true"}"""))
+    }
+
+    @Test
+    fun `container and box carry their surface styling through to the domain`() {
+        val root = HeimJson.decodeScreen(
+            """{"id":"s","root":{"type":"container","id":"c",
+                 "background_color":"surface","corner_radius":16,
+                 "border_color":"primary","border_width":2,
+                 "children":[{"type":"box","id":"b","corner_radius":12,
+                              "border_color":"outline","border_width":3,
+                              "background_color":"primaryContainer"}]}}"""
+        ).toDomain().root as ContainerComponent
+
+        assertEquals(16, root.cornerRadius)
+        assertEquals("primary", root.borderColor)
+        assertEquals(2, root.borderWidth)
+
+        // The box mapping dropped these silently: the DTO parsed them, the domain kept its
+        // defaults, and a payload asking for rounded corners rendered square ones with no error
+        // anywhere. Checking the schema against the DTOs does not catch that — only the trip all
+        // the way to the domain does.
+        val box = assertIs<BoxComponent>(root.children.single())
+        assertEquals(12, box.cornerRadius)
+        assertEquals("outline", box.borderColor)
+        assertEquals(3, box.borderWidth)
+        assertEquals("primaryContainer", box.backgroundColor)
+
+        // Negative is not an instruction; Compose rejects it outright.
+        val clamped = HeimJson.decodeScreen(
+            """{"id":"s","root":{"type":"box","id":"b","corner_radius":-8,"border_width":-2}}"""
+        ).toDomain().root as BoxComponent
+        assertEquals(0, clamped.cornerRadius)
+        assertEquals(0, clamped.borderWidth)
     }
 
 }

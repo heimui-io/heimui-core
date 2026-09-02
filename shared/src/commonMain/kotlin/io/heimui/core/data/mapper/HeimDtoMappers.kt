@@ -204,6 +204,9 @@ internal fun HeimComponentDto.toDomain(
             },
             padding = padding.clampedToZero(),
             backgroundColor = backgroundColor,
+            cornerRadius = maxOf(0, cornerRadius),
+            borderColor = borderColor,
+            borderWidth = maxOf(0, borderWidth),
             children = children.mapDeduplicated(depth = depth + 1, report = report)
         )
         is LazyColumnComponentDto -> LazyColumnComponent(
