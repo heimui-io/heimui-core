@@ -265,10 +265,7 @@ public data class ChipComponentDto(
     @SerialName("state_key") val stateKey: String? = null,
     val value: String? = null,
     @SerialName("is_enabled") @Serializable(with = LenientBooleanSerializer::class) val isEnabled: Boolean = true,
-    val actions: List<HeimActionDto> = emptyList()
-,
-    // Style overrides. Absent means the variant and the theme decide, which is what every
-    // payload written before these existed relies on.
+    val actions: List<HeimActionDto> = emptyList(),
     @SerialName("background_color") val backgroundColor: String? = null,
     @SerialName("text_color") val textColor: String? = null,
     @SerialName("border_color") val borderColor: String? = null,
@@ -345,8 +342,6 @@ public data class ButtonComponentDto(
     @SerialName("is_loading") @Serializable(with = LenientBooleanSerializer::class) val isLoading: Boolean = false,
     val icon: String? = null,
     val actions: List<HeimActionDto> = emptyList(),
-    // Style overrides. Absent means the variant decides, which is what every payload written
-    // before these existed relies on.
     @SerialName("background_color") val backgroundColor: String? = null,
     @SerialName("text_color") val textColor: String? = null,
     @SerialName("border_color") val borderColor: String? = null,
@@ -368,10 +363,7 @@ public data class TextFieldComponentDto(
     @SerialName("input_type") val inputType: InputTypeDto = InputTypeDto.TEXT,
     @SerialName("initial_value") val initialValue: String = "",
     @SerialName("validation_rules") val validationRules: List<ValidationRuleDto> = emptyList(),
-    @SerialName("helper_text") val helperText: String? = null
-,
-    // Style overrides. Absent means the variant and the theme decide, which is what every
-    // payload written before these existed relies on.
+    @SerialName("helper_text") val helperText: String? = null,
     @SerialName("background_color") val backgroundColor: String? = null,
     @SerialName("text_color") val textColor: String? = null,
     @SerialName("border_color") val borderColor: String? = null,
@@ -404,10 +396,7 @@ public data class CheckboxComponentDto(
     val label: String = "",
     @SerialName("initial_checked") @Serializable(with = LenientBooleanSerializer::class) val initialChecked: Boolean = false,
     @SerialName("validation_rules") val validationRules: List<ValidationRuleDto> = emptyList(),
-    @SerialName("on_check_actions") val onCheckActions: List<HeimActionDto> = emptyList()
-,
-    // Style overrides. Absent means the variant and the theme decide, which is what every
-    // payload written before these existed relies on.
+    @SerialName("on_check_actions") val onCheckActions: List<HeimActionDto> = emptyList(),
     @SerialName("text_color") val textColor: String? = null,
     @SerialName("border_color") val borderColor: String? = null,
     @SerialName("corner_radius") val cornerRadius: Int? = null,
@@ -427,10 +416,7 @@ public data class RadioGroupComponentDto(
     val options: List<HeimOptionDto> = emptyList(),
     @SerialName("initial_value") val initialValue: String = "",
     @SerialName("validation_rules") val validationRules: List<ValidationRuleDto> = emptyList(),
-    @SerialName("on_select_actions") val onSelectActions: List<HeimActionDto> = emptyList()
-,
-    // Style overrides. Absent means the variant and the theme decide, which is what every
-    // payload written before these existed relies on.
+    @SerialName("on_select_actions") val onSelectActions: List<HeimActionDto> = emptyList(),
     @SerialName("text_color") val textColor: String? = null,
     @SerialName("border_color") val borderColor: String? = null,
     @SerialName("accent_color") val accentColor: String? = null
@@ -450,10 +436,7 @@ public data class SelectComponentDto(
     val options: List<HeimOptionDto> = emptyList(),
     @SerialName("initial_value") val initialValue: String = "",
     @SerialName("validation_rules") val validationRules: List<ValidationRuleDto> = emptyList(),
-    @SerialName("on_select_actions") val onSelectActions: List<HeimActionDto> = emptyList()
-,
-    // Style overrides. Absent means the variant and the theme decide, which is what every
-    // payload written before these existed relies on.
+    @SerialName("on_select_actions") val onSelectActions: List<HeimActionDto> = emptyList(),
     @SerialName("background_color") val backgroundColor: String? = null,
     @SerialName("text_color") val textColor: String? = null,
     @SerialName("border_color") val borderColor: String? = null,
@@ -486,10 +469,7 @@ public data class DatePickerComponentDto(
     @SerialName("confirm_text") val confirmText: String = "OK",
     @SerialName("dismiss_text") val dismissText: String = "Cancel",
     @SerialName("validation_rules") val validationRules: List<ValidationRuleDto> = emptyList(),
-    @SerialName("on_select_actions") val onSelectActions: List<HeimActionDto> = emptyList()
-,
-    // Style overrides. Absent means the variant and the theme decide, which is what every
-    // payload written before these existed relies on.
+    @SerialName("on_select_actions") val onSelectActions: List<HeimActionDto> = emptyList(),
     @SerialName("background_color") val backgroundColor: String? = null,
     @SerialName("text_color") val textColor: String? = null,
     @SerialName("border_color") val borderColor: String? = null,
@@ -509,10 +489,7 @@ public data class SwitchComponentDto(
     @SerialName("state_key") val stateKey: String = "",
     val label: String = "",
     @SerialName("initial_checked") @Serializable(with = LenientBooleanSerializer::class) val initialChecked: Boolean = false,
-    @SerialName("on_check_actions") val onCheckActions: List<HeimActionDto> = emptyList()
-,
-    // Style overrides. Absent means the variant and the theme decide, which is what every
-    // payload written before these existed relies on.
+    @SerialName("on_check_actions") val onCheckActions: List<HeimActionDto> = emptyList(),
     @SerialName("text_color") val textColor: String? = null,
     @SerialName("background_color") val backgroundColor: String? = null,
     @SerialName("accent_color") val accentColor: String? = null

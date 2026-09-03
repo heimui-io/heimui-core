@@ -20,10 +20,8 @@ import kotlin.test.assertIs
 import kotlin.test.assertNull
 
 /**
- * Interactive controls carried no colours for a long time, and the two reasons were good ones: a
- * colour fixed in a payload is the same colour in light and dark, and a control needs a *set* of
- * colours rather than a value. Both are answered rather than ignored -- a payload names a token
- * the host resolves per theme, and the states are derived -- so these check the answers hold.
+ * The two rules a style override has to keep: a payload names a colour the host resolves per
+ * theme rather than stating one, and every state a control needs is derived from that one name.
  */
 class HeimControlStyleTest {
 
@@ -97,10 +95,7 @@ class HeimControlStyleTest {
         assertEquals(0, button.cornerRadius, "a square button is a design, not a mistake")
     }
 
-    /**
-     * The objection that killed per-control colours for so long: set the fill and the label
-     * becomes unreadable. An author who names only a background still gets text that can be read.
-     */
+    /** Name a fill and nothing else, and the label still has to be readable on it. */
     @Test
     fun `a foreground is derived that can be read on the background it sits on`() {
         assertEquals(Color.Black, heimContentColorFor(Color.White))
@@ -112,10 +107,7 @@ class HeimControlStyleTest {
         assertEquals(Color.White, heimContentColorFor(Color(0xFF7C3AED)))
     }
 
-    /**
-     * The button was the one that got asked about, but shipping it alone would leave a designer
-     * with a styled button next to a field they cannot touch -- which is the complaint, moved.
-     */
+    /** A styled button next to a field that cannot be touched is the same complaint, moved. */
     @Test
     fun `every interactive control carries the style the payload named`() {
         val field = assertIs<TextFieldComponent>(

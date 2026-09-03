@@ -28,9 +28,9 @@ import org.koin.dsl.module
  * )
  * ```
  *
- * @property baseUrl Origin the SDK fetches screens from. Screens resolve to `$baseUrl/screens/{id}`.
- *   Also defines the trust boundary for form submissions: a payload cannot submit to another host
- *   unless it is listed in [allowedSubmitHosts].
+ * @property baseUrl Origin the SDK fetches screens from. Screens resolve to
+ *   `$baseUrl/screens/{id}`. Also defines the trust boundary for form submissions: a payload
+ *   cannot submit to another host unless it is listed in `allowedSubmitHosts`.
  * @property authTokenProvider Supplies the `Authorization` header, per request.
  *
  *   Receives a [io.heimui.core.data.datasource.remote.HeimAuthContext] naming what is about to be
@@ -46,19 +46,19 @@ import org.koin.dsl.module
  *   }
  *   ```
  * @property allowedSubmitHosts Extra hosts permitted to receive authenticated form submissions.
- *   Empty by default: only [baseUrl]'s own origin is allowed, which is what prevents a malicious
+ *   Empty by default: only `baseUrl`'s own origin is allowed, which is what prevents a malicious
  *   payload from exfiltrating the session token to a third party.
  * @property customHttpClient Replaces the SDK's Ktor client entirely. Use it for certificate
- *   pinning or a shared client. Note that doing so **discards** the default timeouts, retry policy
- *   and connection settings; you are responsible for configuring equivalents.
+ *   pinning or a shared client. Note that doing so **discards** the default timeouts, retry
+ *   policy and connection settings; you are responsible for configuring equivalents.
  * @property verifySignatures Enables cryptographic verification of screen payloads. Requires
- *   [publicKey] and a server that signs responses with the `X-Heim-Signature` header. Off by
+ *   `publicKey` and a server that signs responses with the `X-Heim-Signature` header. Off by
  *   default because verification against an unsigned backend would reject every screen.
  * @property publicKey Key material handed to the verifier. Its meaning depends on the
  *   implementation: a shared secret for the default HMAC verifier, a public key for an asymmetric
  *   one.
- * @property customSignatureVerifier Plugs in your own verification, typically to use a
- *   hardware-backed key store or an asymmetric algorithm.
+ * @property customSignatureVerifier Plugs in your own verification, typically to use a hardware-
+ *   backed key store or an asymmetric algorithm.
  * @property emergencyBundleProvider Screens bundled with the app, served when the network fails
  *   and no cache exists. The last line of defence before the user sees an error.
  * @property customCacheDataSource Replaces the default in-memory cache.

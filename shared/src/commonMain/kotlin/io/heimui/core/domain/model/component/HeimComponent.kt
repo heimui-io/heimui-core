@@ -308,8 +308,19 @@ public enum class ChipVariant { ASSIST, FILTER }
  * Fills the gap between [BadgeComponent], which cannot be tapped, and [ButtonComponent], which is
  * the wrong shape for a strip of them.
  *
- * @property stateKey binds it to form state. With [value] the chips sharing a key behave as one
+ * @property stateKey binds it to form state. With `value` the chips sharing a key behave as one
  *   choice; without it the chip is an independent on/off. Null makes it a plain action chip.
+ *
+ * @property backgroundColor fill — a brand token, a Material role or `#RRGGBB`. Null leaves the
+ *   variant its own.
+ * @property textColor label colour — a brand token, a Material role or `#RRGGBB`. Null derives
+ *   one that can be read on whatever fill is in use.
+ * @property borderColor outline colour — a brand token, a Material role or `#RRGGBB`. Null leaves
+ *   the variant its own.
+ * @property borderWidth outline thickness in dp. Ignored without a border colour.
+ * @property cornerRadius corner radius in dp. Null leaves the variant its own shape.
+ * @property accentColor fill while selected; `backgroundColor` is the resting fill. The label
+ *   colour follows both, so it stays readable in either state.
  */
 public data class ChipComponent(
     override val id: String,
@@ -323,12 +334,7 @@ public data class ChipComponent(
     val stateKey: String? = null,
     val value: String? = null,
     val isEnabled: Boolean = true,
-    val actions: List<HeimAction> = emptyList()
-,
-    /**
-     * Style overrides, each null unless the payload asked for it. A name resolves through the
-     * host's brand registry before it is read as a hex, so a token follows the device's theme.
-     */
+    val actions: List<HeimAction> = emptyList(),
     val backgroundColor: String? = null,
     val textColor: String? = null,
     val borderColor: String? = null,
@@ -391,9 +397,18 @@ public data class BadgeComponent(
  *
  * @property isLoading replaces the label with a spinner and blocks interaction.
  * @property icon optional leading icon, named rather than drawn — the host's
- *   [io.heimui.core.presentation.designsystem.HeimIconProvider] decides what it looks like. Prefer
- *   this to an emoji in [title]: an emoji is read aloud by screen readers, renders differently on
- *   every OS version, and cannot be tinted with the button's content colour.
+ *   [io.heimui.core.presentation.designsystem.HeimIconProvider] decides what it looks like.
+ *   Prefer this to an emoji in `title`: an emoji is read aloud by screen readers, renders
+ *   differently on every OS version, and cannot be tinted with the button's content colour.
+ *
+ * @property backgroundColor fill — a brand token, a Material role or `#RRGGBB`. Null leaves the
+ *   variant its own.
+ * @property textColor label colour — a brand token, a Material role or `#RRGGBB`. Null derives
+ *   one that can be read on whatever fill is in use.
+ * @property borderColor outline colour — a brand token, a Material role or `#RRGGBB`. Null leaves
+ *   the variant its own.
+ * @property borderWidth outline thickness in dp. Ignored without a border colour.
+ * @property cornerRadius corner radius in dp. Null leaves the variant its own shape.
  */
 public data class ButtonComponent(
     override val id: String,
@@ -408,13 +423,6 @@ public data class ButtonComponent(
     val isLoading: Boolean = false,
     val icon: String? = null,
     val actions: List<HeimAction> = emptyList(),
-    /**
-     * Style overrides, each null unless the payload asked for it.
-     *
-     * A name resolves through the host's brand registry before it is read as a hex, so a token
-     * follows the device's theme while a hex cannot. The disabled and pressed appearances are
-     * still derived, so a button given a colour keeps behaving like a button.
-     */
     val backgroundColor: String? = null,
     val textColor: String? = null,
     val borderColor: String? = null,
@@ -432,6 +440,15 @@ public data class ButtonComponent(
  * @property stateKey key this field reads and writes in the screen state; also the key used by
  *   `{{state.key}}` interpolation in a submit payload.
  * @property helperText shown below the field while there is no validation error.
+ * @property backgroundColor fill — a brand token, a Material role or `#RRGGBB`. Null leaves the
+ *   variant its own.
+ * @property textColor label colour — a brand token, a Material role or `#RRGGBB`. Null derives
+ *   one that can be read on whatever fill is in use.
+ * @property borderColor outline colour — a brand token, a Material role or `#RRGGBB`. Null leaves
+ *   the variant its own.
+ * @property borderWidth outline thickness in dp. Ignored without a border colour.
+ * @property cornerRadius corner radius in dp. Null leaves the variant its own shape.
+ * @property accentColor focused outline, label and caret — how the field shows where typing goes.
  */
 public data class TextFieldComponent(
     override val id: String,
@@ -445,12 +462,7 @@ public data class TextFieldComponent(
     val inputType: InputType = InputType.TEXT,
     val initialValue: String = "",
     val validationRules: List<ValidationRule> = emptyList(),
-    val helperText: String? = null
-,
-    /**
-     * Style overrides, each null unless the payload asked for it. A name resolves through the
-     * host's brand registry before it is read as a hex, so a token follows the device's theme.
-     */
+    val helperText: String? = null,
     val backgroundColor: String? = null,
     val textColor: String? = null,
     val borderColor: String? = null,
@@ -462,7 +474,8 @@ public data class TextFieldComponent(
 /**
  * One choice in a [RadioGroupComponent] or a [SelectComponent].
  *
- * [value] is stored and submitted; [label] is read. Separate so the label can be translated
+ * `value` is stored and submitted; `label` is read. Separate so the label can be
+ *   translated
  * without the stored value moving underneath the backend.
  */
 public data class HeimOption(
@@ -470,7 +483,16 @@ public data class HeimOption(
     val label: String
 )
 
-/** Single on/off choice bound to [stateKey]. Unlike a switch, it reads as "I agree", not "on". */
+/**
+ * Single on/off choice bound to [stateKey]. Unlike a switch, it reads as "I agree", not "on".
+ *
+ * @property textColor label colour — a brand token, a Material role or `#RRGGBB`. Null derives
+ *   one that can be read on whatever fill is in use.
+ * @property borderColor outline colour — a brand token, a Material role or `#RRGGBB`. Null leaves
+ *   the variant its own.
+ * @property cornerRadius corner radius in dp. Null leaves the variant its own shape.
+ * @property accentColor fill of the box while ticked. The tick is derived from it.
+ */
 public data class CheckboxComponent(
     override val id: String,
     override val visibleIf: String? = null,
@@ -481,19 +503,22 @@ public data class CheckboxComponent(
     val label: String,
     val initialChecked: Boolean = false,
     val validationRules: List<ValidationRule> = emptyList(),
-    val onCheckActions: List<HeimAction> = emptyList()
-,
-    /**
-     * Style overrides, each null unless the payload asked for it. A name resolves through the
-     * host's brand registry before it is read as a hex, so a token follows the device's theme.
-     */
+    val onCheckActions: List<HeimAction> = emptyList(),
     val textColor: String? = null,
     val borderColor: String? = null,
     val cornerRadius: Int? = null,
     val accentColor: String? = null
 ) : HeimComponent
 
-/** One of [options], all visible at once. Use it under about five choices; above that, a select. */
+/**
+ * One of [options], all visible at once. Use it under about five choices; above that, a select.
+ *
+ * @property textColor label colour — a brand token, a Material role or `#RRGGBB`. Null derives
+ *   one that can be read on whatever fill is in use.
+ * @property borderColor outline colour — a brand token, a Material role or `#RRGGBB`. Null leaves
+ *   the variant its own.
+ * @property accentColor the selected dot.
+ */
 public data class RadioGroupComponent(
     override val id: String,
     override val visibleIf: String? = null,
@@ -505,18 +530,25 @@ public data class RadioGroupComponent(
     val options: List<HeimOption> = emptyList(),
     val initialValue: String = "",
     val validationRules: List<ValidationRule> = emptyList(),
-    val onSelectActions: List<HeimAction> = emptyList()
-,
-    /**
-     * Style overrides, each null unless the payload asked for it. A name resolves through the
-     * host's brand registry before it is read as a hex, so a token follows the device's theme.
-     */
+    val onSelectActions: List<HeimAction> = emptyList(),
     val textColor: String? = null,
     val borderColor: String? = null,
     val accentColor: String? = null
 ) : HeimComponent
 
-/** One of [options], revealed on demand. The right shape for a country or document-type list. */
+/**
+ * One of [options], revealed on demand. The right shape for a country or document-type list.
+ *
+ * @property backgroundColor fill — a brand token, a Material role or `#RRGGBB`. Null leaves the
+ *   variant its own.
+ * @property textColor label colour — a brand token, a Material role or `#RRGGBB`. Null derives
+ *   one that can be read on whatever fill is in use.
+ * @property borderColor outline colour — a brand token, a Material role or `#RRGGBB`. Null leaves
+ *   the variant its own.
+ * @property borderWidth outline thickness in dp. Ignored without a border colour.
+ * @property cornerRadius corner radius in dp. Null leaves the variant its own shape.
+ * @property accentColor focused outline and label, as on a [TextFieldComponent].
+ */
 public data class SelectComponent(
     override val id: String,
     override val visibleIf: String? = null,
@@ -529,12 +561,7 @@ public data class SelectComponent(
     val options: List<HeimOption> = emptyList(),
     val initialValue: String = "",
     val validationRules: List<ValidationRule> = emptyList(),
-    val onSelectActions: List<HeimAction> = emptyList()
-,
-    /**
-     * Style overrides, each null unless the payload asked for it. A name resolves through the
-     * host's brand registry before it is read as a hex, so a token follows the device's theme.
-     */
+    val onSelectActions: List<HeimAction> = emptyList(),
     val backgroundColor: String? = null,
     val textColor: String? = null,
     val borderColor: String? = null,
@@ -548,6 +575,16 @@ public data class SelectComponent(
  *
  * @property minDate earliest selectable date, ISO. Null leaves it open.
  * @property maxDate latest selectable date, ISO. Null leaves it open.
+ * @property backgroundColor fill — a brand token, a Material role or `#RRGGBB`. Null leaves the
+ *   variant its own.
+ * @property textColor label colour — a brand token, a Material role or `#RRGGBB`. Null derives
+ *   one that can be read on whatever fill is in use.
+ * @property borderColor outline colour — a brand token, a Material role or `#RRGGBB`. Null leaves
+ *   the variant its own.
+ * @property borderWidth outline thickness in dp. Ignored without a border colour.
+ * @property cornerRadius corner radius in dp. Null leaves the variant its own shape.
+ * @property accentColor focused outline of the field, and the selected day in the calendar it
+ *   opens — the dialog should not arrive in a different palette from the field.
  */
 public data class DatePickerComponent(
     override val id: String,
@@ -572,12 +609,7 @@ public data class DatePickerComponent(
     val confirmText: String = "OK",
     val dismissText: String = "Cancel",
     val validationRules: List<ValidationRule> = emptyList(),
-    val onSelectActions: List<HeimAction> = emptyList()
-,
-    /**
-     * Style overrides, each null unless the payload asked for it. A name resolves through the
-     * host's brand registry before it is read as a hex, so a token follows the device's theme.
-     */
+    val onSelectActions: List<HeimAction> = emptyList(),
     val backgroundColor: String? = null,
     val textColor: String? = null,
     val borderColor: String? = null,
@@ -586,7 +618,15 @@ public data class DatePickerComponent(
     val accentColor: String? = null
 ) : HeimComponent
 
-/** Boolean toggle bound to [stateKey], dispatching [onCheckActions] on every change. */
+/**
+ * Boolean toggle bound to [stateKey], dispatching [onCheckActions] on every change.
+ *
+ * @property textColor label colour — a brand token, a Material role or `#RRGGBB`. Null derives
+ *   one that can be read on whatever fill is in use.
+ * @property backgroundColor fill — a brand token, a Material role or `#RRGGBB`. Null leaves the
+ *   variant its own.
+ * @property accentColor track and thumb while on; `backgroundColor` is the track while off.
+ */
 public data class SwitchComponent(
     override val id: String,
     override val visibleIf: String? = null,
@@ -596,12 +636,7 @@ public data class SwitchComponent(
     val stateKey: String,
     val label: String,
     val initialChecked: Boolean = false,
-    val onCheckActions: List<HeimAction> = emptyList()
-,
-    /**
-     * Style overrides, each null unless the payload asked for it. A name resolves through the
-     * host's brand registry before it is read as a hex, so a token follows the device's theme.
-     */
+    val onCheckActions: List<HeimAction> = emptyList(),
     val textColor: String? = null,
     val backgroundColor: String? = null,
     val accentColor: String? = null

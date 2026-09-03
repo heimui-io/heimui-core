@@ -10,18 +10,9 @@ import androidx.compose.ui.graphics.luminance
 import io.heimui.core.presentation.designsystem.HeimTokenResolver
 import io.heimui.core.presentation.designsystem.LocalHeimBrandTokens
 
-/**
- * Style overrides on an interactive control.
- *
- * Controls are styled by `variant` and by the theme, which is why they carried no colours for so
- * long: a colour fixed in a payload is the same colour in light and in dark, and the states a
- * control needs -- pressed, disabled, selected -- are a set rather than a value. Both objections
- * dissolve the same way. A payload names a **token**, which the host app resolves per theme, and
- * the states are derived from whatever it names rather than listed by the author.
- *
- * Every field is null unless the payload asked for it, so a screen written before these existed
- * renders exactly as it did.
- */
+// Shared plumbing for the style overrides an interactive control accepts. A payload names a
+// colour rather than stating one, and every state a control needs -- pressed, disabled, selected
+// -- is derived from that one name, so an author cannot leave a control half-specified.
 
 /** Resolves a token, a Material role or a hex, or null when the payload said nothing. */
 @Composable
@@ -43,9 +34,8 @@ internal fun heimColorOrNull(token: String?): Color? {
 /**
  * A readable foreground for an arbitrary background.
  *
- * The reason a control could not carry a single colour before: set the fill and the label becomes
- * unreadable. Deriving it from luminance means an author who names only a background still gets
- * text that can be read on it, in both themes, without having to think about the pair.
+ * An author who names only a fill still gets a label that can be read on it, in either theme,
+ * without having to name the pair.
  */
 internal fun heimContentColorFor(background: Color): Color =
     if (background.luminance() > 0.5f) Color.Black else Color.White
