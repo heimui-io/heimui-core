@@ -54,20 +54,14 @@ public fun rememberHeimStateManager(
     var savedSnapshot by rememberSaveable(screenId) { mutableStateOf<Map<String, String>>(emptyMap()) }
     var restored by rememberSaveable(screenId, screenVersion) { mutableStateOf(false) }
 
-    LaunchedEffect(screenId, screenVersion, draftStorage) {
+    // Only the configuration-change snapshot is restored here. The stored draft waits for
+    // `HeimStateManager.applyScreenVersion`, which `HeimScreen` calls once the payload has loaded:
+    // the version a draft must be checked against travels in that payload, so checking it here --
+    // where the only version available is the placeholder default -- compared a value against
+    // itself and restored every draft unconditionally.
+    LaunchedEffect(screenId, draftStorage) {
         if (restored) return@LaunchedEffect
-        if (savedSnapshot.isNotEmpty()) {
-            manager.restoreDraft(savedSnapshot)
-        } else {
-            val draft = draftStorage?.getDraft(screenId)
-            // Drop drafts written against a different screen version: a stateKey may since have
-            // changed meaning, and restoring it would populate the wrong field.
-            if (draft != null && draft[DRAFT_VERSION_KEY] == screenVersion) {
-                manager.restoreDraft(draft - DRAFT_VERSION_KEY)
-            } else if (draft != null) {
-                draftStorage.clearDraft(screenId)
-            }
-        }
+        if (savedSnapshot.isNotEmpty()) manager.restoreDraft(savedSnapshot)
         restored = true
     }
 

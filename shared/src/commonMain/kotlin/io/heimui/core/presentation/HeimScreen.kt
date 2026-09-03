@@ -141,6 +141,16 @@ public fun HeimScreen(
         telemetryObserver = telemetryObserver
     )
     val screenState by controller.screenState
+
+    // The payload carries the version its state keys belong to, and it exists only once the screen
+    // has loaded -- after `stateManager` had to be constructed. Handing it over here is what makes
+    // the draft-version guard able to fire at all.
+    val loadedContent = screenState as? HeimScreenState.Content
+    val loadedVersion = loadedContent?.screen?.version
+    val loadedIsStale = loadedContent?.isStale == true
+    LaunchedEffect(stateManager, loadedVersion, loadedIsStale) {
+        loadedVersion?.let { stateManager.applyScreenVersion(it, loadedIsStale) }
+    }
     val isRefreshing by controller.isRefreshing
     val activeBottomSheet by controller.activeBottomSheet
     val activeDialog by controller.activeDialog

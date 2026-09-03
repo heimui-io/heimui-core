@@ -4333,6 +4333,7 @@ final class io.heimui.core.presentation.state/HeimStateManager { // io.heimui.co
     final fun updateValue(kotlin/String, kotlin/String) // io.heimui.core.presentation.state/HeimStateManager.updateValue|updateValue(kotlin.String;kotlin.String){}[0]
     final fun updateValues(kotlin.collections/Map<kotlin/String, kotlin/String>) // io.heimui.core.presentation.state/HeimStateManager.updateValues|updateValues(kotlin.collections.Map<kotlin.String,kotlin.String>){}[0]
     final fun validateForm(io.heimui.core.domain.evaluator/HeimValidatorRegistry = ..., kotlin/Function1<kotlin/String, kotlin/Unit> = ...): kotlin.collections/Map<kotlin/String, kotlin/String> // io.heimui.core.presentation.state/HeimStateManager.validateForm|validateForm(io.heimui.core.domain.evaluator.HeimValidatorRegistry;kotlin.Function1<kotlin.String,kotlin.Unit>){}[0]
+    final suspend fun applyScreenVersion(kotlin/String, kotlin/Boolean = ...) // io.heimui.core.presentation.state/HeimStateManager.applyScreenVersion|applyScreenVersion(kotlin.String;kotlin.Boolean){}[0]
     final suspend fun flushDraft() // io.heimui.core.presentation.state/HeimStateManager.flushDraft|flushDraft(){}[0]
 }
 

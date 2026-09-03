@@ -25,9 +25,30 @@ public class HeimStateManager(
     private val screenId: String,
     private val draftStorage: HeimFormDraftStorage? = null,
     private val scope: CoroutineScope? = null,
-    private val screenVersion: String = "1.0.0",
+    screenVersion: String = "1.0.0",
     private val draftDebounceMillis: Long = 400L
 ) {
+    /**
+     * The version of the screen currently on screen, used to stamp drafts.
+     *
+     * A `var` because the authoritative value arrives with the payload, after this object has to
+     * exist -- see [applyScreenVersion].
+     */
+    private var activeScreenVersion: String = screenVersion
+
+    /**
+     * Whether a verified payload has already decided what happens to the stored draft.
+     *
+     * Only a fresh payload settles it. A cached one can be an older version than the server now
+     * serves, and treating it as the answer is what destroyed drafts that belonged to the version
+     * arriving a moment later.
+     */
+    private var draftSettled = false
+
+    /** The version the stored draft was restored under, and the keys it brought in. */
+    private var draftRestoredUnder: String? = null
+    private var draftRestoredKeys: Set<String> = emptySet()
+
     private val _formState = MutableStateFlow<Map<String, String>>(emptyMap())
     public val formState: StateFlow<Map<String, String>> = _formState.asStateFlow()
 
@@ -125,6 +146,67 @@ public class HeimStateManager(
         _formState.update { draft + it }
     }
 
+    /**
+     * Declares which version of the screen is being rendered, and restores the stored draft only
+     * if it was written against that same version.
+     *
+     * The version lives in the payload, so it is not known until the screen has loaded -- which is
+     * after this object had to be constructed. Restoring the draft before that point is what made
+     * the version stamp useless: every draft was written and compared against the same placeholder,
+     * so the guard that exists to stop a value landing in a field whose meaning has changed could
+     * never fire.
+     *
+     * [isStale] marks a payload served from cache while revalidation is in flight. Such a render
+     * is not evidence about the draft: its version may be older than the one the server now
+     * serves, so a mismatch here withdraws nothing from storage and decides nothing -- the fresh
+     * payload, moments away, may well be the version the draft was written for.
+     *
+     * Safe to call on every recomposition. The restore is attempted until a fresh payload settles
+     * it; later calls only update the stamp used for saving.
+     */
+    public suspend fun applyScreenVersion(version: String, isStale: Boolean = false) {
+        val restoredUnder = draftRestoredUnder
+        if (restoredUnder != null && restoredUnder != version) {
+            // The screen is not the one the draft was restored against. This happens on every
+            // stale-while-revalidate load: the cached payload renders first, the fresh one arrives
+            // a moment later, and the values already on screen belong to the older version.
+            //
+            // Withdrawing them matters more than it looks. Leaving them and letting the next
+            // debounced save stamp them with the new version would launder the draft into looking
+            // native to a version it was never written for, and the guard could never fire again.
+            // Emptied rather than removed. A field adopts an external change only when the value
+            // is non-null -- a null means "no opinion", which is what stops an untouched field
+            // from being clobbered -- so removing the key would clear the state and leave the old
+            // text sitting on screen.
+            _formState.update { it + draftRestoredKeys.associateWith { "" } }
+            draftRestoredKeys = emptySet()
+            draftRestoredUnder = null
+            // The values leave the screen either way, but the stored draft is only destroyed on
+            // the word of a verified payload.
+            if (!isStale) draftStorage?.clearDraft(screenId)
+        }
+
+        activeScreenVersion = version
+        if (draftSettled || draftRestoredUnder == version) return
+
+        val storage = draftStorage ?: return
+        val draft = storage.getDraft(screenId) ?: return
+        if (draft[DRAFT_VERSION_KEY] == version) {
+            val values = draft - DRAFT_VERSION_KEY
+            // Restoring late cannot cost anything: `restoreDraft` lets whatever the user has
+            // already typed win over the stored values.
+            restoreDraft(values)
+            draftRestoredKeys = values.keys
+            draftRestoredUnder = version
+            if (!isStale) draftSettled = true
+        } else if (!isStale) {
+            // Written against another version of this screen: a state key may since have changed
+            // meaning, and restoring it would populate the wrong field.
+            storage.clearDraft(screenId)
+            draftSettled = true
+        }
+    }
+
     /** Persists the current draft immediately, e.g. from a lifecycle onStop callback. */
     public suspend fun flushDraft() {
         draftJob?.cancel()
@@ -148,7 +230,7 @@ public class HeimStateManager(
             storage.clearDraft(screenId)
         } else {
             // Stamp the version so a draft is never restored onto a screen whose keys have moved.
-            storage.saveDraft(screenId, persistable + (DRAFT_VERSION_KEY to screenVersion))
+            storage.saveDraft(screenId, persistable + (DRAFT_VERSION_KEY to activeScreenVersion))
         }
     }
 
