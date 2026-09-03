@@ -47,6 +47,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import io.heimui.core.domain.model.component.CheckboxComponent
 import io.heimui.core.domain.model.component.ChipComponent
@@ -517,7 +518,22 @@ internal fun HeimChipRenderer(
         actionRunner.run(component.actions)
     }
 
-    val label: @Composable () -> Unit = { Text(component.label) }
+    /**
+     * One line, and an ellipsis when the width runs out.
+     *
+     * Compose's default is as many lines as the text needs, which is right for a paragraph and
+     * wrong for a chip: a long label made the chip taller than the ones beside it and pushed the
+     * height of the whole row. Material calls a chip a compact single-line element, so this is
+     * not a limit being imposed -- it is a default meant for running text being removed.
+     *
+     * `maxLines` alone would cut mid-glyph with nothing to show for it; the overflow is what
+     * draws the ellipsis. Neither truncates anything on its own: a chip is only ever cut when
+     * something gives it a maximum width -- a `frame`, or a parent that has run out of room. In a
+     * `lazy_row` it simply grows wide, which is what a scrolling row of filters is for.
+     */
+    val label: @Composable () -> Unit = {
+        Text(component.label, maxLines = 1, overflow = TextOverflow.Ellipsis)
+    }
     val leadingIcon: (@Composable () -> Unit)? = component.icon?.let { name ->
         {
             iconProvider.RenderIcon(

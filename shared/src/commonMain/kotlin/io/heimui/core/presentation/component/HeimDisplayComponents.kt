@@ -149,7 +149,11 @@ internal fun HeimBadgeRenderer(
                 text = component.text,
                 color = textColor,
                 // No hardcoded fontSize: it silently overrode the design-system token.
-                style = MaterialTheme.typography.labelSmall
+                style = MaterialTheme.typography.labelSmall,
+                // A badge is a pill holding "NEW", "3" or "PREMIUM". Two lines of it is never
+                // what anybody meant, and the default here was Compose's for running text.
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
             )
         }
     }
