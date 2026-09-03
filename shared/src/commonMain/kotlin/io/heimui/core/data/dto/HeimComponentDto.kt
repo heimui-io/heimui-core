@@ -266,6 +266,15 @@ public data class ChipComponentDto(
     val value: String? = null,
     @SerialName("is_enabled") @Serializable(with = LenientBooleanSerializer::class) val isEnabled: Boolean = true,
     val actions: List<HeimActionDto> = emptyList()
+,
+    // Style overrides. Absent means the variant and the theme decide, which is what every
+    // payload written before these existed relies on.
+    @SerialName("background_color") val backgroundColor: String? = null,
+    @SerialName("text_color") val textColor: String? = null,
+    @SerialName("border_color") val borderColor: String? = null,
+    @SerialName("border_width") val borderWidth: Int? = null,
+    @SerialName("corner_radius") val cornerRadius: Int? = null,
+    @SerialName("accent_color") val accentColor: String? = null
 ) : HeimComponentDto
 
 /**
@@ -335,7 +344,14 @@ public data class ButtonComponentDto(
     @SerialName("is_enabled") @Serializable(with = LenientBooleanSerializer::class) val isEnabled: Boolean = true,
     @SerialName("is_loading") @Serializable(with = LenientBooleanSerializer::class) val isLoading: Boolean = false,
     val icon: String? = null,
-    val actions: List<HeimActionDto> = emptyList()
+    val actions: List<HeimActionDto> = emptyList(),
+    // Style overrides. Absent means the variant decides, which is what every payload written
+    // before these existed relies on.
+    @SerialName("background_color") val backgroundColor: String? = null,
+    @SerialName("text_color") val textColor: String? = null,
+    @SerialName("border_color") val borderColor: String? = null,
+    @SerialName("border_width") val borderWidth: Int? = null,
+    @SerialName("corner_radius") val cornerRadius: Int? = null
 ) : HeimComponentDto
 
 @Serializable
@@ -353,6 +369,15 @@ public data class TextFieldComponentDto(
     @SerialName("initial_value") val initialValue: String = "",
     @SerialName("validation_rules") val validationRules: List<ValidationRuleDto> = emptyList(),
     @SerialName("helper_text") val helperText: String? = null
+,
+    // Style overrides. Absent means the variant and the theme decide, which is what every
+    // payload written before these existed relies on.
+    @SerialName("background_color") val backgroundColor: String? = null,
+    @SerialName("text_color") val textColor: String? = null,
+    @SerialName("border_color") val borderColor: String? = null,
+    @SerialName("border_width") val borderWidth: Int? = null,
+    @SerialName("corner_radius") val cornerRadius: Int? = null,
+    @SerialName("accent_color") val accentColor: String? = null
 ) : HeimComponentDto
 
 /**
@@ -380,6 +405,13 @@ public data class CheckboxComponentDto(
     @SerialName("initial_checked") @Serializable(with = LenientBooleanSerializer::class) val initialChecked: Boolean = false,
     @SerialName("validation_rules") val validationRules: List<ValidationRuleDto> = emptyList(),
     @SerialName("on_check_actions") val onCheckActions: List<HeimActionDto> = emptyList()
+,
+    // Style overrides. Absent means the variant and the theme decide, which is what every
+    // payload written before these existed relies on.
+    @SerialName("text_color") val textColor: String? = null,
+    @SerialName("border_color") val borderColor: String? = null,
+    @SerialName("corner_radius") val cornerRadius: Int? = null,
+    @SerialName("accent_color") val accentColor: String? = null
 ) : HeimComponentDto
 
 @Serializable
@@ -396,6 +428,12 @@ public data class RadioGroupComponentDto(
     @SerialName("initial_value") val initialValue: String = "",
     @SerialName("validation_rules") val validationRules: List<ValidationRuleDto> = emptyList(),
     @SerialName("on_select_actions") val onSelectActions: List<HeimActionDto> = emptyList()
+,
+    // Style overrides. Absent means the variant and the theme decide, which is what every
+    // payload written before these existed relies on.
+    @SerialName("text_color") val textColor: String? = null,
+    @SerialName("border_color") val borderColor: String? = null,
+    @SerialName("accent_color") val accentColor: String? = null
 ) : HeimComponentDto
 
 @Serializable
@@ -413,6 +451,15 @@ public data class SelectComponentDto(
     @SerialName("initial_value") val initialValue: String = "",
     @SerialName("validation_rules") val validationRules: List<ValidationRuleDto> = emptyList(),
     @SerialName("on_select_actions") val onSelectActions: List<HeimActionDto> = emptyList()
+,
+    // Style overrides. Absent means the variant and the theme decide, which is what every
+    // payload written before these existed relies on.
+    @SerialName("background_color") val backgroundColor: String? = null,
+    @SerialName("text_color") val textColor: String? = null,
+    @SerialName("border_color") val borderColor: String? = null,
+    @SerialName("border_width") val borderWidth: Int? = null,
+    @SerialName("corner_radius") val cornerRadius: Int? = null,
+    @SerialName("accent_color") val accentColor: String? = null
 ) : HeimComponentDto
 
 /**
@@ -440,6 +487,15 @@ public data class DatePickerComponentDto(
     @SerialName("dismiss_text") val dismissText: String = "Cancel",
     @SerialName("validation_rules") val validationRules: List<ValidationRuleDto> = emptyList(),
     @SerialName("on_select_actions") val onSelectActions: List<HeimActionDto> = emptyList()
+,
+    // Style overrides. Absent means the variant and the theme decide, which is what every
+    // payload written before these existed relies on.
+    @SerialName("background_color") val backgroundColor: String? = null,
+    @SerialName("text_color") val textColor: String? = null,
+    @SerialName("border_color") val borderColor: String? = null,
+    @SerialName("border_width") val borderWidth: Int? = null,
+    @SerialName("corner_radius") val cornerRadius: Int? = null,
+    @SerialName("accent_color") val accentColor: String? = null
 ) : HeimComponentDto
 
 @Serializable
@@ -454,6 +510,12 @@ public data class SwitchComponentDto(
     val label: String = "",
     @SerialName("initial_checked") @Serializable(with = LenientBooleanSerializer::class) val initialChecked: Boolean = false,
     @SerialName("on_check_actions") val onCheckActions: List<HeimActionDto> = emptyList()
+,
+    // Style overrides. Absent means the variant and the theme decide, which is what every
+    // payload written before these existed relies on.
+    @SerialName("text_color") val textColor: String? = null,
+    @SerialName("background_color") val backgroundColor: String? = null,
+    @SerialName("accent_color") val accentColor: String? = null
 ) : HeimComponentDto
 
 @Serializable

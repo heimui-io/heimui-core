@@ -1072,6 +1072,28 @@
         },
         "frame": {
           "$ref": "#/$defs/frame"
+        },
+        "background_color": {
+          "$ref": "#/$defs/color",
+          "description": "The button's fill. Overrides what `variant` would choose. Name a brand token or a Material role rather than a hex: a hex is the same colour in light and dark, and the theme cannot reach it."
+        },
+        "text_color": {
+          "$ref": "#/$defs/color",
+          "description": "The label and the icon. Overrides what `variant` would choose. Name a brand token or a Material role rather than a hex: a hex is the same colour in light and dark, and the theme cannot reach it."
+        },
+        "border_color": {
+          "$ref": "#/$defs/color",
+          "description": "The outline. Overrides what `variant` would choose. Name a brand token or a Material role rather than a hex: a hex is the same colour in light and dark, and the theme cannot reach it."
+        },
+        "border_width": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Outline thickness in dp. Ignored without a border_color."
+        },
+        "corner_radius": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Corner radius in dp. Defaults to the variant's shape."
         }
       }
     },
@@ -1146,6 +1168,32 @@
         },
         "frame": {
           "$ref": "#/$defs/frame"
+        },
+        "background_color": {
+          "$ref": "#/$defs/color",
+          "description": "The field's fill. Overrides what `variant` would choose. Name a brand token or a Material role rather than a hex: a hex is the same colour in light and dark, and the theme cannot reach it."
+        },
+        "text_color": {
+          "$ref": "#/$defs/color",
+          "description": "The value the user types. Label, placeholder and helper text follow it at reduced emphasis. Overrides what `variant` would choose. Name a brand token or a Material role rather than a hex: a hex is the same colour in light and dark, and the theme cannot reach it."
+        },
+        "border_color": {
+          "$ref": "#/$defs/color",
+          "description": "The outline at rest. Overrides what `variant` would choose. Name a brand token or a Material role rather than a hex: a hex is the same colour in light and dark, and the theme cannot reach it."
+        },
+        "border_width": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Outline thickness in dp. Ignored without a border_color."
+        },
+        "corner_radius": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Corner radius in dp."
+        },
+        "accent_color": {
+          "$ref": "#/$defs/color",
+          "description": "The outline, label and cursor while the field has focus. Overrides what `variant` would choose. Name a brand token or a Material role rather than a hex: a hex is the same colour in light and dark, and the theme cannot reach it."
         }
       }
     },
@@ -1193,6 +1241,18 @@
         },
         "frame": {
           "$ref": "#/$defs/frame"
+        },
+        "text_color": {
+          "$ref": "#/$defs/color",
+          "description": "The label beside the switch. Overrides what `variant` would choose. Name a brand token or a Material role rather than a hex: a hex is the same colour in light and dark, and the theme cannot reach it."
+        },
+        "background_color": {
+          "$ref": "#/$defs/color",
+          "description": "The track while the switch is off. Overrides what `variant` would choose. Name a brand token or a Material role rather than a hex: a hex is the same colour in light and dark, and the theme cannot reach it."
+        },
+        "accent_color": {
+          "$ref": "#/$defs/color",
+          "description": "The track and thumb while the switch is on. Overrides what `variant` would choose. Name a brand token or a Material role rather than a hex: a hex is the same colour in light and dark, and the theme cannot reach it."
         }
       }
     },
@@ -2021,6 +2081,23 @@
           "items": {
             "$ref": "#/$defs/action"
           }
+        },
+        "text_color": {
+          "$ref": "#/$defs/color",
+          "description": "The label beside the box. Overrides what `variant` would choose. Name a brand token or a Material role rather than a hex: a hex is the same colour in light and dark, and the theme cannot reach it."
+        },
+        "border_color": {
+          "$ref": "#/$defs/color",
+          "description": "The box outline while unchecked. Overrides what `variant` would choose. Name a brand token or a Material role rather than a hex: a hex is the same colour in light and dark, and the theme cannot reach it."
+        },
+        "corner_radius": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Corner radius of the box in dp."
+        },
+        "accent_color": {
+          "$ref": "#/$defs/color",
+          "description": "The box fill while checked. The tick contrasts against it. Overrides what `variant` would choose. Name a brand token or a Material role rather than a hex: a hex is the same colour in light and dark, and the theme cannot reach it."
         }
       }
     },
@@ -2095,6 +2172,18 @@
           "items": {
             "$ref": "#/$defs/action"
           }
+        },
+        "text_color": {
+          "$ref": "#/$defs/color",
+          "description": "The option labels. Overrides what `variant` would choose. Name a brand token or a Material role rather than a hex: a hex is the same colour in light and dark, and the theme cannot reach it."
+        },
+        "border_color": {
+          "$ref": "#/$defs/color",
+          "description": "The ring outline while unselected. Overrides what `variant` would choose. Name a brand token or a Material role rather than a hex: a hex is the same colour in light and dark, and the theme cannot reach it."
+        },
+        "accent_color": {
+          "$ref": "#/$defs/color",
+          "description": "The ring and dot of the selected option. Overrides what `variant` would choose. Name a brand token or a Material role rather than a hex: a hex is the same colour in light and dark, and the theme cannot reach it."
         }
       }
     },
@@ -2172,6 +2261,32 @@
           "items": {
             "$ref": "#/$defs/action"
           }
+        },
+        "background_color": {
+          "$ref": "#/$defs/color",
+          "description": "The control's fill. Overrides what `variant` would choose. Name a brand token or a Material role rather than a hex: a hex is the same colour in light and dark, and the theme cannot reach it."
+        },
+        "text_color": {
+          "$ref": "#/$defs/color",
+          "description": "The selected value and the placeholder. Overrides what `variant` would choose. Name a brand token or a Material role rather than a hex: a hex is the same colour in light and dark, and the theme cannot reach it."
+        },
+        "border_color": {
+          "$ref": "#/$defs/color",
+          "description": "The outline at rest. Overrides what `variant` would choose. Name a brand token or a Material role rather than a hex: a hex is the same colour in light and dark, and the theme cannot reach it."
+        },
+        "border_width": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Outline thickness in dp. Ignored without a border_color."
+        },
+        "corner_radius": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Corner radius in dp."
+        },
+        "accent_color": {
+          "$ref": "#/$defs/color",
+          "description": "The outline while open, and the tick on the chosen option. Overrides what `variant` would choose. Name a brand token or a Material role rather than a hex: a hex is the same colour in light and dark, and the theme cannot reach it."
         }
       }
     },
@@ -2250,6 +2365,32 @@
           "type": "string",
           "default": "Cancel",
           "description": "Label for the picker's cancel button. See confirm_text."
+        },
+        "background_color": {
+          "$ref": "#/$defs/color",
+          "description": "The control's fill. Overrides what `variant` would choose. Name a brand token or a Material role rather than a hex: a hex is the same colour in light and dark, and the theme cannot reach it."
+        },
+        "text_color": {
+          "$ref": "#/$defs/color",
+          "description": "The chosen date and the placeholder. Overrides what `variant` would choose. Name a brand token or a Material role rather than a hex: a hex is the same colour in light and dark, and the theme cannot reach it."
+        },
+        "border_color": {
+          "$ref": "#/$defs/color",
+          "description": "The outline at rest. Overrides what `variant` would choose. Name a brand token or a Material role rather than a hex: a hex is the same colour in light and dark, and the theme cannot reach it."
+        },
+        "border_width": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Outline thickness in dp. Ignored without a border_color."
+        },
+        "corner_radius": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Corner radius in dp."
+        },
+        "accent_color": {
+          "$ref": "#/$defs/color",
+          "description": "The outline while focused, and the selected day in the calendar. Overrides what `variant` would choose. Name a brand token or a Material role rather than a hex: a hex is the same colour in light and dark, and the theme cannot reach it."
         }
       }
     },
@@ -2316,6 +2457,32 @@
           "items": {
             "$ref": "#/$defs/action"
           }
+        },
+        "background_color": {
+          "$ref": "#/$defs/color",
+          "description": "The chip's fill when it is not selected. Overrides what `variant` would choose. Name a brand token or a Material role rather than a hex: a hex is the same colour in light and dark, and the theme cannot reach it."
+        },
+        "text_color": {
+          "$ref": "#/$defs/color",
+          "description": "The label and the icon. Overrides what `variant` would choose. Name a brand token or a Material role rather than a hex: a hex is the same colour in light and dark, and the theme cannot reach it."
+        },
+        "border_color": {
+          "$ref": "#/$defs/color",
+          "description": "The outline. Overrides what `variant` would choose. Name a brand token or a Material role rather than a hex: a hex is the same colour in light and dark, and the theme cannot reach it."
+        },
+        "border_width": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Outline thickness in dp. Ignored without a border_color."
+        },
+        "corner_radius": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Corner radius in dp. Defaults to the variant's shape."
+        },
+        "accent_color": {
+          "$ref": "#/$defs/color",
+          "description": "The fill and outline while the chip is selected. Overrides what `variant` would choose. Name a brand token or a Material role rather than a hex: a hex is the same colour in light and dark, and the theme cannot reach it."
         }
       }
     },

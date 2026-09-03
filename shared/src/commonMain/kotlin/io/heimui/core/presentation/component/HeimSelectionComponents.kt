@@ -2,6 +2,8 @@ package io.heimui.core.presentation.component
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -11,11 +13,14 @@ import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.selection.toggleable
 import androidx.compose.material3.AssistChip
+import androidx.compose.material3.AssistChipDefaults
 import androidx.compose.material3.Checkbox
+import androidx.compose.material3.CheckboxDefaults
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.DatePicker
+import androidx.compose.material3.DatePickerDefaults
 import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -23,7 +28,9 @@ import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.RadioButton
+import androidx.compose.material3.RadioButtonDefaults
 import androidx.compose.material3.SelectableDates
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -38,6 +45,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
 import io.heimui.core.domain.model.component.CheckboxComponent
@@ -116,10 +124,26 @@ internal fun HeimCheckboxRenderer(
             .heimAccessibility(component.a11y, componentId = component.id),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        Checkbox(checked = isChecked, onCheckedChange = null)
+        // `accent_color` fills the box when it is checked; the tick is derived from it so it can
+        // always be seen against whatever the author chose.
+        val boxChecked = heimColorOrNull(component.accentColor)
+        val boxOutline = heimColorOrNull(component.borderColor)
+        val boxLabel = heimColorOrNull(component.textColor)
+
+        Checkbox(
+            checked = isChecked,
+            onCheckedChange = null,
+            colors = CheckboxDefaults.colors(
+                checkedColor = boxChecked ?: MaterialTheme.colorScheme.primary,
+                uncheckedColor = boxOutline ?: MaterialTheme.colorScheme.onSurfaceVariant,
+                checkmarkColor = boxChecked?.let { heimContentColorFor(it) }
+                    ?: MaterialTheme.colorScheme.onPrimary,
+            ),
+        )
         Text(
             text = component.label,
             style = MaterialTheme.typography.bodyLarge,
+            color = boxLabel ?: Color.Unspecified,
             modifier = Modifier.padding(start = 12.dp),
         )
     }
@@ -173,10 +197,20 @@ internal fun HeimRadioGroupRenderer(
                     .padding(vertical = 8.dp),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                RadioButton(selected = option.value == selected, onClick = null)
+                RadioButton(
+                    selected = option.value == selected,
+                    onClick = null,
+                    colors = RadioButtonDefaults.colors(
+                        selectedColor = heimColorOrNull(component.accentColor)
+                            ?: MaterialTheme.colorScheme.primary,
+                        unselectedColor = heimColorOrNull(component.borderColor)
+                            ?: MaterialTheme.colorScheme.onSurfaceVariant,
+                    ),
+                )
                 Text(
                     text = option.label,
                     style = MaterialTheme.typography.bodyLarge,
+                    color = heimColorOrNull(component.textColor) ?: Color.Unspecified,
                     modifier = Modifier.padding(start = 12.dp),
                 )
             }
@@ -223,6 +257,14 @@ internal fun HeimSelectRenderer(
             isError = submitErrors[component.stateKey] != null,
             supportingText = submitErrors[component.stateKey]?.let { { Text(it) } },
             trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
+            shape = component.cornerRadius?.let { RoundedCornerShape(it.dp) }
+                ?: OutlinedTextFieldDefaults.shape,
+            colors = heimOutlinedFieldColors(
+                fill = heimColorOrNull(component.backgroundColor),
+                text = heimColorOrNull(component.textColor),
+                outline = heimColorOrNull(component.borderColor),
+                accent = heimColorOrNull(component.accentColor),
+            ),
             modifier = Modifier
                 .fillMaxWidth()
                 .menuAnchor(),
@@ -273,6 +315,10 @@ internal fun HeimDatePickerRenderer(
         }
     }
 
+    // The accent follows the value into the dialog: a field outlined in the brand colour that
+    // opens a calendar highlighting the day in Material purple looks like two different products.
+    val accent = heimColorOrNull(component.accentColor)
+
     OutlinedTextField(
         value = storedIso,
         onValueChange = {},
@@ -284,6 +330,14 @@ internal fun HeimDatePickerRenderer(
         // No trailing icon: the SDK ships no icon dependency, which is the reason
         // HeimIconProvider exists. A calendar glyph here would be the app's to supply.
         interactionSource = interactionSource,
+        shape = component.cornerRadius?.let { RoundedCornerShape(it.dp) }
+            ?: OutlinedTextFieldDefaults.shape,
+        colors = heimOutlinedFieldColors(
+            fill = heimColorOrNull(component.backgroundColor),
+            text = heimColorOrNull(component.textColor),
+            outline = heimColorOrNull(component.borderColor),
+            accent = accent,
+        ),
         modifier = modifier
             .fillMaxWidth()
             .heimAccessibility(component.a11y, componentId = component.id),
@@ -315,6 +369,12 @@ internal fun HeimDatePickerRenderer(
 
         DatePickerDialog(
             onDismissRequest = { showDialog = false },
+            colors = DatePickerDefaults.colors(
+                selectedDayContainerColor = accent ?: MaterialTheme.colorScheme.primary,
+                selectedDayContentColor = accent?.let { heimContentColorFor(it) }
+                    ?: MaterialTheme.colorScheme.onPrimary,
+                todayDateBorderColor = accent ?: MaterialTheme.colorScheme.primary,
+            ),
             confirmButton = {
                 TextButton(
                     onClick = {
@@ -399,6 +459,15 @@ internal fun HeimChipRenderer(
     }
     val chipModifier = modifier.heimAccessibility(component.a11y, componentId = component.id)
 
+    // `accent_color` is the selected fill of a filter chip; `background_color` is the resting one.
+    val chipFill = heimColorOrNull(component.backgroundColor)
+    val chipSelected = heimColorOrNull(component.accentColor)
+    val chipLabel = heimColorOrNull(component.textColor)
+    val chipOutline = heimColorOrNull(component.borderColor)
+    val chipShape = component.cornerRadius?.let { RoundedCornerShape(it.dp) }
+        ?: FilterChipDefaults.shape
+    val chipBorder = chipOutline?.let { BorderStroke((component.borderWidth ?: 1).dp, it) }
+
     when (component.variant) {
         // A filter chip announces itself as selected or not; an assist chip announces an action.
         // Using one for the other is the difference between a screen reader saying "selected" and
@@ -410,6 +479,16 @@ internal fun HeimChipRenderer(
             enabled = component.isEnabled,
             leadingIcon = leadingIcon,
             modifier = chipModifier,
+            shape = chipShape,
+            border = chipBorder,
+            colors = FilterChipDefaults.filterChipColors(
+                containerColor = chipFill ?: Color.Transparent,
+                labelColor = chipLabel ?: MaterialTheme.colorScheme.onSurfaceVariant,
+                selectedContainerColor = chipSelected
+                    ?: MaterialTheme.colorScheme.secondaryContainer,
+                selectedLabelColor = chipSelected?.let { heimContentColorFor(it) }
+                    ?: MaterialTheme.colorScheme.onSecondaryContainer,
+            ),
         )
 
         ChipVariant.ASSIST -> AssistChip(
@@ -418,6 +497,12 @@ internal fun HeimChipRenderer(
             enabled = component.isEnabled,
             leadingIcon = leadingIcon,
             modifier = chipModifier,
+            shape = chipShape,
+            border = chipBorder,
+            colors = AssistChipDefaults.assistChipColors(
+                containerColor = chipFill ?: Color.Transparent,
+                labelColor = chipLabel ?: MaterialTheme.colorScheme.onSurface,
+            ),
         )
     }
 }

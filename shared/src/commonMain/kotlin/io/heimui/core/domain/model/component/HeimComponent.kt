@@ -324,6 +324,17 @@ public data class ChipComponent(
     val value: String? = null,
     val isEnabled: Boolean = true,
     val actions: List<HeimAction> = emptyList()
+,
+    /**
+     * Style overrides, each null unless the payload asked for it. A name resolves through the
+     * host's brand registry before it is read as a hex, so a token follows the device's theme.
+     */
+    val backgroundColor: String? = null,
+    val textColor: String? = null,
+    val borderColor: String? = null,
+    val borderWidth: Int? = null,
+    val cornerRadius: Int? = null,
+    val accentColor: String? = null
 ) : HeimComponent
 
 /**
@@ -396,7 +407,19 @@ public data class ButtonComponent(
     val isEnabled: Boolean = true,
     val isLoading: Boolean = false,
     val icon: String? = null,
-    val actions: List<HeimAction> = emptyList()
+    val actions: List<HeimAction> = emptyList(),
+    /**
+     * Style overrides, each null unless the payload asked for it.
+     *
+     * A name resolves through the host's brand registry before it is read as a hex, so a token
+     * follows the device's theme while a hex cannot. The disabled and pressed appearances are
+     * still derived, so a button given a colour keeps behaving like a button.
+     */
+    val backgroundColor: String? = null,
+    val textColor: String? = null,
+    val borderColor: String? = null,
+    val borderWidth: Int? = null,
+    val cornerRadius: Int? = null
 ) : HeimComponent
 
 /**
@@ -423,6 +446,17 @@ public data class TextFieldComponent(
     val initialValue: String = "",
     val validationRules: List<ValidationRule> = emptyList(),
     val helperText: String? = null
+,
+    /**
+     * Style overrides, each null unless the payload asked for it. A name resolves through the
+     * host's brand registry before it is read as a hex, so a token follows the device's theme.
+     */
+    val backgroundColor: String? = null,
+    val textColor: String? = null,
+    val borderColor: String? = null,
+    val borderWidth: Int? = null,
+    val cornerRadius: Int? = null,
+    val accentColor: String? = null
 ) : HeimComponent
 
 /**
@@ -448,6 +482,15 @@ public data class CheckboxComponent(
     val initialChecked: Boolean = false,
     val validationRules: List<ValidationRule> = emptyList(),
     val onCheckActions: List<HeimAction> = emptyList()
+,
+    /**
+     * Style overrides, each null unless the payload asked for it. A name resolves through the
+     * host's brand registry before it is read as a hex, so a token follows the device's theme.
+     */
+    val textColor: String? = null,
+    val borderColor: String? = null,
+    val cornerRadius: Int? = null,
+    val accentColor: String? = null
 ) : HeimComponent
 
 /** One of [options], all visible at once. Use it under about five choices; above that, a select. */
@@ -463,6 +506,14 @@ public data class RadioGroupComponent(
     val initialValue: String = "",
     val validationRules: List<ValidationRule> = emptyList(),
     val onSelectActions: List<HeimAction> = emptyList()
+,
+    /**
+     * Style overrides, each null unless the payload asked for it. A name resolves through the
+     * host's brand registry before it is read as a hex, so a token follows the device's theme.
+     */
+    val textColor: String? = null,
+    val borderColor: String? = null,
+    val accentColor: String? = null
 ) : HeimComponent
 
 /** One of [options], revealed on demand. The right shape for a country or document-type list. */
@@ -479,6 +530,17 @@ public data class SelectComponent(
     val initialValue: String = "",
     val validationRules: List<ValidationRule> = emptyList(),
     val onSelectActions: List<HeimAction> = emptyList()
+,
+    /**
+     * Style overrides, each null unless the payload asked for it. A name resolves through the
+     * host's brand registry before it is read as a hex, so a token follows the device's theme.
+     */
+    val backgroundColor: String? = null,
+    val textColor: String? = null,
+    val borderColor: String? = null,
+    val borderWidth: Int? = null,
+    val cornerRadius: Int? = null,
+    val accentColor: String? = null
 ) : HeimComponent
 
 /**
@@ -511,6 +573,17 @@ public data class DatePickerComponent(
     val dismissText: String = "Cancel",
     val validationRules: List<ValidationRule> = emptyList(),
     val onSelectActions: List<HeimAction> = emptyList()
+,
+    /**
+     * Style overrides, each null unless the payload asked for it. A name resolves through the
+     * host's brand registry before it is read as a hex, so a token follows the device's theme.
+     */
+    val backgroundColor: String? = null,
+    val textColor: String? = null,
+    val borderColor: String? = null,
+    val borderWidth: Int? = null,
+    val cornerRadius: Int? = null,
+    val accentColor: String? = null
 ) : HeimComponent
 
 /** Boolean toggle bound to [stateKey], dispatching [onCheckActions] on every change. */
@@ -524,6 +597,14 @@ public data class SwitchComponent(
     val label: String,
     val initialChecked: Boolean = false,
     val onCheckActions: List<HeimAction> = emptyList()
+,
+    /**
+     * Style overrides, each null unless the payload asked for it. A name resolves through the
+     * host's brand registry before it is read as a hex, so a token follows the device's theme.
+     */
+    val textColor: String? = null,
+    val backgroundColor: String? = null,
+    val accentColor: String? = null
 ) : HeimComponent
 
 /**

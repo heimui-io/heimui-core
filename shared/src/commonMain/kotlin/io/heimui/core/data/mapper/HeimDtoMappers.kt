@@ -353,7 +353,13 @@ internal fun HeimComponentDto.toDomain(
             stateKey = stateKey?.trim()?.takeIf { it.isNotEmpty() },
             value = value,
             isEnabled = isEnabled,
-            actions = actions.map { it.toDomain() }
+            actions = actions.map { it.toDomain() },
+            backgroundColor = backgroundColor,
+            textColor = textColor,
+            borderColor = borderColor,
+            borderWidth = borderWidth?.takeIf { it >= 0 },
+            cornerRadius = cornerRadius?.takeIf { it >= 0 },
+            accentColor = accentColor
         )
         is BadgeComponentDto -> BadgeComponent(
             id = id,
@@ -387,7 +393,12 @@ internal fun HeimComponentDto.toDomain(
             isEnabled = isEnabled,
             isLoading = isLoading,
             icon = icon?.trim()?.takeIf { it.isNotBlank() },
-            actions = actions.map { it.toDomain() }
+            actions = actions.map { it.toDomain() },
+            backgroundColor = backgroundColor,
+            textColor = textColor,
+            borderColor = borderColor,
+            borderWidth = borderWidth?.takeIf { it >= 0 },
+            cornerRadius = cornerRadius?.takeIf { it >= 0 }
         )
         is TextFieldComponentDto -> TextFieldComponent(
             id = id,
@@ -409,7 +420,13 @@ internal fun HeimComponentDto.toDomain(
             },
             initialValue = initialValue,
             validationRules = validationRules.map { it.toDomain() },
-            helperText = helperText
+            helperText = helperText,
+            backgroundColor = backgroundColor,
+            textColor = textColor,
+            borderColor = borderColor,
+            borderWidth = borderWidth?.takeIf { it >= 0 },
+            cornerRadius = cornerRadius?.takeIf { it >= 0 },
+            accentColor = accentColor
         )
         is CheckboxComponentDto -> CheckboxComponent(
             id = id,
@@ -421,7 +438,11 @@ internal fun HeimComponentDto.toDomain(
             label = label,
             initialChecked = initialChecked,
             validationRules = validationRules.map { it.toDomain() },
-            onCheckActions = onCheckActions.map { it.toDomain() }
+            onCheckActions = onCheckActions.map { it.toDomain() },
+            textColor = textColor,
+            borderColor = borderColor,
+            cornerRadius = cornerRadius?.takeIf { it >= 0 },
+            accentColor = accentColor
         )
         is RadioGroupComponentDto -> RadioGroupComponent(
             id = id,
@@ -436,7 +457,10 @@ internal fun HeimComponentDto.toDomain(
             options = options.mapNotNull { it.toDomain() },
             initialValue = initialValue,
             validationRules = validationRules.map { it.toDomain() },
-            onSelectActions = onSelectActions.map { it.toDomain() }
+            onSelectActions = onSelectActions.map { it.toDomain() },
+            textColor = textColor,
+            borderColor = borderColor,
+            accentColor = accentColor
         )
         is SelectComponentDto -> SelectComponent(
             id = id,
@@ -450,7 +474,13 @@ internal fun HeimComponentDto.toDomain(
             options = options.mapNotNull { it.toDomain() },
             initialValue = initialValue,
             validationRules = validationRules.map { it.toDomain() },
-            onSelectActions = onSelectActions.map { it.toDomain() }
+            onSelectActions = onSelectActions.map { it.toDomain() },
+            backgroundColor = backgroundColor,
+            textColor = textColor,
+            borderColor = borderColor,
+            borderWidth = borderWidth?.takeIf { it >= 0 },
+            cornerRadius = cornerRadius?.takeIf { it >= 0 },
+            accentColor = accentColor
         )
         is DatePickerComponentDto -> DatePickerComponent(
             id = id,
@@ -469,7 +499,13 @@ internal fun HeimComponentDto.toDomain(
             confirmText = confirmText.ifBlank { "OK" },
             dismissText = dismissText.ifBlank { "Cancel" },
             validationRules = validationRules.map { it.toDomain() },
-            onSelectActions = onSelectActions.map { it.toDomain() }
+            onSelectActions = onSelectActions.map { it.toDomain() },
+            backgroundColor = backgroundColor,
+            textColor = textColor,
+            borderColor = borderColor,
+            borderWidth = borderWidth?.takeIf { it >= 0 },
+            cornerRadius = cornerRadius?.takeIf { it >= 0 },
+            accentColor = accentColor
         )
         is SwitchComponentDto -> SwitchComponent(
             id = id,
@@ -482,7 +518,10 @@ internal fun HeimComponentDto.toDomain(
             stateKey = stateKey,
             label = label,
             initialChecked = initialChecked,
-            onCheckActions = onCheckActions.map { it.toDomain() }
+            onCheckActions = onCheckActions.map { it.toDomain() },
+            textColor = textColor,
+            backgroundColor = backgroundColor,
+            accentColor = accentColor
         )
         is IconComponentDto -> IconComponent(
             id = id,

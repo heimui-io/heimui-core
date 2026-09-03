@@ -10,13 +10,18 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Switch
+import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -29,6 +34,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.KeyboardType
@@ -72,6 +78,39 @@ internal fun HeimButtonRenderer(
         }
     }
 
+    // Style overrides, each null unless the payload asked for it. Resolved through the host's
+    // brand registry, so a token follows the theme where a hex could not.
+    val overriddenFill = heimColorOrNull(component.backgroundColor)
+    val overriddenLabel = heimColorOrNull(component.textColor)
+    val overriddenOutline = heimColorOrNull(component.borderColor)
+
+    val variantFill = when (component.variant) {
+        ButtonVariant.FILLED -> MaterialTheme.colorScheme.primary
+        ButtonVariant.TONAL -> MaterialTheme.colorScheme.secondaryContainer
+        ButtonVariant.OUTLINED, ButtonVariant.TEXT -> Color.Transparent
+    }
+    val variantLabel = when (component.variant) {
+        ButtonVariant.FILLED -> MaterialTheme.colorScheme.onPrimary
+        ButtonVariant.TONAL -> MaterialTheme.colorScheme.onSecondaryContainer
+        ButtonVariant.OUTLINED, ButtonVariant.TEXT -> MaterialTheme.colorScheme.primary
+    }
+
+    val fill = overriddenFill ?: variantFill
+    // A background on its own leaves the label to be worked out. Deriving it from luminance is
+    // what keeps a custom colour from producing text nobody can read.
+    val label = overriddenLabel
+        ?: overriddenFill?.let { heimContentColorFor(it) }
+        ?: variantLabel
+
+    val colors = ButtonDefaults.buttonColors(
+        containerColor = fill,
+        contentColor = label,
+        disabledContainerColor = fill.copy(alpha = HeimDisabledAlpha.CONTAINER),
+        disabledContentColor = label.copy(alpha = HeimDisabledAlpha.CONTENT),
+    )
+    val shape = component.cornerRadius?.let { RoundedCornerShape(it.dp) } ?: ButtonDefaults.shape
+    val border = overriddenOutline?.let { BorderStroke((component.borderWidth ?: 1).dp, it) }
+
     val iconProvider = LocalHeimIconProvider.current
     val content: @Composable RowScope.() -> Unit = {
         when {
@@ -104,6 +143,9 @@ internal fun HeimButtonRenderer(
                 onClick = onClick,
                 modifier = buttonModifier,
                 enabled = component.isEnabled && !component.isLoading,
+                shape = shape,
+                colors = colors,
+                border = border,
                 content = content
             )
         }
@@ -112,6 +154,13 @@ internal fun HeimButtonRenderer(
                 onClick = onClick,
                 modifier = buttonModifier,
                 enabled = component.isEnabled && !component.isLoading,
+                shape = shape,
+                colors = colors,
+                // Null keeps Material's own outline: an outlined button without a stated border
+                // colour must still have a border.
+                border = border ?: ButtonDefaults.outlinedButtonBorder(
+                    enabled = component.isEnabled && !component.isLoading
+                ),
                 content = content
             )
         }
@@ -120,6 +169,9 @@ internal fun HeimButtonRenderer(
                 onClick = onClick,
                 modifier = buttonModifier,
                 enabled = component.isEnabled && !component.isLoading,
+                shape = shape,
+                colors = colors,
+                border = border,
                 content = content
             )
         }
@@ -128,6 +180,9 @@ internal fun HeimButtonRenderer(
                 onClick = onClick,
                 modifier = buttonModifier,
                 enabled = component.isEnabled && !component.isLoading,
+                shape = shape,
+                colors = colors,
+                border = border,
                 content = content
             )
         }
@@ -202,12 +257,34 @@ internal fun HeimTextFieldRenderer(
         VisualTransformation.None
     }
 
+    // Style overrides, each null unless the payload asked for it. `accent_color` is the focused
+    // state: an outlined field says where the caret is by colouring its own outline.
+    val fieldFill = heimColorOrNull(component.backgroundColor)
+    val fieldText = heimColorOrNull(component.textColor)
+    val fieldOutline = heimColorOrNull(component.borderColor)
+    val fieldAccent = heimColorOrNull(component.accentColor)
+
+    val fieldColors = OutlinedTextFieldDefaults.colors(
+        focusedTextColor = fieldText ?: MaterialTheme.colorScheme.onSurface,
+        unfocusedTextColor = fieldText ?: MaterialTheme.colorScheme.onSurface,
+        focusedContainerColor = fieldFill ?: Color.Transparent,
+        unfocusedContainerColor = fieldFill ?: Color.Transparent,
+        focusedBorderColor = fieldAccent ?: fieldOutline ?: MaterialTheme.colorScheme.primary,
+        unfocusedBorderColor = fieldOutline ?: MaterialTheme.colorScheme.outline,
+        focusedLabelColor = fieldAccent ?: MaterialTheme.colorScheme.primary,
+        cursorColor = fieldAccent ?: MaterialTheme.colorScheme.primary,
+    )
+    val fieldShape = component.cornerRadius?.let { RoundedCornerShape(it.dp) }
+        ?: OutlinedTextFieldDefaults.shape
+
     Column(
         modifier = modifier
             .fillMaxWidth()
             .heimAccessibility(component.a11y, componentId = component.id)
     ) {
         OutlinedTextField(
+            colors = fieldColors,
+            shape = fieldShape,
             value = field,
             onValueChange = { newValue ->
                 field = newValue                                   // same-frame echo to the IME
@@ -283,9 +360,16 @@ internal fun HeimSwitchRenderer(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
+        // `accent_color` is the on state, `background_color` the track while it is off. A thumb
+        // is derived from the track it sits on rather than asked for, so one name is enough.
+        val switchOn = heimColorOrNull(component.accentColor)
+        val switchOffTrack = heimColorOrNull(component.backgroundColor)
+        val switchLabel = heimColorOrNull(component.textColor)
+
         Text(
             text = component.label,
             style = MaterialTheme.typography.bodyLarge,
+            color = switchLabel ?: Color.Unspecified,
             modifier = Modifier.weight(1f)
         )
         Switch(
@@ -293,7 +377,15 @@ internal fun HeimSwitchRenderer(
             onCheckedChange = { checked ->
                 stateManager.updateValue(component.stateKey, checked.toString())
                 actionRunner.run(component.onCheckActions)
-            }
+            },
+            colors = SwitchDefaults.colors(
+                checkedTrackColor = switchOn ?: MaterialTheme.colorScheme.primary,
+                checkedThumbColor = switchOn?.let { heimContentColorFor(it) }
+                    ?: MaterialTheme.colorScheme.onPrimary,
+                uncheckedTrackColor = switchOffTrack ?: MaterialTheme.colorScheme.surfaceVariant,
+                uncheckedThumbColor = switchOffTrack?.let { heimContentColorFor(it) }
+                    ?: MaterialTheme.colorScheme.outline,
+            )
         )
     }
 }
