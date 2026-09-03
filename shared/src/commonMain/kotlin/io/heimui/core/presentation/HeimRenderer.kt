@@ -37,7 +37,9 @@ import io.heimui.core.domain.model.component.ChipComponent
 import io.heimui.core.domain.model.component.RichTextComponent
 import io.heimui.core.domain.model.component.DatePickerComponent
 import io.heimui.core.domain.model.component.RadioGroupComponent
+import io.heimui.core.domain.model.component.RadioComponent
 import io.heimui.core.domain.model.component.SelectComponent
+import io.heimui.core.presentation.component.HeimRadioRenderer
 import io.heimui.core.presentation.component.HeimBoxRenderer
 import io.heimui.core.presentation.component.HeimCheckboxRenderer
 import io.heimui.core.presentation.component.HeimChipRenderer
@@ -201,6 +203,12 @@ public fun HeimRenderer(
         )
 
         is RadioGroupComponent -> HeimRadioGroupRenderer(
+            component = component,
+            stateManager = stateManager,
+            modifier = modifier
+        )
+
+        is RadioComponent -> HeimRadioRenderer(
             component = component,
             stateManager = stateManager,
             modifier = modifier

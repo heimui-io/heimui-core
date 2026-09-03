@@ -16,6 +16,7 @@ import io.heimui.core.data.dto.CheckboxComponentDto
 import io.heimui.core.data.dto.DatePickerComponentDto
 import io.heimui.core.data.dto.HeimOptionDto
 import io.heimui.core.data.dto.RadioGroupComponentDto
+import io.heimui.core.data.dto.RadioComponentDto
 import io.heimui.core.data.dto.SelectComponentDto
 import io.heimui.core.data.dto.ContainerComponentDto
 import io.heimui.core.data.dto.ContentScaleDto
@@ -82,6 +83,7 @@ import io.heimui.core.domain.model.component.CheckboxComponent
 import io.heimui.core.domain.model.component.DatePickerComponent
 import io.heimui.core.domain.model.component.HeimOption
 import io.heimui.core.domain.model.component.RadioGroupComponent
+import io.heimui.core.domain.model.component.RadioComponent
 import io.heimui.core.domain.model.component.SelectComponent
 import io.heimui.core.domain.model.component.ContainerComponent
 import io.heimui.core.domain.model.component.ContentScale
@@ -316,6 +318,7 @@ internal fun HeimComponentDto.toDomain(
             cornerRadius = maxOf(0, cornerRadius),
             backgroundColor = backgroundColor,
             borderColor = borderColor,
+            borderWidth = maxOf(0, borderWidth),
             padding = padding.clampedToZero(),
             actions = actions.map { it.toDomain() },
             child = child.toDomain(depth = depth + 1)
@@ -457,6 +460,21 @@ internal fun HeimComponentDto.toDomain(
             options = options.mapNotNull { it.toDomain() },
             initialValue = initialValue,
             validationRules = validationRules.map { it.toDomain() },
+            onSelectActions = onSelectActions.map { it.toDomain() },
+            textColor = textColor,
+            borderColor = borderColor,
+            accentColor = accentColor
+        )
+        is RadioComponentDto -> RadioComponent(
+            id = id,
+            visibleIf = visibleIf,
+            a11y = a11y?.toDomain(),
+            weight = weight?.takeIf { it > 0f },
+            frame = frame.sanitized(),
+            stateKey = stateKey,
+            value = value,
+            label = label,
+            initialSelected = initialSelected,
             onSelectActions = onSelectActions.map { it.toDomain() },
             textColor = textColor,
             borderColor = borderColor,
@@ -613,6 +631,7 @@ private fun List<HeimComponentDto>.mapDeduplicated(
                 is CustomComponent -> child.copy(id = "${child.id}_$index")
                 is CheckboxComponent -> child.copy(id = "${child.id}_$index")
                 is RadioGroupComponent -> child.copy(id = "${child.id}_$index")
+                is RadioComponent -> child.copy(id = "${child.id}_$index")
                 is SelectComponent -> child.copy(id = "${child.id}_$index")
                 is DatePickerComponent -> child.copy(id = "${child.id}_$index")
                 is RichTextComponent -> child.copy(id = "${child.id}_$index")
@@ -641,6 +660,7 @@ private fun HeimComponent.withId(newId: String): HeimComponent = when (this) {
     is CustomComponent -> copy(id = newId)
     is CheckboxComponent -> copy(id = newId)
     is RadioGroupComponent -> copy(id = newId)
+    is RadioComponent -> copy(id = newId)
     is SelectComponent -> copy(id = newId)
     is DatePickerComponent -> copy(id = newId)
     is RichTextComponent -> copy(id = newId)

@@ -127,6 +127,37 @@ object DemoScreens {
                     "initial_checked": false
                 },
                 {
+                    "type": "text",
+                    "id": "billing_title",
+                    "text": "Billing Cycle",
+                    "style": "titleMedium"
+                },
+                {
+                    "type": "container",
+                    "id": "billing_radio_row",
+                    "direction": "HORIZONTAL",
+                    "spacing": 16,
+                    "children": [
+                        {
+                            "type": "radio",
+                            "id": "radio_monthly",
+                            "state_key": "billing_cycle",
+                            "value": "monthly",
+                            "label": "Monthly",
+                            "initial_selected": true,
+                            "accent_color": "primary"
+                        },
+                        {
+                            "type": "radio",
+                            "id": "radio_yearly",
+                            "state_key": "billing_cycle",
+                            "value": "yearly",
+                            "label": "Yearly (-20%)",
+                            "accent_color": "primary"
+                        }
+                    ]
+                },
+                {
                     "type": "text_field",
                     "id": "input_company",
                     "visible_if": "is_enterprise == 'true'",

@@ -224,6 +224,7 @@ public data class CardComponentDto(
     @SerialName("corner_radius") @Serializable(with = LenientIntSerializer::class) val cornerRadius: Int = 12,
     @SerialName("background_color") val backgroundColor: String = "surface",
     @SerialName("border_color") val borderColor: String? = null,
+    @SerialName("border_width") @Serializable(with = LenientIntSerializer::class) val borderWidth: Int = 1,
     val padding: PaddingSpec = HeimPadding.all(12),
     val actions: List<HeimActionDto> = emptyList(),
     override val weight: Float? = null,
@@ -416,6 +417,24 @@ public data class RadioGroupComponentDto(
     val options: List<HeimOptionDto> = emptyList(),
     @SerialName("initial_value") val initialValue: String = "",
     @SerialName("validation_rules") val validationRules: List<ValidationRuleDto> = emptyList(),
+    @SerialName("on_select_actions") val onSelectActions: List<HeimActionDto> = emptyList(),
+    @SerialName("text_color") val textColor: String? = null,
+    @SerialName("border_color") val borderColor: String? = null,
+    @SerialName("accent_color") val accentColor: String? = null
+) : HeimComponentDto
+
+@Serializable
+@SerialName("radio")
+public data class RadioComponentDto(
+    override val id: String = "",
+    @SerialName("visible_if") override val visibleIf: String? = null,
+    override val a11y: HeimAccessibilityDto? = null,
+    override val weight: Float? = null,
+    override val frame: SizeSpec = HeimSize.None,
+    @SerialName("state_key") val stateKey: String = "",
+    val value: String = "true",
+    val label: String? = null,
+    @SerialName("initial_selected") @Serializable(with = LenientBooleanSerializer::class) val initialSelected: Boolean = false,
     @SerialName("on_select_actions") val onSelectActions: List<HeimActionDto> = emptyList(),
     @SerialName("text_color") val textColor: String? = null,
     @SerialName("border_color") val borderColor: String? = null,

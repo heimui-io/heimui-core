@@ -212,7 +212,12 @@ internal fun HeimTextFieldRenderer(
         // Registering the rules is what lets the controller gate submission on fields the user
         // never touched -- per-field validation alone only fires on typing.
         stateManager.registerField(component.stateKey, component.validationRules)
-        onDispose { stateManager.unregisterField(component.stateKey) }
+        // Only what was registered is removed; see the same guard in HeimSelectionComponents.
+        onDispose {
+            if (component.validationRules.isNotEmpty()) {
+                stateManager.unregisterField(component.stateKey)
+            }
+        }
     }
 
     LaunchedEffect(component.stateKey, component.initialValue) {

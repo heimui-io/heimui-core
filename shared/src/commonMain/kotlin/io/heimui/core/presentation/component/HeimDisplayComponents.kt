@@ -90,7 +90,13 @@ internal fun HeimCardRenderer(
     val borderColor = heimColor(component.borderColor, Color.Transparent)
 
     val shape = RoundedCornerShape(component.cornerRadius.dp)
-    val borderStroke = if (component.borderColor != null) BorderStroke(1.dp, borderColor) else null
+    // The width was hardcoded, so a card could say what colour its border is and not how thick --
+    // the one bordered surface that could not, while a `box` beside it could.
+    val borderStroke = if (component.borderColor != null) {
+        BorderStroke(component.borderWidth.dp, borderColor)
+    } else {
+        null
+    }
 
     var cardModifier = modifier
         .fillMaxWidth()

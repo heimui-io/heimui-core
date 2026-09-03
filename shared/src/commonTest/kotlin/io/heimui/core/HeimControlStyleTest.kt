@@ -5,6 +5,7 @@ import io.heimui.core.data.dto.HeimComponentDto
 import io.heimui.core.data.mapper.toDomain
 import io.heimui.core.data.serialization.HeimJson
 import io.heimui.core.domain.model.component.ButtonComponent
+import io.heimui.core.domain.model.component.CardComponent
 import io.heimui.core.domain.model.component.CheckboxComponent
 import io.heimui.core.domain.model.component.ChipComponent
 import io.heimui.core.domain.model.component.DatePickerComponent
@@ -275,5 +276,46 @@ class HeimControlStyleTest {
         assertNull(radio.textColor)
         assertNull(radio.borderColor)
         assertNull(radio.accentColor)
+    }
+
+    /**
+     * A `card` could name its border colour and not its thickness, so the renderer picked 1dp for
+     * everybody -- while a `box` sitting beside it took both. It surfaced as a save rejected for
+     * "property 'border_width' is not defined in the schema", which is the schema being right
+     * about a gap rather than the author being wrong.
+     */
+    @Test
+    fun `a card takes a border width like the box beside it`() {
+        val card = assertIs<CardComponent>(
+            from(
+                """
+                {"type":"card","id":"plan","border_color":"outline","border_width":2,
+                 "child":{"type":"text","id":"t","text":"Plan"}}
+                """.trimIndent()
+            )
+        )
+
+        assertEquals("outline", card.borderColor)
+        assertEquals(2, card.borderWidth)
+    }
+
+    /** Every card written before this renders exactly as it did. */
+    @Test
+    fun `a card that says nothing about width keeps the one the renderer used to hardcode`() {
+        val card = assertIs<CardComponent>(
+            from("""{"type":"card","id":"c","child":{"type":"text","id":"t","text":"x"}}""")
+        )
+        assertEquals(1, card.borderWidth)
+    }
+
+    @Test
+    fun `a negative card border is dropped rather than passed to Compose`() {
+        val card = assertIs<CardComponent>(
+            from(
+                """{"type":"card","id":"c","border_width":-3,
+                    "child":{"type":"text","id":"t","text":"x"}}""".trimIndent()
+            )
+        )
+        assertEquals(0, card.borderWidth)
     }
 }

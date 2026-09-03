@@ -292,6 +292,8 @@ public data class CardComponent(
     val cornerRadius: Int = 12,
     val backgroundColor: String = "surface",
     val borderColor: String? = null,
+    /** Border thickness in dp. Ignored without a [borderColor], as on a `box`. */
+    val borderWidth: Int = 1,
     val padding: HeimPadding = HeimPadding.all(12),
     val actions: List<HeimAction> = emptyList(),
     override val weight: Float? = null,
@@ -530,6 +532,33 @@ public data class RadioGroupComponent(
     val options: List<HeimOption> = emptyList(),
     val initialValue: String = "",
     val validationRules: List<ValidationRule> = emptyList(),
+    val onSelectActions: List<HeimAction> = emptyList(),
+    val textColor: String? = null,
+    val borderColor: String? = null,
+    val accentColor: String? = null
+) : HeimComponent
+
+/**
+ * Standalone selectable radio button. Radios sharing the same [stateKey] form a mutually exclusive
+ * selection group.
+ *
+ * @property value the value written to [stateKey] when selected.
+ * @property label optional text label next to the radio circle.
+ * @property initialSelected whether this radio is selected on first load.
+ * @property textColor label colour — a brand token, a Material role or `#RRGGBB`.
+ * @property borderColor unselected ring colour — a brand token, a Material role or `#RRGGBB`.
+ * @property accentColor selected dot and ring colour — a brand token, a Material role or `#RRGGBB`.
+ */
+public data class RadioComponent(
+    override val id: String,
+    override val visibleIf: String? = null,
+    override val a11y: HeimAccessibility? = null,
+    override val weight: Float? = null,
+    override val frame: HeimSize = HeimSize.None,
+    val stateKey: String,
+    val value: String = "true",
+    val label: String? = null,
+    val initialSelected: Boolean = false,
     val onSelectActions: List<HeimAction> = emptyList(),
     val textColor: String? = null,
     val borderColor: String? = null,

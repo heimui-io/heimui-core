@@ -326,6 +326,21 @@
           "if": {
             "properties": {
               "type": {
+                "const": "radio"
+              }
+            },
+            "required": [
+              "type"
+            ]
+          },
+          "then": {
+            "$ref": "#/$defs/radio"
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
                 "const": "select"
               }
             },
@@ -936,6 +951,12 @@
         },
         "border_color": {
           "$ref": "#/$defs/color"
+        },
+        "border_width": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 1,
+          "description": "Border thickness in dp. Ignored without a border_color."
         },
         "padding": {
           "$ref": "#/$defs/padding",
@@ -2184,6 +2205,72 @@
         "accent_color": {
           "$ref": "#/$defs/color",
           "description": "The ring and dot of the selected option. Overrides what `variant` would choose. Name a brand token or a Material role rather than a hex: a hex is the same colour in light and dark, and the theme cannot reach it."
+        }
+      }
+    },
+    "radio": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "type",
+        "state_key"
+      ],
+      "description": "Standalone selectable radio button. Radios sharing the same state_key form a mutually exclusive selection group.",
+      "properties": {
+        "weight": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "description": "Share of the parent container's main axis. Two children with weight 1 split a row in half; 2 and 1 split it two thirds to one third. Any component may carry it. Ignored unless the parent is a `container`, and ignored inside a scrolling container — a scrolling axis is unbounded, so there is nothing to divide."
+        },
+        "frame": {
+          "$ref": "#/$defs/frame"
+        },
+        "id": {
+          "$ref": "#/$defs/component_id"
+        },
+        "visible_if": {
+          "$ref": "#/$defs/visible_if"
+        },
+        "a11y": {
+          "$ref": "#/$defs/accessibility"
+        },
+        "type": {
+          "const": "radio"
+        },
+        "state_key": {
+          "type": "string",
+          "minLength": 1
+        },
+        "value": {
+          "type": "string",
+          "default": "true",
+          "description": "The value written to state_key when selected. Radios sharing state_key compare their value against the current state."
+        },
+        "label": {
+          "type": "string",
+          "description": "Optional label text displayed alongside the radio button. Omit to render just the radio circle."
+        },
+        "initial_selected": {
+          "type": "boolean",
+          "default": false
+        },
+        "on_select_actions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/action"
+          }
+        },
+        "text_color": {
+          "$ref": "#/$defs/color",
+          "description": "Label text colour."
+        },
+        "border_color": {
+          "$ref": "#/$defs/color",
+          "description": "The unselected ring colour."
+        },
+        "accent_color": {
+          "$ref": "#/$defs/color",
+          "description": "The selected dot and ring colour."
         }
       }
     },

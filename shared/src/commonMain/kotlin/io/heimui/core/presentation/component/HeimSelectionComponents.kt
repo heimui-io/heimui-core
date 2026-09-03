@@ -53,6 +53,7 @@ import io.heimui.core.domain.model.component.ChipComponent
 import io.heimui.core.domain.model.component.ChipVariant
 import io.heimui.core.domain.model.component.DatePickerComponent
 import io.heimui.core.domain.model.component.RadioGroupComponent
+import io.heimui.core.domain.model.component.RadioComponent
 import io.heimui.core.domain.model.component.SelectComponent
 import io.heimui.core.presentation.accessibility.heimAccessibility
 import io.heimui.core.presentation.action.LocalHeimActionRunner
@@ -80,7 +81,12 @@ private fun rememberFieldRegistration(
 ) {
     DisposableEffect(stateKey, rules) {
         stateManager.registerField(stateKey, rules)
-        onDispose { stateManager.unregisterField(stateKey) }
+        // Guarded the same way `registerField` is: it returns early for a field with no rules,
+        // so an unguarded unregister removes what somebody else put there. `radio` is the first
+        // component where that can happen -- several radios share one `state_key`, each registers
+        // nothing, and any one of them leaving the composition (scrolled out of a lazy list,
+        // hidden by a `visible_if`) would drop the rules a sibling registered for that key.
+        onDispose { if (rules.isNotEmpty()) stateManager.unregisterField(stateKey) }
     }
     LaunchedEffect(stateKey, initialValue) {
         if (!stateManager.hasValue(stateKey) && initialValue.isNotEmpty()) {
@@ -214,6 +220,71 @@ internal fun HeimRadioGroupRenderer(
                     modifier = Modifier.padding(start = 12.dp),
                 )
             }
+        }
+    }
+}
+
+@Composable
+internal fun HeimRadioRenderer(
+    component: RadioComponent,
+    stateManager: HeimStateManager,
+    modifier: Modifier = Modifier,
+) {
+    val actionRunner = LocalHeimActionRunner.current
+    val formState by stateManager.formState.collectAsState()
+
+    val initialVal = if (component.initialSelected) component.value else ""
+    rememberFieldRegistration(
+        stateManager = stateManager,
+        stateKey = component.stateKey,
+        rules = emptyList(),
+        initialValue = initialVal,
+    )
+
+    val currentVal = formState[component.stateKey] ?: initialVal
+    val isSelected = currentVal == component.value
+
+    val radioColors = RadioButtonDefaults.colors(
+        selectedColor = heimColorOrNull(component.accentColor)
+            ?: MaterialTheme.colorScheme.primary,
+        unselectedColor = heimColorOrNull(component.borderColor)
+            ?: MaterialTheme.colorScheme.onSurfaceVariant,
+    )
+
+    val onSelect = {
+        stateManager.updateValue(component.stateKey, component.value)
+        actionRunner.run(component.onSelectActions)
+    }
+
+    if (component.label.isNullOrBlank()) {
+        RadioButton(
+            selected = isSelected,
+            onClick = onSelect,
+            colors = radioColors,
+            modifier = modifier.heimAccessibility(component.a11y, componentId = component.id),
+        )
+    } else {
+        Row(
+            modifier = modifier
+                .selectable(
+                    selected = isSelected,
+                    role = Role.RadioButton,
+                    onClick = onSelect,
+                )
+                .heimAccessibility(component.a11y, componentId = component.id),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            RadioButton(
+                selected = isSelected,
+                onClick = null,
+                colors = radioColors,
+            )
+            Text(
+                text = component.label,
+                style = MaterialTheme.typography.bodyLarge,
+                color = heimColorOrNull(component.textColor) ?: Color.Unspecified,
+                modifier = Modifier.padding(start = 8.dp),
+            )
         }
     }
 }
