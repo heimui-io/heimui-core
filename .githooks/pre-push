@@ -53,6 +53,8 @@ check_committed "heimui-studio" \
   "ui/src/__tests__/fixtures/hydration"
 check_committed "prototype-heimui-backend" \
   "src/test/resources/hydration"
+check_committed "heimui-docs" \
+  "backend/corpus"
 
 if [[ ${#uncommitted[@]} -gt 0 ]]; then
   echo

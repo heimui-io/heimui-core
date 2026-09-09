@@ -30,6 +30,9 @@ drift=0
 consumers=(
   "heimui-studio|server/src/main/resources/heimui-screen.schema.json|ui/src/__tests__/fixtures/hydration"
   "prototype-heimui-backend||src/test/resources/hydration"
+  # The public guide at heimui.io/backend ships the corpus for integrators to run against their own
+  # implementation. The schema is deliberately not copied there: hydration never reads it.
+  "heimui-docs||backend/corpus"
 )
 
 copy_file() {
