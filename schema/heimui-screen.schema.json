@@ -38,6 +38,9 @@
     "root": {
       "$ref": "#/$defs/component"
     },
+    "data": {
+      "$ref": "#/$defs/screen_data"
+    },
     "metadata": {
       "type": [
         "object",
@@ -455,8 +458,26 @@
         "visible_if": {
           "$ref": "#/$defs/visible_if"
         },
+        "state_scope": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The state namespace this node and its subtree belong to.\n\nWritten by whatever expanded a repeated list, never by an author. A `text_field` inside a list of passengers is three fields on screen and was one in memory: they all carry the same `state_key`, so typing in the third row filled the first, one validation rule covered all three, and the submitted payload held a single name. The scope tells them apart -- `passengers/1`, `passengers/2` -- while the key the author wrote stays `full_name` everywhere.\n\nAbsent means the screen's own namespace, which is every screen written before this existed. An older client ignores the field and behaves exactly as it did."
+        },
+        "when": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Which value of the enclosing repeat's `match` field this mould draws. `*` draws anything no other mould claimed.\n\nNamed `when` rather than `variant` because a button already has a `variant` of its own -- FILLED, TEXT -- and a mould that happened to be a button would have been read as drawing entries whose kind is \"TEXT\".\n\nAuthoring-time: hydration picks a mould per item and removes the field."
+        },
         "a11y": {
           "$ref": "#/$defs/accessibility"
+        },
+        "repeat": {
+          "$ref": "#/$defs/repeat"
+        },
+        "scope": {
+          "$ref": "#/$defs/scope"
         },
         "direction": {
           "enum": [
@@ -555,8 +576,26 @@
         "visible_if": {
           "$ref": "#/$defs/visible_if"
         },
+        "state_scope": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The state namespace this node and its subtree belong to.\n\nWritten by whatever expanded a repeated list, never by an author. A `text_field` inside a list of passengers is three fields on screen and was one in memory: they all carry the same `state_key`, so typing in the third row filled the first, one validation rule covered all three, and the submitted payload held a single name. The scope tells them apart -- `passengers/1`, `passengers/2` -- while the key the author wrote stays `full_name` everywhere.\n\nAbsent means the screen's own namespace, which is every screen written before this existed. An older client ignores the field and behaves exactly as it did."
+        },
+        "when": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Which value of the enclosing repeat's `match` field this mould draws. `*` draws anything no other mould claimed.\n\nNamed `when` rather than `variant` because a button already has a `variant` of its own -- FILLED, TEXT -- and a mould that happened to be a button would have been read as drawing entries whose kind is \"TEXT\".\n\nAuthoring-time: hydration picks a mould per item and removes the field."
+        },
         "a11y": {
           "$ref": "#/$defs/accessibility"
+        },
+        "repeat": {
+          "$ref": "#/$defs/repeat"
+        },
+        "scope": {
+          "$ref": "#/$defs/scope"
         },
         "content_alignment": {
           "enum": [
@@ -625,8 +664,26 @@
         "visible_if": {
           "$ref": "#/$defs/visible_if"
         },
+        "state_scope": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The state namespace this node and its subtree belong to.\n\nWritten by whatever expanded a repeated list, never by an author. A `text_field` inside a list of passengers is three fields on screen and was one in memory: they all carry the same `state_key`, so typing in the third row filled the first, one validation rule covered all three, and the submitted payload held a single name. The scope tells them apart -- `passengers/1`, `passengers/2` -- while the key the author wrote stays `full_name` everywhere.\n\nAbsent means the screen's own namespace, which is every screen written before this existed. An older client ignores the field and behaves exactly as it did."
+        },
+        "when": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Which value of the enclosing repeat's `match` field this mould draws. `*` draws anything no other mould claimed.\n\nNamed `when` rather than `variant` because a button already has a `variant` of its own -- FILLED, TEXT -- and a mould that happened to be a button would have been read as drawing entries whose kind is \"TEXT\".\n\nAuthoring-time: hydration picks a mould per item and removes the field."
+        },
         "a11y": {
           "$ref": "#/$defs/accessibility"
+        },
+        "repeat": {
+          "$ref": "#/$defs/repeat"
+        },
+        "scope": {
+          "$ref": "#/$defs/scope"
         },
         "spacing": {
           "type": "integer",
@@ -699,8 +756,26 @@
         "visible_if": {
           "$ref": "#/$defs/visible_if"
         },
+        "state_scope": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The state namespace this node and its subtree belong to.\n\nWritten by whatever expanded a repeated list, never by an author. A `text_field` inside a list of passengers is three fields on screen and was one in memory: they all carry the same `state_key`, so typing in the third row filled the first, one validation rule covered all three, and the submitted payload held a single name. The scope tells them apart -- `passengers/1`, `passengers/2` -- while the key the author wrote stays `full_name` everywhere.\n\nAbsent means the screen's own namespace, which is every screen written before this existed. An older client ignores the field and behaves exactly as it did."
+        },
+        "when": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Which value of the enclosing repeat's `match` field this mould draws. `*` draws anything no other mould claimed.\n\nNamed `when` rather than `variant` because a button already has a `variant` of its own -- FILLED, TEXT -- and a mould that happened to be a button would have been read as drawing entries whose kind is \"TEXT\".\n\nAuthoring-time: hydration picks a mould per item and removes the field."
+        },
         "a11y": {
           "$ref": "#/$defs/accessibility"
+        },
+        "repeat": {
+          "$ref": "#/$defs/repeat"
+        },
+        "scope": {
+          "$ref": "#/$defs/scope"
         },
         "spacing": {
           "type": "integer",
@@ -804,6 +879,18 @@
         "visible_if": {
           "$ref": "#/$defs/visible_if"
         },
+        "state_scope": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The state namespace this node and its subtree belong to.\n\nWritten by whatever expanded a repeated list, never by an author. A `text_field` inside a list of passengers is three fields on screen and was one in memory: they all carry the same `state_key`, so typing in the third row filled the first, one validation rule covered all three, and the submitted payload held a single name. The scope tells them apart -- `passengers/1`, `passengers/2` -- while the key the author wrote stays `full_name` everywhere.\n\nAbsent means the screen's own namespace, which is every screen written before this existed. An older client ignores the field and behaves exactly as it did."
+        },
+        "when": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Which value of the enclosing repeat's `match` field this mould draws. `*` draws anything no other mould claimed.\n\nNamed `when` rather than `variant` because a button already has a `variant` of its own -- FILLED, TEXT -- and a mould that happened to be a button would have been read as drawing entries whose kind is \"TEXT\".\n\nAuthoring-time: hydration picks a mould per item and removes the field."
+        },
         "a11y": {
           "$ref": "#/$defs/accessibility"
         },
@@ -860,6 +947,18 @@
         },
         "visible_if": {
           "$ref": "#/$defs/visible_if"
+        },
+        "state_scope": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The state namespace this node and its subtree belong to.\n\nWritten by whatever expanded a repeated list, never by an author. A `text_field` inside a list of passengers is three fields on screen and was one in memory: they all carry the same `state_key`, so typing in the third row filled the first, one validation rule covered all three, and the submitted payload held a single name. The scope tells them apart -- `passengers/1`, `passengers/2` -- while the key the author wrote stays `full_name` everywhere.\n\nAbsent means the screen's own namespace, which is every screen written before this existed. An older client ignores the field and behaves exactly as it did."
+        },
+        "when": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Which value of the enclosing repeat's `match` field this mould draws. `*` draws anything no other mould claimed.\n\nNamed `when` rather than `variant` because a button already has a `variant` of its own -- FILLED, TEXT -- and a mould that happened to be a button would have been read as drawing entries whose kind is \"TEXT\".\n\nAuthoring-time: hydration picks a mould per item and removes the field."
         },
         "a11y": {
           "$ref": "#/$defs/accessibility"
@@ -932,8 +1031,23 @@
         "visible_if": {
           "$ref": "#/$defs/visible_if"
         },
+        "state_scope": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The state namespace this node and its subtree belong to.\n\nWritten by whatever expanded a repeated list, never by an author. A `text_field` inside a list of passengers is three fields on screen and was one in memory: they all carry the same `state_key`, so typing in the third row filled the first, one validation rule covered all three, and the submitted payload held a single name. The scope tells them apart -- `passengers/1`, `passengers/2` -- while the key the author wrote stays `full_name` everywhere.\n\nAbsent means the screen's own namespace, which is every screen written before this existed. An older client ignores the field and behaves exactly as it did."
+        },
+        "when": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Which value of the enclosing repeat's `match` field this mould draws. `*` draws anything no other mould claimed.\n\nNamed `when` rather than `variant` because a button already has a `variant` of its own -- FILLED, TEXT -- and a mould that happened to be a button would have been read as drawing entries whose kind is \"TEXT\".\n\nAuthoring-time: hydration picks a mould per item and removes the field."
+        },
         "a11y": {
           "$ref": "#/$defs/accessibility"
+        },
+        "scope": {
+          "$ref": "#/$defs/scope"
         },
         "elevation": {
           "type": "integer",
@@ -999,6 +1113,18 @@
         "visible_if": {
           "$ref": "#/$defs/visible_if"
         },
+        "state_scope": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The state namespace this node and its subtree belong to.\n\nWritten by whatever expanded a repeated list, never by an author. A `text_field` inside a list of passengers is three fields on screen and was one in memory: they all carry the same `state_key`, so typing in the third row filled the first, one validation rule covered all three, and the submitted payload held a single name. The scope tells them apart -- `passengers/1`, `passengers/2` -- while the key the author wrote stays `full_name` everywhere.\n\nAbsent means the screen's own namespace, which is every screen written before this existed. An older client ignores the field and behaves exactly as it did."
+        },
+        "when": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Which value of the enclosing repeat's `match` field this mould draws. `*` draws anything no other mould claimed.\n\nNamed `when` rather than `variant` because a button already has a `variant` of its own -- FILLED, TEXT -- and a mould that happened to be a button would have been read as drawing entries whose kind is \"TEXT\".\n\nAuthoring-time: hydration picks a mould per item and removes the field."
+        },
         "a11y": {
           "$ref": "#/$defs/accessibility"
         },
@@ -1047,12 +1173,17 @@
         "visible_if": {
           "$ref": "#/$defs/visible_if"
         },
-        "a11y": {
-          "$ref": "#/$defs/accessibility"
+        "state_scope": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The state namespace this node and its subtree belong to.\n\nWritten by whatever expanded a repeated list, never by an author. A `text_field` inside a list of passengers is three fields on screen and was one in memory: they all carry the same `state_key`, so typing in the third row filled the first, one validation rule covered all three, and the submitted payload held a single name. The scope tells them apart -- `passengers/1`, `passengers/2` -- while the key the author wrote stays `full_name` everywhere.\n\nAbsent means the screen's own namespace, which is every screen written before this existed. An older client ignores the field and behaves exactly as it did."
         },
-        "title": {
+        "when": {
           "type": "string",
-          "default": ""
+          "minLength": 1,
+          "description": "Which value of the enclosing repeat's `match` field this mould draws. `*` draws anything no other mould claimed.\n\nNamed `when` rather than `variant` because a button already has a `variant` of its own -- FILLED, TEXT -- and a mould that happened to be a button would have been read as drawing entries whose kind is \"TEXT\".\n\nAuthoring-time: hydration picks a mould per item and removes the field."
         },
         "variant": {
           "enum": [
@@ -1062,6 +1193,13 @@
             "TONAL"
           ],
           "default": "FILLED"
+        },
+        "a11y": {
+          "$ref": "#/$defs/accessibility"
+        },
+        "title": {
+          "type": "string",
+          "default": ""
         },
         "is_full_width": {
           "type": "boolean",
@@ -1134,6 +1272,18 @@
         },
         "visible_if": {
           "$ref": "#/$defs/visible_if"
+        },
+        "state_scope": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The state namespace this node and its subtree belong to.\n\nWritten by whatever expanded a repeated list, never by an author. A `text_field` inside a list of passengers is three fields on screen and was one in memory: they all carry the same `state_key`, so typing in the third row filled the first, one validation rule covered all three, and the submitted payload held a single name. The scope tells them apart -- `passengers/1`, `passengers/2` -- while the key the author wrote stays `full_name` everywhere.\n\nAbsent means the screen's own namespace, which is every screen written before this existed. An older client ignores the field and behaves exactly as it did."
+        },
+        "when": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Which value of the enclosing repeat's `match` field this mould draws. `*` draws anything no other mould claimed.\n\nNamed `when` rather than `variant` because a button already has a `variant` of its own -- FILLED, TEXT -- and a mould that happened to be a button would have been read as drawing entries whose kind is \"TEXT\".\n\nAuthoring-time: hydration picks a mould per item and removes the field."
         },
         "a11y": {
           "$ref": "#/$defs/accessibility"
@@ -1235,6 +1385,18 @@
         "visible_if": {
           "$ref": "#/$defs/visible_if"
         },
+        "state_scope": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The state namespace this node and its subtree belong to.\n\nWritten by whatever expanded a repeated list, never by an author. A `text_field` inside a list of passengers is three fields on screen and was one in memory: they all carry the same `state_key`, so typing in the third row filled the first, one validation rule covered all three, and the submitted payload held a single name. The scope tells them apart -- `passengers/1`, `passengers/2` -- while the key the author wrote stays `full_name` everywhere.\n\nAbsent means the screen's own namespace, which is every screen written before this existed. An older client ignores the field and behaves exactly as it did."
+        },
+        "when": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Which value of the enclosing repeat's `match` field this mould draws. `*` draws anything no other mould claimed.\n\nNamed `when` rather than `variant` because a button already has a `variant` of its own -- FILLED, TEXT -- and a mould that happened to be a button would have been read as drawing entries whose kind is \"TEXT\".\n\nAuthoring-time: hydration picks a mould per item and removes the field."
+        },
         "a11y": {
           "$ref": "#/$defs/accessibility"
         },
@@ -1294,6 +1456,18 @@
         "visible_if": {
           "$ref": "#/$defs/visible_if"
         },
+        "state_scope": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The state namespace this node and its subtree belong to.\n\nWritten by whatever expanded a repeated list, never by an author. A `text_field` inside a list of passengers is three fields on screen and was one in memory: they all carry the same `state_key`, so typing in the third row filled the first, one validation rule covered all three, and the submitted payload held a single name. The scope tells them apart -- `passengers/1`, `passengers/2` -- while the key the author wrote stays `full_name` everywhere.\n\nAbsent means the screen's own namespace, which is every screen written before this existed. An older client ignores the field and behaves exactly as it did."
+        },
+        "when": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Which value of the enclosing repeat's `match` field this mould draws. `*` draws anything no other mould claimed.\n\nNamed `when` rather than `variant` because a button already has a `variant` of its own -- FILLED, TEXT -- and a mould that happened to be a button would have been read as drawing entries whose kind is \"TEXT\".\n\nAuthoring-time: hydration picks a mould per item and removes the field."
+        },
         "a11y": {
           "$ref": "#/$defs/accessibility"
         },
@@ -1350,6 +1524,18 @@
         "visible_if": {
           "$ref": "#/$defs/visible_if"
         },
+        "state_scope": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The state namespace this node and its subtree belong to.\n\nWritten by whatever expanded a repeated list, never by an author. A `text_field` inside a list of passengers is three fields on screen and was one in memory: they all carry the same `state_key`, so typing in the third row filled the first, one validation rule covered all three, and the submitted payload held a single name. The scope tells them apart -- `passengers/1`, `passengers/2` -- while the key the author wrote stays `full_name` everywhere.\n\nAbsent means the screen's own namespace, which is every screen written before this existed. An older client ignores the field and behaves exactly as it did."
+        },
+        "when": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Which value of the enclosing repeat's `match` field this mould draws. `*` draws anything no other mould claimed.\n\nNamed `when` rather than `variant` because a button already has a `variant` of its own -- FILLED, TEXT -- and a mould that happened to be a button would have been read as drawing entries whose kind is \"TEXT\".\n\nAuthoring-time: hydration picks a mould per item and removes the field."
+        },
         "a11y": {
           "$ref": "#/$defs/accessibility"
         },
@@ -1390,6 +1576,18 @@
         "visible_if": {
           "$ref": "#/$defs/visible_if"
         },
+        "state_scope": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The state namespace this node and its subtree belong to.\n\nWritten by whatever expanded a repeated list, never by an author. A `text_field` inside a list of passengers is three fields on screen and was one in memory: they all carry the same `state_key`, so typing in the third row filled the first, one validation rule covered all three, and the submitted payload held a single name. The scope tells them apart -- `passengers/1`, `passengers/2` -- while the key the author wrote stays `full_name` everywhere.\n\nAbsent means the screen's own namespace, which is every screen written before this existed. An older client ignores the field and behaves exactly as it did."
+        },
+        "when": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Which value of the enclosing repeat's `match` field this mould draws. `*` draws anything no other mould claimed.\n\nNamed `when` rather than `variant` because a button already has a `variant` of its own -- FILLED, TEXT -- and a mould that happened to be a button would have been read as drawing entries whose kind is \"TEXT\".\n\nAuthoring-time: hydration picks a mould per item and removes the field."
+        },
         "a11y": {
           "$ref": "#/$defs/accessibility"
         },
@@ -1428,6 +1626,18 @@
         },
         "visible_if": {
           "$ref": "#/$defs/visible_if"
+        },
+        "state_scope": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The state namespace this node and its subtree belong to.\n\nWritten by whatever expanded a repeated list, never by an author. A `text_field` inside a list of passengers is three fields on screen and was one in memory: they all carry the same `state_key`, so typing in the third row filled the first, one validation rule covered all three, and the submitted payload held a single name. The scope tells them apart -- `passengers/1`, `passengers/2` -- while the key the author wrote stays `full_name` everywhere.\n\nAbsent means the screen's own namespace, which is every screen written before this existed. An older client ignores the field and behaves exactly as it did."
+        },
+        "when": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Which value of the enclosing repeat's `match` field this mould draws. `*` draws anything no other mould claimed.\n\nNamed `when` rather than `variant` because a button already has a `variant` of its own -- FILLED, TEXT -- and a mould that happened to be a button would have been read as drawing entries whose kind is \"TEXT\".\n\nAuthoring-time: hydration picks a mould per item and removes the field."
         },
         "a11y": {
           "$ref": "#/$defs/accessibility"
@@ -1706,7 +1916,8 @@
           "const": "navigate"
         },
         "screen_id": {
-          "type": "string"
+          "type": "string",
+          "description": "Which screen to open. Resolved against the SDK's configured baseUrl, so `home` and `catalog/detail` both name a route on your own backend — the SDK adds no path segment of its own. An absolute URL is accepted as well, which is how one payload links to the next by href, but it is held to the origin: same host, same port, no cleartext. A URL anywhere else is refused, because the Authorization header would follow it."
         },
         "params": {
           "type": "object",
@@ -2074,6 +2285,18 @@
         "visible_if": {
           "type": "string"
         },
+        "state_scope": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The state namespace this node and its subtree belong to.\n\nWritten by whatever expanded a repeated list, never by an author. A `text_field` inside a list of passengers is three fields on screen and was one in memory: they all carry the same `state_key`, so typing in the third row filled the first, one validation rule covered all three, and the submitted payload held a single name. The scope tells them apart -- `passengers/1`, `passengers/2` -- while the key the author wrote stays `full_name` everywhere.\n\nAbsent means the screen's own namespace, which is every screen written before this existed. An older client ignores the field and behaves exactly as it did."
+        },
+        "when": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Which value of the enclosing repeat's `match` field this mould draws. `*` draws anything no other mould claimed.\n\nNamed `when` rather than `variant` because a button already has a `variant` of its own -- FILLED, TEXT -- and a mould that happened to be a button would have been read as drawing entries whose kind is \"TEXT\".\n\nAuthoring-time: hydration picks a mould per item and removes the field."
+        },
         "a11y": {
           "$ref": "#/$defs/accessibility"
         },
@@ -2145,6 +2368,18 @@
         },
         "visible_if": {
           "type": "string"
+        },
+        "state_scope": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The state namespace this node and its subtree belong to.\n\nWritten by whatever expanded a repeated list, never by an author. A `text_field` inside a list of passengers is three fields on screen and was one in memory: they all carry the same `state_key`, so typing in the third row filled the first, one validation rule covered all three, and the submitted payload held a single name. The scope tells them apart -- `passengers/1`, `passengers/2` -- while the key the author wrote stays `full_name` everywhere.\n\nAbsent means the screen's own namespace, which is every screen written before this existed. An older client ignores the field and behaves exactly as it did."
+        },
+        "when": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Which value of the enclosing repeat's `match` field this mould draws. `*` draws anything no other mould claimed.\n\nNamed `when` rather than `variant` because a button already has a `variant` of its own -- FILLED, TEXT -- and a mould that happened to be a button would have been read as drawing entries whose kind is \"TEXT\".\n\nAuthoring-time: hydration picks a mould per item and removes the field."
         },
         "a11y": {
           "$ref": "#/$defs/accessibility"
@@ -2231,6 +2466,18 @@
         "visible_if": {
           "$ref": "#/$defs/visible_if"
         },
+        "state_scope": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The state namespace this node and its subtree belong to.\n\nWritten by whatever expanded a repeated list, never by an author. A `text_field` inside a list of passengers is three fields on screen and was one in memory: they all carry the same `state_key`, so typing in the third row filled the first, one validation rule covered all three, and the submitted payload held a single name. The scope tells them apart -- `passengers/1`, `passengers/2` -- while the key the author wrote stays `full_name` everywhere.\n\nAbsent means the screen's own namespace, which is every screen written before this existed. An older client ignores the field and behaves exactly as it did."
+        },
+        "when": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Which value of the enclosing repeat's `match` field this mould draws. `*` draws anything no other mould claimed.\n\nNamed `when` rather than `variant` because a button already has a `variant` of its own -- FILLED, TEXT -- and a mould that happened to be a button would have been read as drawing entries whose kind is \"TEXT\".\n\nAuthoring-time: hydration picks a mould per item and removes the field."
+        },
         "a11y": {
           "$ref": "#/$defs/accessibility"
         },
@@ -2297,6 +2544,18 @@
         },
         "visible_if": {
           "type": "string"
+        },
+        "state_scope": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The state namespace this node and its subtree belong to.\n\nWritten by whatever expanded a repeated list, never by an author. A `text_field` inside a list of passengers is three fields on screen and was one in memory: they all carry the same `state_key`, so typing in the third row filled the first, one validation rule covered all three, and the submitted payload held a single name. The scope tells them apart -- `passengers/1`, `passengers/2` -- while the key the author wrote stays `full_name` everywhere.\n\nAbsent means the screen's own namespace, which is every screen written before this existed. An older client ignores the field and behaves exactly as it did."
+        },
+        "when": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Which value of the enclosing repeat's `match` field this mould draws. `*` draws anything no other mould claimed.\n\nNamed `when` rather than `variant` because a button already has a `variant` of its own -- FILLED, TEXT -- and a mould that happened to be a button would have been read as drawing entries whose kind is \"TEXT\".\n\nAuthoring-time: hydration picks a mould per item and removes the field."
         },
         "a11y": {
           "$ref": "#/$defs/accessibility"
@@ -2400,6 +2659,18 @@
         "visible_if": {
           "type": "string"
         },
+        "state_scope": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The state namespace this node and its subtree belong to.\n\nWritten by whatever expanded a repeated list, never by an author. A `text_field` inside a list of passengers is three fields on screen and was one in memory: they all carry the same `state_key`, so typing in the third row filled the first, one validation rule covered all three, and the submitted payload held a single name. The scope tells them apart -- `passengers/1`, `passengers/2` -- while the key the author wrote stays `full_name` everywhere.\n\nAbsent means the screen's own namespace, which is every screen written before this existed. An older client ignores the field and behaves exactly as it did."
+        },
+        "when": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Which value of the enclosing repeat's `match` field this mould draws. `*` draws anything no other mould claimed.\n\nNamed `when` rather than `variant` because a button already has a `variant` of its own -- FILLED, TEXT -- and a mould that happened to be a button would have been read as drawing entries whose kind is \"TEXT\".\n\nAuthoring-time: hydration picks a mould per item and removes the field."
+        },
         "a11y": {
           "$ref": "#/$defs/accessibility"
         },
@@ -2499,6 +2770,27 @@
         "visible_if": {
           "type": "string"
         },
+        "state_scope": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The state namespace this node and its subtree belong to.\n\nWritten by whatever expanded a repeated list, never by an author. A `text_field` inside a list of passengers is three fields on screen and was one in memory: they all carry the same `state_key`, so typing in the third row filled the first, one validation rule covered all three, and the submitted payload held a single name. The scope tells them apart -- `passengers/1`, `passengers/2` -- while the key the author wrote stays `full_name` everywhere.\n\nAbsent means the screen's own namespace, which is every screen written before this existed. An older client ignores the field and behaves exactly as it did."
+        },
+        "when": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Which value of the enclosing repeat's `match` field this mould draws. `*` draws anything no other mould claimed.\n\nNamed `when` rather than `variant` because a button already has a `variant` of its own -- FILLED, TEXT -- and a mould that happened to be a button would have been read as drawing entries whose kind is \"TEXT\".\n\nAuthoring-time: hydration picks a mould per item and removes the field."
+        },
+        "variant": {
+          "type": "string",
+          "enum": [
+            "ASSIST",
+            "FILTER"
+          ],
+          "default": "ASSIST",
+          "description": "FILTER announces itself as selected or not to a screen reader; ASSIST announces an action. Using one for the other is the difference between hearing 'selected' and hearing nothing."
+        },
         "a11y": {
           "$ref": "#/$defs/accessibility"
         },
@@ -2517,15 +2809,6 @@
         "icon": {
           "type": "string",
           "description": "Icon name, resolved by the app's HeimIconProvider."
-        },
-        "variant": {
-          "type": "string",
-          "enum": [
-            "ASSIST",
-            "FILTER"
-          ],
-          "default": "ASSIST",
-          "description": "FILTER announces itself as selected or not to a screen reader; ASSIST announces an action. Using one for the other is the difference between hearing 'selected' and hearing nothing."
         },
         "state_key": {
           "type": "string",
@@ -2590,6 +2873,18 @@
         },
         "visible_if": {
           "type": "string"
+        },
+        "state_scope": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The state namespace this node and its subtree belong to.\n\nWritten by whatever expanded a repeated list, never by an author. A `text_field` inside a list of passengers is three fields on screen and was one in memory: they all carry the same `state_key`, so typing in the third row filled the first, one validation rule covered all three, and the submitted payload held a single name. The scope tells them apart -- `passengers/1`, `passengers/2` -- while the key the author wrote stays `full_name` everywhere.\n\nAbsent means the screen's own namespace, which is every screen written before this existed. An older client ignores the field and behaves exactly as it did."
+        },
+        "when": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Which value of the enclosing repeat's `match` field this mould draws. `*` draws anything no other mould claimed.\n\nNamed `when` rather than `variant` because a button already has a `variant` of its own -- FILLED, TEXT -- and a mould that happened to be a button would have been read as drawing entries whose kind is \"TEXT\".\n\nAuthoring-time: hydration picks a mould per item and removes the field."
         },
         "a11y": {
           "$ref": "#/$defs/accessibility"
@@ -2677,6 +2972,239 @@
         "age >= 18",
         "!is_guest"
       ]
+    },
+    "data_type": {
+      "type": "string",
+      "pattern": "^(string|number|bool|url|money|date)\\?$|^(string|number|bool|url|money|date)$",
+      "description": "The shape of one field, optionally suffixed with `?` to mark it as absent in some payloads. Deliberately short: this vocabulary exists so an editor can autocomplete, type-check a binding and format a value -- not to describe the backend's domain. `money` and `url` are separate from `string` because they are the two the editor formats and validates differently."
+    },
+    "data_fields": {
+      "type": "object",
+      "description": "Field names mapped to their shape.",
+      "additionalProperties": {
+        "$ref": "#/$defs/data_type"
+      }
+    },
+    "data_input": {
+      "description": "One entry the screen asks its backend for. `kind` discriminates: a `scalar` is a single value, an `object` is a group of fields addressed as `{{ name.field }}`, and a `list` is a collection a node repeats over.",
+      "type": "object",
+      "required": [
+        "kind"
+      ],
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "kind": {
+                "const": "scalar"
+              }
+            },
+            "required": [
+              "kind"
+            ]
+          },
+          "then": {
+            "$ref": "#/$defs/data_input_scalar"
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "kind": {
+                "const": "object"
+              }
+            },
+            "required": [
+              "kind"
+            ]
+          },
+          "then": {
+            "$ref": "#/$defs/data_input_object"
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "kind": {
+                "const": "list"
+              }
+            },
+            "required": [
+              "kind"
+            ]
+          },
+          "then": {
+            "$ref": "#/$defs/data_input_list"
+          }
+        }
+      ],
+      "properties": {
+        "kind": {
+          "type": "string",
+          "enum": [
+            "scalar",
+            "object",
+            "list"
+          ]
+        }
+      }
+    },
+    "data_input_scalar": {
+      "title": "scalar input",
+      "type": "object",
+      "required": [
+        "kind",
+        "type"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "const": "scalar"
+        },
+        "type": {
+          "$ref": "#/$defs/data_type"
+        },
+        "description": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      }
+    },
+    "data_input_object": {
+      "title": "object input",
+      "type": "object",
+      "required": [
+        "kind",
+        "fields"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "const": "object"
+        },
+        "fields": {
+          "$ref": "#/$defs/data_fields"
+        },
+        "description": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      }
+    },
+    "data_input_list": {
+      "title": "list input",
+      "type": "object",
+      "required": [
+        "kind",
+        "as",
+        "item"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "const": "list"
+        },
+        "as": {
+          "type": "string",
+          "pattern": "^[a-zA-Z_][a-zA-Z0-9_]*$",
+          "description": "The name one item answers to inside the repeated subtree, e.g. `product` for `{{ product.name }}`. Required and explicit on purpose: deriving it from the collection's name means two implementations have to agree on how to singularise a word, and they did not -- `product_categories` yielded `product` in one and `category` in the other, so a screen previewed correctly and shipped its placeholders as literal text."
+        },
+        "item": {
+          "$ref": "#/$defs/data_fields"
+        },
+        "description": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      }
+    },
+    "screen_data": {
+      "title": "declared data contract",
+      "description": "What this screen needs in order to render, declared rather than inferred. Without it the only record of the contract is the `{{ }}` expressions themselves, which means a typo is indistinguishable from a field the backend genuinely sends, and nothing can be checked until a device renders the literal braces to a user.\n\nAuthoring-time information: whatever hydrates the screen removes this object before the payload reaches a device.",
+      "type": [
+        "object",
+        "null"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "version": {
+          "type": "integer",
+          "minimum": 1,
+          "default": 1,
+          "description": "Bumped when the contract stops being satisfiable by a payload that satisfied the previous one -- a new required field, a removed one, a changed type. The backend can compare it against what it was built for."
+        },
+        "inputs": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/$defs/data_input"
+          },
+          "description": "Named entries, keyed exactly as they appear in the backend's payload."
+        },
+        "sample": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "description": "One real payload, kept so the editor can render the screen with actual values instead of inventing them. Stored with the screen so a release records the data its author was looking at."
+        }
+      }
+    },
+    "repeat": {
+      "title": "repeat over a collection",
+      "description": "Makes this node's first child a mould that is expanded once per item of `source`. Authoring-time: hydration replaces the children with the expanded copies and removes this object.\n\nIt lives on the node rather than in a side map keyed by component id, because a side map is lost the moment the subtree is copied, saved as a preset, or has its id renamed -- three things an editor does constantly.",
+      "type": "object",
+      "required": [
+        "source",
+        "as"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "source": {
+          "type": "string",
+          "minLength": 1,
+          "description": "The name of a `list` entry in the screen's `data.inputs`."
+        },
+        "as": {
+          "type": "string",
+          "pattern": "^[a-zA-Z_][a-zA-Z0-9_]*$",
+          "description": "What one item is called inside the mould."
+        },
+        "match": {
+          "type": "string",
+          "minLength": 1,
+          "description": "The item field that decides which mould draws it, for a list whose entries are not all the same shape -- a feed of products, banners and separators.\n\nWhen present, every child of this container carrying `variant` is a mould and the rest is content. When absent, the first child is the only mould, which is what every list written before this does.\n\nA field name rather than an expression on purpose: the editor can check it against the declared contract, say which sample items match no mould, and show each mould the value it draws. None of that is possible once the condition is a program."
+        },
+        "empty": {
+          "$ref": "#/$defs/component",
+          "description": "Rendered in place of the mould when the collection arrives empty. Without it an empty collection is an empty screen with no explanation on it, which is the most common state a real app has to show."
+        }
+      }
+    },
+    "scope": {
+      "title": "resolve this subtree against one object",
+      "description": "Points this node's subtree at an `object` entry of `data.inputs`, so its descendants can write `{{ promo.title }}` instead of repeating the full path. Authoring-time: hydration removes it.",
+      "type": "object",
+      "required": [
+        "source",
+        "as"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "source": {
+          "type": "string",
+          "minLength": 1
+        },
+        "as": {
+          "type": "string",
+          "pattern": "^[a-zA-Z_][a-zA-Z0-9_]*$"
+        }
+      }
     }
   }
 }

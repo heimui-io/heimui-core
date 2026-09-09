@@ -40,6 +40,7 @@ import io.heimui.core.presentation.designsystem.LocalHeimIconProvider
 import io.heimui.core.domain.model.action.SetStateAction
 import io.heimui.core.presentation.action.HeimActionRunner
 import io.heimui.core.presentation.action.LocalHeimActionRunner
+import io.heimui.core.presentation.state.HeimStateScope
 import io.heimui.core.presentation.action.runHeimActionSequence
 import io.heimui.core.presentation.launcher.LocalHeimUrlLauncher
 import io.heimui.core.presentation.tracking.LocalHeimTrackingDispatcher
@@ -85,7 +86,7 @@ import kotlinx.coroutines.launch
  * Must be called inside [io.heimui.core.presentation.designsystem.HeimTheme], which installs the
  * image loader, modal presenter, telemetry observer and URL policy this composable reads.
  *
- * @param screenId identifier resolved against `HeimConfig.baseUrl` as `/screens/{screenId}`.
+ * @param screenId identifier resolved against `HeimConfig.baseUrl` (or an absolute URL).
  * @param onAction invoked for every action the payload dispatches, after the SDK has handled it.
  * @param modifier applied to the root container.
  * @param repository overrides the shared [HeimUI.repository]. Pass one explicitly in previews and
@@ -169,11 +170,11 @@ public fun HeimScreen(
 
     // Executes one action and reports whether the ones after it may run. Only submission can
     // fail in a way the sequence must respect; everything else either happens or is a no-op.
-    val executeAction: suspend (HeimAction) -> Boolean = remember(
+    val executeAction: suspend (HeimAction, HeimStateScope) -> Boolean = remember(
         screenId, urlLauncher, telemetryObserver, stateManager,
         validatorRegistry, controller, trackingDispatcher
     ) {
-        { action ->
+        { action, actionScope ->
             var mayContinue = true
             when (action) {
                 is ShowBottomSheetAction -> controller.showBottomSheet(action)
@@ -181,7 +182,9 @@ public fun HeimScreen(
                 is DismissModalAction -> controller.dismissModals()
                 is OpenUrlAction -> urlLauncher.openUrl(action.url)
                 is SetStateAction -> stateManager.updateValue(
-                    action.key,
+                    // Writing inside the row that raised it, so a "clear" button in one row does
+                    // not empty the field in every other row.
+                    actionScope.resolve(action.key),
                     // A null writes an empty string rather than removing the key: `visible_if`
                     // distinguishes "empty" from "never set", and a payload clearing a field means
                     // the first.
@@ -193,7 +196,8 @@ public fun HeimScreen(
                     mayContinue = controller.submitForm(
                         action = action,
                         stateManager = stateManager,
-                        validatorRegistry = validatorRegistry
+                        validatorRegistry = validatorRegistry,
+                        scope = actionScope
                     )
                 }
                 else -> Unit
@@ -219,22 +223,28 @@ public fun HeimScreen(
                 // second coroutine and lose the ordering the caller is relying on.
                 var resolved: HeimAction? = null
                 actionDispatcher.dispatch(action, stateManager) { resolved = it }
-                resolved?.let { executeAction(it) }
+                // Dispatched by the host rather than by a component, so there is no row to be
+                // inside: the screen's own namespace is the only sensible reading.
+                resolved?.let { executeAction(it, HeimStateScope.Root) }
             }
         }
     }
 
     // One coroutine for the whole list, so the order the payload wrote is the order that happens.
     val actionRunner = remember(actionDispatcher, executeAction, stateManager) {
-        HeimActionRunner { actions ->
-            coroutineScope.launch {
-                runHeimActionSequence(
-                    actions = actions,
-                    dispatch = { action, onResolved ->
-                        actionDispatcher.dispatch(action, stateManager, onResolved)
-                    },
-                    execute = executeAction,
-                )
+        object : HeimActionRunner {
+            override fun run(actions: List<HeimAction>): Unit = run(actions, HeimStateScope.Root)
+
+            override fun run(actions: List<HeimAction>, scope: HeimStateScope) {
+                coroutineScope.launch {
+                    runHeimActionSequence(
+                        actions = actions,
+                        dispatch = { action, onResolved ->
+                            actionDispatcher.dispatch(action, stateManager, onResolved)
+                        },
+                        execute = { action -> executeAction(action, scope) },
+                    )
+                }
             }
         }
     }

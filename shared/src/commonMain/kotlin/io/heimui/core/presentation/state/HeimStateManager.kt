@@ -136,6 +136,47 @@ public class HeimStateManager(
 
     public fun getValue(key: String): String = _formState.value[key] ?: ""
 
+    /**
+     * What [key] means inside [scope]: the scope's own value, or the screen's when it has none.
+     *
+     * The fallback is what lets a row in a repeated list read a screen-level key -- a
+     * `visible_if` on `is_editing`, say -- without the author having to know that the row lives in
+     * a namespace at all.
+     */
+    public fun resolveValue(scope: HeimStateScope, key: String): String? {
+        if (!scope.isRoot) {
+            val scoped = _formState.value[scope.resolve(key)]
+            if (scoped != null) return scoped
+        }
+        return _formState.value[key]
+    }
+
+    /**
+     * Every value written inside [scope], under the keys the author wrote.
+     *
+     * This is how a submit outside the list reaches what the rows hold: the host asks for
+     * `passengers/1` and gets `{ full_name: ... }` rather than having to know the separator.
+     */
+    public fun valuesIn(scope: HeimStateScope): Map<String, String> {
+        if (scope.isRoot) {
+            return _formState.value.filterKeys { !it.contains(HeimStateScope.SEPARATOR) }
+        }
+        val prefix = scope.path + HeimStateScope.SEPARATOR
+        return _formState.value
+            .filterKeys { it.startsWith(prefix) }
+            .mapKeys { (key, _) -> key.removePrefix(prefix) }
+    }
+
+    /** Every scope that currently holds a value, for a host collecting a repeated form. */
+    public fun scopesUnder(source: String): List<HeimStateScope> =
+        _formState.value.keys
+            .mapNotNull { key ->
+                val (scope, _) = HeimStateScope.split(key)
+                scope.takeIf { !it.isRoot && (it.path == source || it.path.startsWith("$source/")) }
+            }
+            .distinct()
+            .sortedBy { it.path }
+
     public fun hasValue(key: String): Boolean = _formState.value.containsKey(key)
 
     public fun getAllValues(): Map<String, String> = _formState.value
@@ -246,18 +287,31 @@ public class HeimStateManager(
     public fun interpolatePayload(
         payload: Map<String, HeimValue>?,
         onUnresolved: (key: String) -> Unit = {}
+    ): Map<String, HeimValue>? = interpolatePayload(payload, HeimStateScope.Root, onUnresolved)
+
+    /**
+     * The same, for a button that lives inside a repeated row.
+     *
+     * Without the scope, `{{state.full_name}}` on row three submits row one's name -- which is the
+     * form the bug took before rows had namespaces.
+     */
+    public fun interpolatePayload(
+        payload: Map<String, HeimValue>?,
+        scope: HeimStateScope,
+        onUnresolved: (key: String) -> Unit = {}
     ): Map<String, HeimValue>? {
         if (payload == null) return null
-        return payload.mapValues { (_, value) -> interpolateValue(value, onUnresolved) }
+        return payload.mapValues { (_, value) -> interpolateValue(value, scope, onUnresolved) }
     }
 
     private fun interpolateValue(
         value: HeimValue,
+        scope: HeimStateScope,
         onUnresolved: (String) -> Unit
     ): HeimValue = when (value) {
-        is HeimValue.Str -> interpolateString(value.value, onUnresolved)
-        is HeimValue.Arr -> HeimValue.Arr(value.items.map { interpolateValue(it, onUnresolved) })
-        is HeimValue.Obj -> HeimValue.Obj(value.fields.mapValues { interpolateValue(it.value, onUnresolved) })
+        is HeimValue.Str -> interpolateString(value.value, scope, onUnresolved)
+        is HeimValue.Arr -> HeimValue.Arr(value.items.map { interpolateValue(it, scope, onUnresolved) })
+        is HeimValue.Obj -> HeimValue.Obj(value.fields.mapValues { interpolateValue(it.value, scope, onUnresolved) })
         else -> value
     }
 
@@ -270,7 +324,7 @@ public class HeimStateManager(
      * compiled fine in unit tests on two of them crashed at startup on the third. Plain string
      * scanning behaves identically everywhere and is faster besides.
      */
-    private fun interpolateString(raw: String, onUnresolved: (String) -> Unit): HeimValue {
+    private fun interpolateString(raw: String, scope: HeimStateScope, onUnresolved: (String) -> Unit): HeimValue {
         if (!raw.contains(PLACEHOLDER_OPEN)) return HeimValue.Str(raw)
 
         val trimmed = raw.trim()
@@ -279,7 +333,7 @@ public class HeimStateManager(
             val inner = trimmed.substring(PLACEHOLDER_OPEN.length, trimmed.length - PLACEHOLDER_CLOSE.length)
             if (PLACEHOLDER_OPEN !in inner && "}" !in inner) {
                 val key = inner.trim().removePrefix(STATE_PREFIX)
-                val resolved = _formState.value[key]
+                val resolved = resolveValue(scope, key)
                     ?: return HeimValue.Null.also { onUnresolved(key) }
                 return coerce(resolved)
             }
@@ -302,7 +356,7 @@ public class HeimStateManager(
             }
             out.append(raw, i, open)
             val key = raw.substring(open + PLACEHOLDER_OPEN.length, close).trim().removePrefix(STATE_PREFIX)
-            out.append(_formState.value[key] ?: run { onUnresolved(key); "" })
+            out.append(resolveValue(scope, key) ?: run { onUnresolved(key); "" })
             i = close + PLACEHOLDER_CLOSE.length
         }
         return HeimValue.Str(out.toString())

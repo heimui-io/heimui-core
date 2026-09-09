@@ -3,6 +3,7 @@ package io.heimui.core.presentation.action
 import androidx.compose.runtime.ProvidableCompositionLocal
 import androidx.compose.runtime.staticCompositionLocalOf
 import io.heimui.core.domain.model.action.HeimAction
+import io.heimui.core.presentation.state.HeimStateScope
 
 /**
  * Runs the actions a component declares, **in order**, one after the previous finished.
@@ -26,6 +27,15 @@ import io.heimui.core.domain.model.action.HeimAction
  */
 public fun interface HeimActionRunner {
     public fun run(actions: List<HeimAction>)
+
+    /**
+     * The same, from inside a repeated row.
+     *
+     * The scope has to travel with the call because the runner is built once, at the screen, and
+     * a row's `{{state.full_name}}` has to mean *that row's* name. Defaulted so an existing
+     * implementation keeps working and simply reports the screen's own namespace.
+     */
+    public fun run(actions: List<HeimAction>, scope: HeimStateScope): Unit = run(actions)
 }
 
 internal val LocalHeimActionRunner: ProvidableCompositionLocal<HeimActionRunner> =

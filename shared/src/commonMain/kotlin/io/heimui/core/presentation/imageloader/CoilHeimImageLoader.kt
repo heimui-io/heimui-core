@@ -15,6 +15,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import io.heimui.core.presentation.util.HeimBlurHashDecoder
+import io.ktor.http.Url
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
@@ -26,7 +27,16 @@ public class CoilHeimImageLoader(
     private val blurHeight: Int = 24,
     private val blurPunch: Float = 1f,
     /** Schemes an image URL may use. `file://` and `content://` would expose local storage. */
-    private val allowedSchemes: Set<String> = setOf("https", "data")
+    private val allowedSchemes: Set<String> = setOf("https", "data"),
+    /**
+     * Hosts whose images may be served over cleartext `http://`.
+     *
+     * Empty by default, and populated from `HeimConfig.allowCleartextHosts` by
+     * [io.heimui.core.presentation.designsystem.HeimTheme]. Adding `http` to [allowedSchemes]
+     * instead would open cleartext to every host a payload can name, which is the one thing the
+     * scheme allowlist is there to prevent.
+     */
+    private val cleartextHosts: Set<String> = emptySet()
 ) : HeimImageLoader {
 
     @Composable
@@ -65,8 +75,7 @@ public class CoilHeimImageLoader(
             }
         }
 
-        val scheme = url.substringBefore(':', "").lowercase()
-        if (scheme.isNotEmpty() && scheme !in allowedSchemes) return
+        if (!isAllowed(url)) return
 
         AsyncImage(
             model = url,
@@ -78,5 +87,21 @@ public class CoilHeimImageLoader(
             contentScale = contentScale,
             modifier = imageModifier
         )
+    }
+
+    /**
+     * Whether this URL may be loaded at all.
+     *
+     * `http` is not a scheme the loader accepts outright — it is accepted for the hosts the app
+     * declared as cleartext, so a local development backend works without every payload on every
+     * other host gaining the same licence.
+     */
+    private fun isAllowed(url: String): Boolean {
+        // Empty means relative, which the loader resolves against nothing dangerous.
+        val scheme = url.substringBefore(':', "").lowercase()
+        if (scheme.isEmpty() || scheme in allowedSchemes) return true
+        if (scheme != "http" || cleartextHosts.isEmpty()) return false
+        val host = runCatching { Url(url).host }.getOrNull() ?: return false
+        return cleartextHosts.any { it.equals(host, ignoreCase = true) }
     }
 }

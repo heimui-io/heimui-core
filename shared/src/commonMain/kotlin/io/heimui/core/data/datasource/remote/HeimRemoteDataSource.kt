@@ -104,6 +104,8 @@ internal class HeimRemoteDataSource(
     private val circuitBreaker: HeimCircuitBreaker = HeimCircuitBreaker(),
     /** Extra hosts allowed to receive authenticated form submissions, beyond the baseUrl host. */
     private val allowedSubmitHosts: Set<String> = emptySet(),
+    /** Hosts reachable over cleartext `http://`, beyond loopback. See `HeimConfig`. */
+    private val allowCleartextHosts: Set<String> = emptySet(),
 ) {
 
   suspend fun fetchScreen(
@@ -111,6 +113,19 @@ internal class HeimRemoteDataSource(
       queryParams: Map<String, String> = emptyMap(),
       ifNoneMatchEtag: String? = null,
   ): RemoteScreenResponse {
+    // Resolved before the breaker, not inside it: a refused identifier is a payload or
+    // configuration fault, and counting it as a network failure would let three bad ids pause
+    // every screen in the app for the breaker's full interval.
+    val screenUrl =
+        try {
+          resolveScreenUrl(screenId)
+        } catch (e: HeimSecurityException) {
+          return RemoteScreenResponse.Error(
+              statusCode = -1,
+              message = e.message ?: "Blocked by security policy",
+          )
+        }
+
     return try {
       circuitBreaker.withBreaker(
           onOpen = {
@@ -119,7 +134,7 @@ internal class HeimRemoteDataSource(
             )
           }
       ) {
-        performFetch(screenId, queryParams, ifNoneMatchEtag)
+        performFetch(screenUrl, queryParams, ifNoneMatchEtag)
       }
     } catch (e: CancellationException) {
       throw e
@@ -129,11 +144,10 @@ internal class HeimRemoteDataSource(
   }
 
   private suspend fun performFetch(
-      screenId: String,
+      screenUrl: String,
       queryParams: Map<String, String>,
       ifNoneMatchEtag: String?,
   ): RemoteScreenResponse {
-    val screenUrl = buildUrl("/screens/$screenId")
     val response =
         httpClient.get(screenUrl) {
           headers {
@@ -277,9 +291,11 @@ internal class HeimRemoteDataSource(
               )
             }
 
-    val isLoopback = target.host == "localhost" || target.host == "127.0.0.1"
-    if (target.protocol == URLProtocol.HTTP && !isLoopback) {
-      throw HeimSecurityException("Cleartext HTTP form submission is prohibited.")
+    if (target.protocol == URLProtocol.HTTP && !allowsCleartext(target.host)) {
+      throw HeimSecurityException(
+          "Cleartext HTTP form submission to '${target.host}' is prohibited. Add the host to " +
+              "HeimConfig.allowCleartextHosts if this is a local development backend."
+      )
     }
 
     val hostAllowed =
@@ -305,6 +321,85 @@ internal class HeimRemoteDataSource(
   }
 
   /**
+   * Whether cleartext `http://` is tolerated for [host].
+   *
+   * Loopback is always allowed, because that traffic never leaves the device. Everything else has
+   * to be named in `HeimConfig.allowCleartextHosts` -- so the emulator alias a developer needs
+   * (`10.0.2.2`) is a decision each app makes for its own debug build, not a hole the SDK opens
+   * for every consumer. The platform still has to agree: Android needs `usesCleartextTraffic` (or
+   * a network security config) and iOS an ATS exception, neither of which the SDK can grant.
+   */
+  private fun allowsCleartext(host: String): Boolean =
+      host == "localhost" ||
+          host == "127.0.0.1" ||
+          allowCleartextHosts.any { it.equals(host, ignoreCase = true) }
+
+  /**
+   * Resolves a screen identifier into the URL it is fetched from.
+   *
+   * A relative id resolves against [baseUrl] -- `home`, `/home` and `catalog/detail` all work,
+   * and the SDK contributes no path segment of its own, so the id names the backend's route
+   * rather than a convention the SDK imposes on it.
+   *
+   * An absolute URL is accepted too, which is what lets one payload link to the next by href
+   * instead of by an id the client must know how to expand. It is held to the same policy as a
+   * form endpoint, because the `Authorization` header follows it: same host, same port, no
+   * cleartext. Without that a hostile payload could name any URL and be handed the session token.
+   *
+   * @throws HeimSecurityException if the identifier resolves outside the configured origin. Every
+   *   caller has to turn that into a result rather than let it escape -- see [fetchScreen] and
+   *   [screenCacheKey].
+   */
+  internal fun resolveScreenUrl(screenId: String): String {
+    // Compared lowercased: `HTTPS://evil.example` is absolute to every URL parser that matters,
+    // and a case-sensitive check would have sent it down the relative branch.
+    val scheme = screenId.substringBefore(':', "").lowercase()
+    if (scheme != "http" && scheme != "https") {
+      if (screenId.contains("..")) {
+        throw HeimSecurityException(
+            "Path traversal is not permitted in screen identifiers: '$screenId'"
+        )
+      }
+      return buildUrl(screenId)
+    }
+
+    val target =
+        runCatching { Url(screenId) }
+            .getOrElse { throw HeimSecurityException("Malformed screen URL: '$screenId'") }
+    val base =
+        runCatching { Url(baseUrl) }
+            .getOrElse {
+              throw HeimSecurityException(
+                  "HeimUI is misconfigured: baseUrl '$baseUrl' is not a valid URL"
+              )
+            }
+
+    if (target.protocol == URLProtocol.HTTP && !allowsCleartext(target.host)) {
+      throw HeimSecurityException(
+          "Cleartext HTTP screen fetch from '${target.host}' is prohibited. Add the host to " +
+              "HeimConfig.allowCleartextHosts if this is a local development backend."
+      )
+    }
+
+    val isAllowlistedHost = allowedSubmitHosts.any { it.equals(target.host, ignoreCase = true) }
+    if (!isAllowlistedHost && !target.host.equals(base.host, ignoreCase = true)) {
+      throw HeimSecurityException(
+          "Cross-domain screen fetch from '${target.host}' is prohibited."
+      )
+    }
+
+    // Same host on a different port is a different service, exactly as it is for a submission.
+    if (!isAllowlistedHost && target.port != base.port) {
+      throw HeimSecurityException(
+          "Screen fetch from '${target.host}:${target.port}' does not match the " +
+              "configured origin port ${base.port}."
+      )
+    }
+
+    return screenId
+  }
+
+  /**
    * The URL a screen resolves to, which is also what identifies it in the cache.
    *
    * Exposed so the repository keys its cache by exactly what it fetched, rather than by
@@ -314,7 +409,11 @@ internal class HeimRemoteDataSource(
    * an instant — and sent the first one's ETag to ask about the second.
    */
   internal fun screenCacheKey(screenId: String, queryParams: Map<String, String>): String {
-    val base = buildUrl("/screens/$screenId")
+    // Deliberately does not propagate a refused identifier. The repository calls this outside any
+    // catch, so throwing here would crash the collecting coroutine instead of surfacing an error
+    // state; the refusal still happens, in [fetchScreen], which reports it as a result. The key
+    // is only ever read in that case -- nothing is written under it, because the fetch fails.
+    val base = runCatching { resolveScreenUrl(screenId) }.getOrElse { screenId }
     if (queryParams.isEmpty()) return base
     // Sorted, so two callers passing the same parameters in a different order share one entry
     // rather than quietly caching the same screen twice.

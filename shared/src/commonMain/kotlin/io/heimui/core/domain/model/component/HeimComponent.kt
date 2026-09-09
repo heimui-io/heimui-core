@@ -8,6 +8,19 @@ import io.heimui.core.domain.model.validation.ValidationRule
 public sealed interface HeimComponent {
     public val id: String
     public val visibleIf: String? get() = null
+
+    /**
+     * The state namespace this node and its subtree belong to.
+     *
+     * Written by whatever expanded a repeated list, never by an author. A `text_field` inside a
+     * list of passengers is three fields on screen and used to be one in memory: they all carry
+     * the same `state_key`, so typing in the third row filled the first. The scope is what tells
+     * them apart -- `passengers/1`, `passengers/2` -- while the key the author wrote stays
+     * `full_name` everywhere.
+     *
+     * Null means the screen's own namespace, which is every screen written before this existed.
+     */
+    public val stateScope: String? get() = null
     public val a11y: HeimAccessibility? get() = null
 
     /**
@@ -154,7 +167,8 @@ public data class ContainerComponent(
     val scrollable: Boolean? = null,
     override val weight: Float? = null,
     override val frame: HeimSize = HeimSize.None,
-    val children: List<HeimComponent> = emptyList()
+    val children: List<HeimComponent> = emptyList(),
+    override val stateScope: String? = null,
 ) : HeimComponent
 
 /**
@@ -176,7 +190,8 @@ public data class BoxComponent(
     val borderWidth: Int = 1,
     override val weight: Float? = null,
     override val frame: HeimSize = HeimSize.None,
-    val children: List<HeimComponent> = emptyList()
+    val children: List<HeimComponent> = emptyList(),
+    override val stateScope: String? = null,
 ) : HeimComponent
 
 /**
@@ -203,7 +218,8 @@ public data class LazyColumnComponent(
     val alignment: Alignment = Alignment.START,
     val arrangement: HeimArrangement = HeimArrangement.PACKED,
     val items: List<HeimComponent> = emptyList(),
-    val pagination: PaginationConfig? = null
+    val pagination: PaginationConfig? = null,
+    override val stateScope: String? = null,
 ) : HeimComponent
 
 /**
@@ -225,7 +241,8 @@ public data class LazyRowComponent(
     val alignment: Alignment = Alignment.START,
     val arrangement: HeimArrangement = HeimArrangement.PACKED,
     val items: List<HeimComponent> = emptyList(),
-    val pagination: PaginationConfig? = null
+    val pagination: PaginationConfig? = null,
+    override val stateScope: String? = null,
 ) : HeimComponent
 
 public data class PaginationConfig(
@@ -254,7 +271,8 @@ public data class TextComponent(
     val style: String = "bodyMedium",
     val color: String? = null,
     val maxLines: Int? = null,
-    val textAlign: TextAlign = TextAlign.START
+    val textAlign: TextAlign = TextAlign.START,
+    override val stateScope: String? = null,
 ) : HeimComponent
 
 /**
@@ -276,7 +294,8 @@ public data class ImageComponent(
     val aspectRatio: Float? = null,
     val height: Int? = null,
     val cornerRadius: Int = 0,
-    val contentScale: ContentScale = ContentScale.CROP
+    val contentScale: ContentScale = ContentScale.CROP,
+    override val stateScope: String? = null,
 ) : HeimComponent
 
 /**
@@ -298,7 +317,8 @@ public data class CardComponent(
     val actions: List<HeimAction> = emptyList(),
     override val weight: Float? = null,
     override val frame: HeimSize = HeimSize.None,
-    val child: HeimComponent
+    val child: HeimComponent,
+    override val stateScope: String? = null,
 ) : HeimComponent
 
 /** How a chip reads: an action to take, or a filter that can be on. */
@@ -342,7 +362,8 @@ public data class ChipComponent(
     val borderColor: String? = null,
     val borderWidth: Int? = null,
     val cornerRadius: Int? = null,
-    val accentColor: String? = null
+    val accentColor: String? = null,
+    override val stateScope: String? = null,
 ) : HeimComponent
 
 /**
@@ -378,7 +399,8 @@ public data class RichTextComponent(
     val style: String = "bodyMedium",
     val color: String? = null,
     val align: TextAlign = TextAlign.START,
-    val maxLines: Int = 0
+    val maxLines: Int = 0,
+    override val stateScope: String? = null,
 ) : HeimComponent
 
 /** Compact pill-shaped label, for statuses, counts and tags. */
@@ -391,7 +413,8 @@ public data class BadgeComponent(
     val text: String,
     val backgroundColor: String = "primaryContainer",
     val textColor: String = "onPrimaryContainer",
-    val iconUrl: String? = null
+    val iconUrl: String? = null,
+    override val stateScope: String? = null,
 ) : HeimComponent
 
 /**
@@ -429,7 +452,8 @@ public data class ButtonComponent(
     val textColor: String? = null,
     val borderColor: String? = null,
     val borderWidth: Int? = null,
-    val cornerRadius: Int? = null
+    val cornerRadius: Int? = null,
+    override val stateScope: String? = null,
 ) : HeimComponent
 
 /**
@@ -470,7 +494,8 @@ public data class TextFieldComponent(
     val borderColor: String? = null,
     val borderWidth: Int? = null,
     val cornerRadius: Int? = null,
-    val accentColor: String? = null
+    val accentColor: String? = null,
+    override val stateScope: String? = null,
 ) : HeimComponent
 
 /**
@@ -509,7 +534,8 @@ public data class CheckboxComponent(
     val textColor: String? = null,
     val borderColor: String? = null,
     val cornerRadius: Int? = null,
-    val accentColor: String? = null
+    val accentColor: String? = null,
+    override val stateScope: String? = null,
 ) : HeimComponent
 
 /**
@@ -535,7 +561,8 @@ public data class RadioGroupComponent(
     val onSelectActions: List<HeimAction> = emptyList(),
     val textColor: String? = null,
     val borderColor: String? = null,
-    val accentColor: String? = null
+    val accentColor: String? = null,
+    override val stateScope: String? = null,
 ) : HeimComponent
 
 /**
@@ -562,7 +589,8 @@ public data class RadioComponent(
     val onSelectActions: List<HeimAction> = emptyList(),
     val textColor: String? = null,
     val borderColor: String? = null,
-    val accentColor: String? = null
+    val accentColor: String? = null,
+    override val stateScope: String? = null,
 ) : HeimComponent
 
 /**
@@ -596,7 +624,8 @@ public data class SelectComponent(
     val borderColor: String? = null,
     val borderWidth: Int? = null,
     val cornerRadius: Int? = null,
-    val accentColor: String? = null
+    val accentColor: String? = null,
+    override val stateScope: String? = null,
 ) : HeimComponent
 
 /**
@@ -644,7 +673,8 @@ public data class DatePickerComponent(
     val borderColor: String? = null,
     val borderWidth: Int? = null,
     val cornerRadius: Int? = null,
-    val accentColor: String? = null
+    val accentColor: String? = null,
+    override val stateScope: String? = null,
 ) : HeimComponent
 
 /**
@@ -668,7 +698,8 @@ public data class SwitchComponent(
     val onCheckActions: List<HeimAction> = emptyList(),
     val textColor: String? = null,
     val backgroundColor: String? = null,
-    val accentColor: String? = null
+    val accentColor: String? = null,
+    override val stateScope: String? = null,
 ) : HeimComponent
 
 /**
@@ -685,7 +716,8 @@ public data class IconComponent(
     override val frame: HeimSize = HeimSize.None,
     val name: String,
     val tint: String? = null,
-    val size: Int = 24
+    val size: Int = 24,
+    override val stateScope: String? = null,
 ) : HeimComponent
 
 /**
@@ -701,7 +733,8 @@ public data class SpacerComponent(
     override val weight: Float? = null,
     override val frame: HeimSize = HeimSize.None,
     val size: Int,
-    val isFlexible: Boolean = false
+    val isFlexible: Boolean = false,
+    override val stateScope: String? = null,
 ) : HeimComponent
 
 /** Horizontal rule separating sections. */
@@ -712,7 +745,8 @@ public data class DividerComponent(
     override val weight: Float? = null,
     override val frame: HeimSize = HeimSize.None,
     val thickness: Int = 1,
-    val color: String = "outlineVariant"
+    val color: String = "outlineVariant",
+    override val stateScope: String? = null,
 ) : HeimComponent
 
 /**
@@ -728,7 +762,8 @@ public data class CustomComponent(
     override val weight: Float? = null,
     override val frame: HeimSize = HeimSize.None,
     val name: String,
-    val data: Map<String, HeimValue> = emptyMap()
+    val data: Map<String, HeimValue> = emptyMap(),
+    override val stateScope: String? = null,
 ) : HeimComponent
 
 /**
@@ -743,5 +778,6 @@ public data class UnknownComponent(
     override val a11y: HeimAccessibility? = null,
     override val weight: Float? = null,
     override val frame: HeimSize = HeimSize.None,
-    val originalType: String? = null
+    val originalType: String? = null,
+    override val stateScope: String? = null,
 ) : HeimComponent

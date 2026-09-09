@@ -28,7 +28,7 @@ group = "io.heimui"
  * every alpha sorts before the eventual 0.0.1 release. A bare `-alpha` would leave nowhere to go
  * for the second one.
  */
-version = (findProperty("heimui.version") as String?) ?: "0.0.1-alpha-1"
+version = (findProperty("heimui.version") as String?) ?: "0.0.1-alpha-2"
 
 kotlin {
     // Forces an explicit visibility modifier and return type on every public declaration.

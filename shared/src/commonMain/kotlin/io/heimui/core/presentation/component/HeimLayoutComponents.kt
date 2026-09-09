@@ -8,6 +8,7 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.ui.Alignment
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
@@ -15,6 +16,7 @@ import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -31,6 +33,7 @@ import io.heimui.core.domain.model.component.ContainerComponent
 import io.heimui.core.domain.model.component.HeimArrangement
 import io.heimui.core.domain.model.component.Direction
 import io.heimui.core.domain.model.component.DividerComponent
+import io.heimui.core.domain.model.component.HeimComponent
 import io.heimui.core.domain.model.component.SpacerComponent
 import io.heimui.core.presentation.HeimRenderer
 import io.heimui.core.presentation.accessibility.heimAccessibility
@@ -50,11 +53,10 @@ internal fun HeimContainerRenderer(
     onAction: (HeimAction) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val colorScheme = MaterialTheme.colorScheme
-    val bgColor = heimColor(component.backgroundColor, Color.Transparent)
+    val fillsWidth = heimFillsWidth(component)
 
     val containerModifier = modifier
-        .fillMaxWidth()
+        .then(if (fillsWidth) Modifier.fillMaxWidth() else Modifier)
         .heimSurface(
             backgroundColor = component.backgroundColor,
             cornerRadius = component.cornerRadius,
@@ -72,93 +74,187 @@ internal fun HeimContainerRenderer(
         component.scrollable != false &&
         !insideScroller
 
-    val scrolledModifier = if (shouldScroll) {
-        containerModifier.verticalScroll(rememberScrollState())
-    } else {
-        containerModifier
-    }
-
     CompositionLocalProvider(
-        LocalInsideVerticalScroller provides (insideScroller || shouldScroll)
+        LocalInsideVerticalScroller provides (insideScroller || shouldScroll),
+        // Set on the way into a row and cleared on the way into a column. Only setting it would
+        // latch the flag on for the whole subtree, so everything below a row -- however deep, and
+        // however many columns down -- would stop filling the width its own column offers it.
+        LocalInsideHorizontalContainer provides (component.direction == Direction.HORIZONTAL),
     ) {
-    when (component.direction) {
-        Direction.VERTICAL -> {
-            Column(
-                modifier = scrolledModifier,
-                verticalArrangement = component.verticalArrangement(),
-                horizontalAlignment = HeimTokenResolver.resolveHorizontalAlignment(component.alignment)
-            ) {
-                component.children.forEach { child ->
-                    if (child is SpacerComponent) {
-                        HeimSpacerRenderer(child)      // ColumnScope overload: weight works here
-                    } else {
-                        HeimRenderer(
-                            component = child,
-                            stateManager = stateManager,
-                            onAction = onAction,
-                            // Weight is only expressible from inside the scope, which is why the
-                            // parent applies it rather than the child asking for it.
-                            modifier = child.weight
-                                ?.let { Modifier.weight(it) }
-                                ?: Modifier
-                        )
+        when (component.direction) {
+            Direction.VERTICAL -> HeimVerticalContainer(
+                component = component,
+                stateManager = stateManager,
+                onAction = onAction,
+                containerModifier = containerModifier,
+                fillsWidth = fillsWidth,
+                shouldScroll = shouldScroll,
+            )
+
+            Direction.HORIZONTAL -> {
+                // A horizontal row that overflows used to clip its last children with no way to
+                // reach them: `scrollable` was only ever honoured on the vertical axis. Horizontal
+                // overflow is the normal case for a chip row or a category strip, so silently
+                // cutting it off loses content rather than merely looking wrong.
+                //
+                // Note this scrolls the row *and its padding* — the padding is inside the
+                // viewport, so the first child sits `start` dp in and scrolls away with everything
+                // else. A chip strip that must keep its inset while scrolling edge to edge wants
+                // `lazy_row`, whose padding becomes `contentPadding` and therefore stays outside
+                // the scroll. `scrollable` defaults to true, but a weighted child says the row
+                // divides a finite width — and the two cannot both hold, since a scrolling axis is
+                // unbounded. An explicit weight in the payload outranks a flag nobody set, so
+                // weight wins and the row does not scroll. Without this the default silently
+                // defeated every weight.
+                val hasWeightedChild = component.children.any { it.weight != null }
+                // Opt-in, unlike the vertical axis: unbounded width stops text from wrapping, so a
+                // row only scrolls when the payload actually asked for it.
+                val horizontalModifier = if (component.scrollable == true && !hasWeightedChild) {
+                    containerModifier.horizontalScroll(rememberScrollState())
+                } else {
+                    containerModifier
+                }
+                Row(
+                    modifier = horizontalModifier,
+                    horizontalArrangement = component.horizontalArrangement(),
+                    verticalAlignment = HeimTokenResolver.resolveVerticalAlignment(component.alignment)
+                ) {
+                    component.children.forEach { child ->
+                        if (child is SpacerComponent) {
+                            HeimSpacerRenderer(child)      // RowScope overload
+                        } else {
+                            HeimRenderer(
+                                component = child,
+                                stateManager = stateManager,
+                                onAction = onAction,
+                                // A scrolling row measures against infinite width, and `weight`
+                                // divides a finite one — asking for both throws. The scroll wins,
+                                // because a payload that scrolls and weights is contradictory and
+                                // crashing the screen over it helps nobody.
+                                modifier = child.weight
+                                    ?.let { Modifier.weight(it) }
+                                    ?: Modifier
+                            )
+                        }
                     }
                 }
             }
         }
-        Direction.HORIZONTAL -> {
-            // A horizontal row that overflows used to clip its last children with no way to
-            // reach them: `scrollable` was only ever honoured on the vertical axis. Horizontal
-            // overflow is the normal case for a chip row or a category strip, so silently
-            // cutting it off loses content rather than merely looking wrong.
-            //
-            // Note this scrolls the row *and its padding* — the padding is inside the viewport,
-            // so the first child sits `start` dp in and scrolls away with everything else. A
-            // chip strip that must keep its inset while scrolling edge to edge wants `lazy_row`,
-            // whose padding becomes `contentPadding` and therefore stays outside the scroll.
-            // `scrollable` defaults to true, but a weighted child says the row divides a finite
-            // width — and the two cannot both hold, since a scrolling axis is unbounded. An
-            // explicit weight in the payload outranks a flag nobody set, so weight wins and the
-            // row does not scroll. Without this the default silently defeated every weight.
-            val hasWeightedChild = component.children.any { it.weight != null }
-            // Opt-in, unlike the vertical axis: unbounded width stops text from wrapping, so a
-            // row only scrolls when the payload actually asked for it.
-            val horizontalModifier = if (component.scrollable == true && !hasWeightedChild) {
-                containerModifier.horizontalScroll(rememberScrollState())
+    }
+}
+
+/**
+ * The vertical half of [HeimContainerRenderer], split out because a distributing arrangement needs
+ * a second layout pass around the column.
+ *
+ * A column is only as tall as its children, so CENTER, END and the SPACE_* arrangements had no
+ * height to distribute within and quietly did nothing -- the payload asked to centre, the JSON
+ * carried the request all the way down, and the screen still rendered top-aligned.
+ */
+@Composable
+private fun HeimVerticalContainer(
+    component: ContainerComponent,
+    stateManager: HeimStateManager,
+    onAction: (HeimAction) -> Unit,
+    containerModifier: Modifier,
+    fillsWidth: Boolean,
+    shouldScroll: Boolean,
+) {
+    if (component.arrangement == HeimArrangement.PACKED) {
+        // The default, and the one arrangement that needs no height of its own: packing children
+        // at the start is what a column wrapping its content already does. Kept on the exact
+        // layout path it has always had, so the common payload is untouched by any of this.
+        Column(
+            modifier = if (shouldScroll) {
+                containerModifier.verticalScroll(rememberScrollState())
             } else {
                 containerModifier
-            }
-            Row(
-                modifier = horizontalModifier,
-                horizontalArrangement = component.horizontalArrangement(),
-                verticalAlignment = HeimTokenResolver.resolveVerticalAlignment(component.alignment)
-            ) {
-                component.children.forEach { child ->
-                    if (child is SpacerComponent) {
-                        HeimSpacerRenderer(child)      // RowScope overload
-                    } else {
-                        HeimRenderer(
-                            component = child,
-                            stateManager = stateManager,
-                            onAction = onAction,
-                            // A scrolling row measures against infinite width, and `weight` divides
-                            // a finite one — asking for both throws. The scroll wins, because a
-                            // payload that scrolls and weights is contradictory and crashing the
-                            // screen over it helps nobody.
-                            modifier = child.weight
-                                ?.let { Modifier.weight(it) }
-                                ?: Modifier
-                        )
-                    }
-                }
-            }
+            },
+            verticalArrangement = component.verticalArrangement(),
+            horizontalAlignment = HeimTokenResolver.resolveHorizontalAlignment(component.alignment)
+        ) {
+            HeimContainerChildren(component, stateManager, onAction)
+        }
+        return
+    }
+
+    // The viewport height has to be read *outside* the scroller: inside one the incoming max
+    // height is infinite, which is exactly why the arrangement had nothing to work with. The
+    // column then takes at least that height, so short content is distributed across the screen
+    // and long content still grows past it and scrolls.
+    BoxWithConstraints(modifier = containerModifier) {
+        val viewport = maxHeight
+        var innerModifier: Modifier = Modifier
+        if (shouldScroll) innerModifier = innerModifier.verticalScroll(rememberScrollState())
+        if (fillsWidth) innerModifier = innerModifier.fillMaxWidth()
+        // Infinite when an ancestor already scrolls vertically: there is no viewport to fill
+        // there, and `heightIn(Dp.Infinity)` is not a size any layout can honour.
+        if (viewport.value.isFinite()) innerModifier = innerModifier.heightIn(min = viewport)
+
+        Column(
+            modifier = innerModifier,
+            verticalArrangement = component.verticalArrangement(),
+            horizontalAlignment = HeimTokenResolver.resolveHorizontalAlignment(component.alignment)
+        ) {
+            HeimContainerChildren(component, stateManager, onAction)
         }
     }
+}
+
+@Composable
+private fun ColumnScope.HeimContainerChildren(
+    component: ContainerComponent,
+    stateManager: HeimStateManager,
+    onAction: (HeimAction) -> Unit,
+) {
+    component.children.forEach { child ->
+        if (child is SpacerComponent) {
+            HeimSpacerRenderer(child)      // ColumnScope overload: weight works here
+        } else {
+            HeimRenderer(
+                component = child,
+                stateManager = stateManager,
+                onAction = onAction,
+                // Weight is only expressible from inside the scope, which is why the
+                // parent applies it rather than the child asking for it.
+                modifier = child.weight
+                    ?.let { Modifier.weight(it) }
+                    ?: Modifier
+            )
+        }
     }
 }
 
 /** True while composing inside a scrollable ancestor, so nested scrollers can opt out. */
 internal val LocalInsideVerticalScroller = staticCompositionLocalOf { false }
+
+/**
+ * True while composing directly inside a row, so a child does not greedily fill the whole width.
+ *
+ * Every renderer that provides it has to provide it in both directions — see the note in
+ * [HeimContainerRenderer].
+ */
+internal val LocalInsideHorizontalContainer = staticCompositionLocalOf { false }
+
+/**
+ * Whether a component should claim the full width offered to it.
+ *
+ * Filling is the right default for a block-level component: it is what makes a stack of cards line
+ * up without every payload having to say so. Inside a row it is the wrong one — an unweighted
+ * child that fills takes the entire row and starves its siblings — so there the component wraps
+ * its content instead. An explicit width or weight in the payload outranks both.
+ */
+@Composable
+internal fun heimFillsWidth(component: HeimComponent): Boolean =
+    !LocalInsideHorizontalContainer.current &&
+        component.frame.width == null &&
+        component.frame.minWidth == null &&
+        component.weight == null
+
+/** [heimFillsWidth] applied, for the renderers that need nothing else from it. */
+@Composable
+internal fun Modifier.heimFillWidth(component: HeimComponent): Modifier =
+    if (heimFillsWidth(component)) fillMaxWidth() else this
 
 @Composable
 internal fun HeimBoxRenderer(
@@ -169,7 +265,7 @@ internal fun HeimBoxRenderer(
 ) {
     Box(
         modifier = modifier
-            .fillMaxWidth()
+            .heimFillWidth(component)
             // Surface before padding, so the colour and border frame the padded area rather than
             // being inset by it — the same order the container uses.
             .heimSurface(

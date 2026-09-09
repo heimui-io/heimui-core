@@ -11,6 +11,7 @@ import io.heimui.core.domain.model.validation.ValidationType
 import io.heimui.core.domain.repository.HeimScreenRepository
 import io.heimui.core.domain.repository.HeimScreenResult
 import io.heimui.core.domain.repository.HeimSubmitResult
+import io.heimui.core.presentation.state.SUBMITTING_STATE_KEY
 import io.heimui.core.presentation.state.HeimScreenController
 import io.heimui.core.presentation.state.HeimScreenState
 import io.heimui.core.presentation.state.HeimStateManager
@@ -235,4 +236,53 @@ class HeimScreenControllerTest {
         assertNull(repo.submittedEndpoint)
         assertTrue(telemetry.events.any { it is HeimTelemetryEvent.ValidatorMissing })
     }
+
+    /*
+     * `visible_if: "is_submitting"` has to work without the host app arranging it.
+     *
+     * The controller has always known it was submitting; it kept the fact to itself, where Kotlin
+     * could read it and a payload could not. A screen that swaps its button for a spinner
+     * therefore worked only in an app that mirrored the flag by hand, and the same JSON sat
+     * inert in one that did not -- the screen described behaviour it could not deliver.
+     */
+    @Test
+    fun `a submission publishes its own progress into form state`() = runTest {
+        val stateManager = HeimStateManager(screenId = "s")
+        val controller = HeimScreenController(
+            screenId = "s",
+            repository = FakeRepository(submitResult = HeimSubmitResult.Success(null)),
+            scope = this,
+            telemetryObserver = RecordingTelemetry()
+        )
+
+        assertFalse(stateManager.hasValue(SUBMITTING_STATE_KEY))
+
+        controller.submitForm(
+            action = SubmitFormAction(endpoint = "/login"),
+            stateManager = stateManager
+        )
+
+        // Back to false once it settles, whatever the outcome: the spinner must not outlive the
+        // request, and `finally` is what guarantees that for a failure too.
+        assertEquals("false", stateManager.getValue(SUBMITTING_STATE_KEY))
+    }
+
+    @Test
+    fun `a failed submission still clears its progress flag`() = runTest {
+        val stateManager = HeimStateManager(screenId = "s")
+        val controller = HeimScreenController(
+            screenId = "s",
+            repository = FakeRepository(submitResult = HeimSubmitResult.Error("boom", null)),
+            scope = this,
+            telemetryObserver = RecordingTelemetry()
+        )
+
+        controller.submitForm(
+            action = SubmitFormAction(endpoint = "/login"),
+            stateManager = stateManager
+        )
+
+        assertEquals("false", stateManager.getValue(SUBMITTING_STATE_KEY))
+    }
+
 }

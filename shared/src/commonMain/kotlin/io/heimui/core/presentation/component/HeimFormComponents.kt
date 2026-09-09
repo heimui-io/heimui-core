@@ -54,6 +54,7 @@ import io.heimui.core.presentation.accessibility.heimAccessibility
 import io.heimui.core.presentation.designsystem.LocalHeimIconProvider
 import io.heimui.core.presentation.action.LocalHeimActionRunner
 import io.heimui.core.presentation.state.HeimStateManager
+import io.heimui.core.presentation.state.LocalHeimStateScope
 import io.heimui.core.presentation.telemetry.HeimTelemetryEvent
 import io.heimui.core.presentation.telemetry.LocalHeimTelemetryObserver
 import io.heimui.core.presentation.validation.LocalHeimValidatorRegistry
@@ -189,12 +190,26 @@ internal fun HeimButtonRenderer(
     }
 }
 
+/**
+ * The key this field actually reads and writes.
+ *
+ * The author writes `full_name`; inside a repeated row that has to mean this row's `full_name` and
+ * not the first one's. Resolving it once, here, is what keeps every call site below written in
+ * terms of the key the author chose.
+ */
+@Composable
+internal fun rememberScopedStateKey(stateKey: String): String {
+    val scope = LocalHeimStateScope.current
+    return remember(scope, stateKey) { scope.resolve(stateKey) }
+}
+
 @Composable
 internal fun HeimTextFieldRenderer(
     component: TextFieldComponent,
     stateManager: HeimStateManager,
     modifier: Modifier = Modifier
 ) {
+    val stateKey = rememberScopedStateKey(component.stateKey)
     val validatorRegistry = LocalHeimValidatorRegistry.current
     val telemetry = LocalHeimTelemetryObserver.current
 
@@ -202,42 +217,42 @@ internal fun HeimTextFieldRenderer(
     // the text round-trip through an async boundary, which drops the TextRange and therefore the
     // caret position -- the cause of cursor jumps, dropped characters on fast typing, and broken
     // IME composition for CJK and autocorrect.
-    var field by remember(component.stateKey) {
-        val seed = stateManager.getValue(component.stateKey).ifEmpty { component.initialValue }
+    var field by remember(stateKey) {
+        val seed = stateManager.getValue(stateKey).ifEmpty { component.initialValue }
         mutableStateOf(TextFieldValue(text = seed, selection = TextRange(seed.length)))
     }
-    var errorMessage by remember(component.stateKey) { mutableStateOf<String?>(null) }
+    var errorMessage by remember(stateKey) { mutableStateOf<String?>(null) }
 
-    DisposableEffect(component.stateKey, component.validationRules) {
+    DisposableEffect(stateKey, component.validationRules) {
         // Registering the rules is what lets the controller gate submission on fields the user
         // never touched -- per-field validation alone only fires on typing.
-        stateManager.registerField(component.stateKey, component.validationRules)
+        stateManager.registerField(stateKey, component.validationRules)
         // Only what was registered is removed; see the same guard in HeimSelectionComponents.
         onDispose {
             if (component.validationRules.isNotEmpty()) {
-                stateManager.unregisterField(component.stateKey)
+                stateManager.unregisterField(stateKey)
             }
         }
     }
 
-    LaunchedEffect(component.stateKey, component.initialValue) {
+    LaunchedEffect(stateKey, component.initialValue) {
         if (component.inputType == InputType.PASSWORD) {
             // Never let a password reach draft storage.
-            stateManager.markSensitive(component.stateKey)
+            stateManager.markSensitive(stateKey)
         }
-        if (!stateManager.hasValue(component.stateKey) && component.initialValue.isNotEmpty()) {
-            stateManager.updateValue(component.stateKey, component.initialValue)
+        if (!stateManager.hasValue(stateKey) && component.initialValue.isNotEmpty()) {
+            stateManager.updateValue(stateKey, component.initialValue)
         }
     }
 
     // Errors raised by a submit-time validation sweep, for fields never touched by the user.
     val submitErrors by stateManager.fieldErrors.collectAsState()
-    val effectiveError = errorMessage ?: submitErrors[component.stateKey]
+    val effectiveError = errorMessage ?: submitErrors[stateKey]
 
     // Adopt external mutations (draft restore, native result, another component writing the same
     // key) without clobbering what the user is currently typing.
     val externalValue by stateManager.formState
-        .map { it[component.stateKey] }
+        .map { it[stateKey] }
         .distinctUntilChanged()
         .collectAsState(initial = field.text)
 
@@ -293,8 +308,8 @@ internal fun HeimTextFieldRenderer(
             value = field,
             onValueChange = { newValue ->
                 field = newValue                                   // same-frame echo to the IME
-                stateManager.updateValue(component.stateKey, newValue.text)
-                stateManager.clearFieldError(component.stateKey)
+                stateManager.updateValue(stateKey, newValue.text)
+                stateManager.clearFieldError(stateKey)
                 errorMessage = HeimValidationEngine.validate(
                     value = newValue.text,
                     rules = component.validationRules,
@@ -341,9 +356,10 @@ internal fun HeimSwitchRenderer(
     onAction: (HeimAction) -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val stateKey = rememberScopedStateKey(component.stateKey)
     val actionRunner = LocalHeimActionRunner.current
     val formState by stateManager.formState.collectAsState()
-    val isChecked = (formState[component.stateKey] ?: component.initialChecked.toString()).toBooleanStrictOrNull()
+    val isChecked = (formState[stateKey] ?: component.initialChecked.toString()).toBooleanStrictOrNull()
         ?: component.initialChecked
 
     // Seed the declared default into form state, the way a text field seeds `initial_value`.
@@ -351,9 +367,9 @@ internal fun HeimSwitchRenderer(
     // held no value for it, so a payload interpolating `{{state.key}}` submitted null until the
     // user toggled it twice. Two components implementing the same payload concept differently is
     // the kind of thing a backend team discovers from bad data, not from a stack trace.
-    LaunchedEffect(component.stateKey, component.initialChecked) {
-        if (!stateManager.hasValue(component.stateKey)) {
-            stateManager.updateValue(component.stateKey, component.initialChecked.toString())
+    LaunchedEffect(stateKey, component.initialChecked) {
+        if (!stateManager.hasValue(stateKey)) {
+            stateManager.updateValue(stateKey, component.initialChecked.toString())
         }
     }
 
@@ -380,7 +396,7 @@ internal fun HeimSwitchRenderer(
         Switch(
             checked = isChecked,
             onCheckedChange = { checked ->
-                stateManager.updateValue(component.stateKey, checked.toString())
+                stateManager.updateValue(stateKey, checked.toString())
                 actionRunner.run(component.onCheckActions)
             },
             colors = SwitchDefaults.colors(

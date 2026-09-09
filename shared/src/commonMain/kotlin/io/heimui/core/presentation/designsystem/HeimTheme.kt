@@ -10,6 +10,8 @@ import androidx.compose.runtime.ProvidableCompositionLocal
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalUriHandler
+import io.heimui.core.HeimUI
+import io.heimui.core.di.cleartextHosts
 import io.heimui.core.domain.evaluator.HeimValidatorRegistry
 import io.heimui.core.presentation.action.HeimActionDispatcher
 import io.heimui.core.presentation.action.LocalHeimActionDispatcher
@@ -99,7 +101,14 @@ public fun HeimTheme(
     shapes: Shapes? = null,
     iconProvider: HeimIconProvider = DefaultHeimIconProvider,
     brandTokens: HeimBrandTokens = HeimBrandTokens.default,
-    imageLoader: HeimImageLoader = remember { CoilHeimImageLoader() },
+    imageLoader: HeimImageLoader = remember {
+        // The default loader refuses cleartext. It learns which hosts the app exempted from the
+        // active config rather than from a scheme allowlist of its own, so an `http` development
+        // backend needs to be declared once, in HeimConfig, and nowhere else.
+        CoilHeimImageLoader(
+            cleartextHosts = if (HeimUI.isInitialized) HeimUI.config.cleartextHosts() else emptySet()
+        )
+    },
     modalPresenter: HeimModalPresenter = remember { DefaultHeimModalPresenter() },
     urlLauncher: HeimUrlLauncher? = null,
     /** Scheme allow-list for payload-supplied URLs. Defaults to https only. */

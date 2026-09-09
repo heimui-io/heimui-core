@@ -39,7 +39,7 @@ class HeimScreenRepositoryTest {
         // Keyed by the URL, not the screen id: `product_detail?sku=x1` and `?sku=x2` share an id and
         // are different resources, so the id alone collapsed them onto one entry.
         cache.saveScreen(
-            "https://api.heimui.io/screens/dashboard",
+            "https://api.heimui.io/dashboard",
             cachedScreenDto,
             etag = "W/\"old-etag\"",
         )
@@ -98,7 +98,7 @@ class HeimScreenRepositoryTest {
         assertFalse(freshResult.isStale)
 
         // 3. Cache must be updated with Fresh ETag, under the same URL it was fetched from.
-        val updatedCache = cache.getScreen("https://api.heimui.io/screens/dashboard")
+        val updatedCache = cache.getScreen("https://api.heimui.io/dashboard")
         assertEquals("W/\"fresh-etag\"", updatedCache?.etag)
 
         // And nothing under the bare screen id: keying by that is what let two products share one
@@ -147,9 +147,9 @@ class HeimScreenRepositoryTest {
         // Both are cached, under the URL each was fetched from.
         assertEquals(
             "product_detail",
-            cache.getScreen("https://api.heimui.io/screens/product_detail?sku=x1")?.screen?.id
+            cache.getScreen("https://api.heimui.io/product_detail?sku=x1")?.screen?.id
         )
-        assertNotNull(cache.getScreen("https://api.heimui.io/screens/product_detail?sku=x2"))
+        assertNotNull(cache.getScreen("https://api.heimui.io/product_detail?sku=x2"))
     }
 
     @Test
@@ -165,6 +165,27 @@ class HeimScreenRepositoryTest {
             remote.screenCacheKey("search", mapOf("q" to "shoes", "page" to "2")),
             remote.screenCacheKey("search", mapOf("page" to "2", "q" to "shoes")),
         )
+    }
+
+    @Test
+    fun `a refused screen identifier becomes an error state rather than a crash`() = runTest {
+        // A payload picks the screen id -- a navigate action carries whatever string the backend
+        // put in it. Refusing one has to travel back as a result: the collector in
+        // HeimScreenController has no catch, so an exception escaping this flow takes the host
+        // app down with it.
+        val repository = HeimScreenRepositoryImpl(
+            remoteDataSource = HeimRemoteDataSource(
+                httpClient = HttpClient(MockEngine { respond("{}") }),
+                baseUrl = "https://api.heimui.io",
+            ),
+            cacheDataSource = InMemoryHeimCacheDataSource(),
+        )
+
+        val results = repository.getScreen("https://evil.example.com/steal").toList()
+
+        assertEquals(1, results.size)
+        val error = assertIs<HeimScreenResult.Error>(results[0])
+        assertTrue(error.message.contains("Cross-domain"), error.message)
     }
 
 }

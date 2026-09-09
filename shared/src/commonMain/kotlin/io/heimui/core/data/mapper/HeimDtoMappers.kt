@@ -143,6 +143,7 @@ internal fun HeimComponentDto.toDomain(
         return UnknownComponent(
             id = id,
             visibleIf = visibleIf,
+            stateScope = stateScope,
             a11y = a11y?.toDomain(),
             // A weight of 0 or less is not a layout instruction; Compose throws on it, so one bad
             // number would cost the whole screen rather than one component.
@@ -156,6 +157,7 @@ internal fun HeimComponentDto.toDomain(
         is ContainerComponentDto -> ContainerComponent(
             id = id,
             visibleIf = visibleIf,
+            stateScope = stateScope,
             a11y = a11y?.toDomain(),
             // A weight of 0 or less is not a layout instruction; Compose throws on it, so one bad
             // number would cost the whole screen rather than one component.
@@ -192,6 +194,7 @@ internal fun HeimComponentDto.toDomain(
         is BoxComponentDto -> BoxComponent(
             id = id,
             visibleIf = visibleIf,
+            stateScope = stateScope,
             a11y = a11y?.toDomain(),
             // A weight of 0 or less is not a layout instruction; Compose throws on it, so one bad
             // number would cost the whole screen rather than one component.
@@ -214,6 +217,7 @@ internal fun HeimComponentDto.toDomain(
         is LazyColumnComponentDto -> LazyColumnComponent(
             id = id,
             visibleIf = visibleIf,
+            stateScope = stateScope,
             a11y = a11y?.toDomain(),
             // A weight of 0 or less is not a layout instruction; Compose throws on it, so one bad
             // number would cost the whole screen rather than one component.
@@ -242,6 +246,7 @@ internal fun HeimComponentDto.toDomain(
         is LazyRowComponentDto -> LazyRowComponent(
             id = id,
             visibleIf = visibleIf,
+            stateScope = stateScope,
             a11y = a11y?.toDomain(),
             // A weight of 0 or less is not a layout instruction; Compose throws on it, so one bad
             // number would cost the whole screen rather than one component.
@@ -270,6 +275,7 @@ internal fun HeimComponentDto.toDomain(
         is TextComponentDto -> TextComponent(
             id = id,
             visibleIf = visibleIf,
+            stateScope = stateScope,
             a11y = a11y?.toDomain(),
             // A weight of 0 or less is not a layout instruction; Compose throws on it, so one bad
             // number would cost the whole screen rather than one component.
@@ -289,6 +295,7 @@ internal fun HeimComponentDto.toDomain(
         is ImageComponentDto -> ImageComponent(
             id = id,
             visibleIf = visibleIf,
+            stateScope = stateScope,
             a11y = a11y?.toDomain(),
             // A weight of 0 or less is not a layout instruction; Compose throws on it, so one bad
             // number would cost the whole screen rather than one component.
@@ -309,6 +316,7 @@ internal fun HeimComponentDto.toDomain(
         is CardComponentDto -> CardComponent(
             id = id,
             visibleIf = visibleIf,
+            stateScope = stateScope,
             a11y = a11y?.toDomain(),
             // A weight of 0 or less is not a layout instruction; Compose throws on it, so one bad
             // number would cost the whole screen rather than one component.
@@ -326,6 +334,7 @@ internal fun HeimComponentDto.toDomain(
         is RichTextComponentDto -> RichTextComponent(
             id = id,
             visibleIf = visibleIf,
+            stateScope = stateScope,
             a11y = a11y?.toDomain(),
             weight = weight?.takeIf { it > 0f },
             frame = frame.sanitized(),
@@ -344,6 +353,7 @@ internal fun HeimComponentDto.toDomain(
         is ChipComponentDto -> ChipComponent(
             id = id,
             visibleIf = visibleIf,
+            stateScope = stateScope,
             a11y = a11y?.toDomain(),
             weight = weight?.takeIf { it > 0f },
             frame = frame.sanitized(),
@@ -367,6 +377,7 @@ internal fun HeimComponentDto.toDomain(
         is BadgeComponentDto -> BadgeComponent(
             id = id,
             visibleIf = visibleIf,
+            stateScope = stateScope,
             a11y = a11y?.toDomain(),
             // A weight of 0 or less is not a layout instruction; Compose throws on it, so one bad
             // number would cost the whole screen rather than one component.
@@ -380,6 +391,7 @@ internal fun HeimComponentDto.toDomain(
         is ButtonComponentDto -> ButtonComponent(
             id = id,
             visibleIf = visibleIf,
+            stateScope = stateScope,
             a11y = a11y?.toDomain(),
             // A weight of 0 or less is not a layout instruction; Compose throws on it, so one bad
             // number would cost the whole screen rather than one component.
@@ -406,6 +418,7 @@ internal fun HeimComponentDto.toDomain(
         is TextFieldComponentDto -> TextFieldComponent(
             id = id,
             visibleIf = visibleIf,
+            stateScope = stateScope,
             a11y = a11y?.toDomain(),
             // A weight of 0 or less is not a layout instruction; Compose throws on it, so one bad
             // number would cost the whole screen rather than one component.
@@ -434,6 +447,7 @@ internal fun HeimComponentDto.toDomain(
         is CheckboxComponentDto -> CheckboxComponent(
             id = id,
             visibleIf = visibleIf,
+            stateScope = stateScope,
             a11y = a11y?.toDomain(),
             weight = weight?.takeIf { it > 0f },
             frame = frame.sanitized(),
@@ -450,6 +464,7 @@ internal fun HeimComponentDto.toDomain(
         is RadioGroupComponentDto -> RadioGroupComponent(
             id = id,
             visibleIf = visibleIf,
+            stateScope = stateScope,
             a11y = a11y?.toDomain(),
             weight = weight?.takeIf { it > 0f },
             frame = frame.sanitized(),
@@ -468,6 +483,7 @@ internal fun HeimComponentDto.toDomain(
         is RadioComponentDto -> RadioComponent(
             id = id,
             visibleIf = visibleIf,
+            stateScope = stateScope,
             a11y = a11y?.toDomain(),
             weight = weight?.takeIf { it > 0f },
             frame = frame.sanitized(),
@@ -483,6 +499,7 @@ internal fun HeimComponentDto.toDomain(
         is SelectComponentDto -> SelectComponent(
             id = id,
             visibleIf = visibleIf,
+            stateScope = stateScope,
             a11y = a11y?.toDomain(),
             weight = weight?.takeIf { it > 0f },
             frame = frame.sanitized(),
@@ -503,6 +520,7 @@ internal fun HeimComponentDto.toDomain(
         is DatePickerComponentDto -> DatePickerComponent(
             id = id,
             visibleIf = visibleIf,
+            stateScope = stateScope,
             a11y = a11y?.toDomain(),
             weight = weight?.takeIf { it > 0f },
             frame = frame.sanitized(),
@@ -528,6 +546,7 @@ internal fun HeimComponentDto.toDomain(
         is SwitchComponentDto -> SwitchComponent(
             id = id,
             visibleIf = visibleIf,
+            stateScope = stateScope,
             a11y = a11y?.toDomain(),
             // A weight of 0 or less is not a layout instruction; Compose throws on it, so one bad
             // number would cost the whole screen rather than one component.
@@ -544,6 +563,7 @@ internal fun HeimComponentDto.toDomain(
         is IconComponentDto -> IconComponent(
             id = id,
             visibleIf = visibleIf,
+            stateScope = stateScope,
             a11y = a11y?.toDomain(),
             // A weight of 0 or less is not a layout instruction; Compose throws on it, so one bad
             // number would cost the whole screen rather than one component.
@@ -556,6 +576,7 @@ internal fun HeimComponentDto.toDomain(
         is SpacerComponentDto -> SpacerComponent(
             id = id,
             visibleIf = visibleIf,
+            stateScope = stateScope,
             a11y = a11y?.toDomain(),
             // A weight of 0 or less is not a layout instruction; Compose throws on it, so one bad
             // number would cost the whole screen rather than one component.
@@ -567,6 +588,7 @@ internal fun HeimComponentDto.toDomain(
         is DividerComponentDto -> DividerComponent(
             id = id,
             visibleIf = visibleIf,
+            stateScope = stateScope,
             a11y = a11y?.toDomain(),
             // A weight of 0 or less is not a layout instruction; Compose throws on it, so one bad
             // number would cost the whole screen rather than one component.
@@ -578,6 +600,7 @@ internal fun HeimComponentDto.toDomain(
         is CustomComponentDto -> CustomComponent(
             id = id,
             visibleIf = visibleIf,
+            stateScope = stateScope,
             a11y = a11y?.toDomain(),
             // A weight of 0 or less is not a layout instruction; Compose throws on it, so one bad
             // number would cost the whole screen rather than one component.
@@ -589,6 +612,7 @@ internal fun HeimComponentDto.toDomain(
         is UnknownComponentDto -> UnknownComponent(
             id = id,
             visibleIf = visibleIf,
+            stateScope = stateScope,
             a11y = a11y?.toDomain(),
             // A weight of 0 or less is not a layout instruction; Compose throws on it, so one bad
             // number would cost the whole screen rather than one component.

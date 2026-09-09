@@ -27,6 +27,9 @@ import kotlinx.serialization.json.JsonObject
 public sealed interface HeimComponentDto {
     public val id: String
     public val visibleIf: String? get() = null
+
+    /** See `HeimComponent.stateScope`. Written by hydration, ignored by older clients. */
+    public val stateScope: String? get() = null
     public val a11y: HeimAccessibilityDto? get() = null
 
     /**
@@ -123,7 +126,8 @@ public data class ContainerComponentDto(
     @SerialName("scrollable") @Serializable(with = LenientNullableBooleanSerializer::class) val scrollable: Boolean? = null,
     override val weight: Float? = null,
     override val frame: SizeSpec = HeimSize.None,
-    val children: List<HeimComponentDto> = emptyList()
+    val children: List<HeimComponentDto> = emptyList(),
+    @SerialName("state_scope") override val stateScope: String? = null,
 ) : HeimComponentDto
 
 @Serializable
@@ -140,7 +144,8 @@ public data class BoxComponentDto(
     @SerialName("border_width") @Serializable(with = LenientIntSerializer::class) val borderWidth: Int = 1,
     override val weight: Float? = null,
     override val frame: SizeSpec = HeimSize.None,
-    val children: List<HeimComponentDto> = emptyList()
+    val children: List<HeimComponentDto> = emptyList(),
+    @SerialName("state_scope") override val stateScope: String? = null,
 ) : HeimComponentDto
 
 @Serializable
@@ -156,7 +161,8 @@ public data class LazyColumnComponentDto(
     val alignment: AlignmentDto = AlignmentDto.START,
     val arrangement: ArrangementDto = ArrangementDto.PACKED,
     val items: List<HeimComponentDto> = emptyList(),
-    val pagination: PaginationConfigDto? = null
+    val pagination: PaginationConfigDto? = null,
+    @SerialName("state_scope") override val stateScope: String? = null,
 ) : HeimComponentDto
 
 @Serializable
@@ -172,7 +178,8 @@ public data class LazyRowComponentDto(
     val alignment: AlignmentDto = AlignmentDto.START,
     val arrangement: ArrangementDto = ArrangementDto.PACKED,
     val items: List<HeimComponentDto> = emptyList(),
-    val pagination: PaginationConfigDto? = null
+    val pagination: PaginationConfigDto? = null,
+    @SerialName("state_scope") override val stateScope: String? = null,
 ) : HeimComponentDto
 
 @Serializable
@@ -195,7 +202,8 @@ public data class TextComponentDto(
     val style: String = "bodyMedium",
     val color: String? = null,
     @SerialName("max_lines") @Serializable(with = LenientNullableIntSerializer::class) val maxLines: Int? = null,
-    @SerialName("text_align") val textAlign: TextAlignDto = TextAlignDto.START
+    @SerialName("text_align") val textAlign: TextAlignDto = TextAlignDto.START,
+    @SerialName("state_scope") override val stateScope: String? = null,
 ) : HeimComponentDto
 
 @Serializable
@@ -211,7 +219,8 @@ public data class ImageComponentDto(
     @SerialName("aspect_ratio") @Serializable(with = LenientNullableFloatSerializer::class) val aspectRatio: Float? = null,
     @Serializable(with = LenientNullableIntSerializer::class) val height: Int? = null,
     @SerialName("corner_radius") @Serializable(with = LenientIntSerializer::class) val cornerRadius: Int = 0,
-    @SerialName("content_scale") val contentScale: ContentScaleDto = ContentScaleDto.CROP
+    @SerialName("content_scale") val contentScale: ContentScaleDto = ContentScaleDto.CROP,
+    @SerialName("state_scope") override val stateScope: String? = null,
 ) : HeimComponentDto
 
 @Serializable
@@ -229,7 +238,8 @@ public data class CardComponentDto(
     val actions: List<HeimActionDto> = emptyList(),
     override val weight: Float? = null,
     override val frame: SizeSpec = HeimSize.None,
-    val child: HeimComponentDto = UnknownComponentDto(id = "missing_child")
+    val child: HeimComponentDto = UnknownComponentDto(id = "missing_child"),
+    @SerialName("state_scope") override val stateScope: String? = null,
 ) : HeimComponentDto
 
 @Serializable
@@ -272,7 +282,8 @@ public data class ChipComponentDto(
     @SerialName("border_color") val borderColor: String? = null,
     @SerialName("border_width") val borderWidth: Int? = null,
     @SerialName("corner_radius") val cornerRadius: Int? = null,
-    @SerialName("accent_color") val accentColor: String? = null
+    @SerialName("accent_color") val accentColor: String? = null,
+    @SerialName("state_scope") override val stateScope: String? = null,
 ) : HeimComponentDto
 
 /**
@@ -311,7 +322,8 @@ public data class RichTextComponentDto(
     val style: String = "bodyMedium",
     val color: String? = null,
     val align: TextAlignDto = TextAlignDto.START,
-    @SerialName("max_lines") @Serializable(with = LenientIntSerializer::class) val maxLines: Int = 0
+    @SerialName("max_lines") @Serializable(with = LenientIntSerializer::class) val maxLines: Int = 0,
+    @SerialName("state_scope") override val stateScope: String? = null,
 ) : HeimComponentDto
 
 @Serializable
@@ -325,7 +337,8 @@ public data class BadgeComponentDto(
     val text: String = "",
     @SerialName("background_color") val backgroundColor: String = "primaryContainer",
     @SerialName("text_color") val textColor: String = "onPrimaryContainer",
-    @SerialName("icon_url") val iconUrl: String? = null
+    @SerialName("icon_url") val iconUrl: String? = null,
+    @SerialName("state_scope") override val stateScope: String? = null,
 ) : HeimComponentDto
 
 @Serializable
@@ -347,7 +360,8 @@ public data class ButtonComponentDto(
     @SerialName("text_color") val textColor: String? = null,
     @SerialName("border_color") val borderColor: String? = null,
     @SerialName("border_width") val borderWidth: Int? = null,
-    @SerialName("corner_radius") val cornerRadius: Int? = null
+    @SerialName("corner_radius") val cornerRadius: Int? = null,
+    @SerialName("state_scope") override val stateScope: String? = null,
 ) : HeimComponentDto
 
 @Serializable
@@ -370,7 +384,8 @@ public data class TextFieldComponentDto(
     @SerialName("border_color") val borderColor: String? = null,
     @SerialName("border_width") val borderWidth: Int? = null,
     @SerialName("corner_radius") val cornerRadius: Int? = null,
-    @SerialName("accent_color") val accentColor: String? = null
+    @SerialName("accent_color") val accentColor: String? = null,
+    @SerialName("state_scope") override val stateScope: String? = null,
 ) : HeimComponentDto
 
 /**
@@ -401,7 +416,8 @@ public data class CheckboxComponentDto(
     @SerialName("text_color") val textColor: String? = null,
     @SerialName("border_color") val borderColor: String? = null,
     @SerialName("corner_radius") val cornerRadius: Int? = null,
-    @SerialName("accent_color") val accentColor: String? = null
+    @SerialName("accent_color") val accentColor: String? = null,
+    @SerialName("state_scope") override val stateScope: String? = null,
 ) : HeimComponentDto
 
 @Serializable
@@ -420,7 +436,8 @@ public data class RadioGroupComponentDto(
     @SerialName("on_select_actions") val onSelectActions: List<HeimActionDto> = emptyList(),
     @SerialName("text_color") val textColor: String? = null,
     @SerialName("border_color") val borderColor: String? = null,
-    @SerialName("accent_color") val accentColor: String? = null
+    @SerialName("accent_color") val accentColor: String? = null,
+    @SerialName("state_scope") override val stateScope: String? = null,
 ) : HeimComponentDto
 
 @Serializable
@@ -438,7 +455,8 @@ public data class RadioComponentDto(
     @SerialName("on_select_actions") val onSelectActions: List<HeimActionDto> = emptyList(),
     @SerialName("text_color") val textColor: String? = null,
     @SerialName("border_color") val borderColor: String? = null,
-    @SerialName("accent_color") val accentColor: String? = null
+    @SerialName("accent_color") val accentColor: String? = null,
+    @SerialName("state_scope") override val stateScope: String? = null,
 ) : HeimComponentDto
 
 @Serializable
@@ -461,7 +479,8 @@ public data class SelectComponentDto(
     @SerialName("border_color") val borderColor: String? = null,
     @SerialName("border_width") val borderWidth: Int? = null,
     @SerialName("corner_radius") val cornerRadius: Int? = null,
-    @SerialName("accent_color") val accentColor: String? = null
+    @SerialName("accent_color") val accentColor: String? = null,
+    @SerialName("state_scope") override val stateScope: String? = null,
 ) : HeimComponentDto
 
 /**
@@ -494,7 +513,8 @@ public data class DatePickerComponentDto(
     @SerialName("border_color") val borderColor: String? = null,
     @SerialName("border_width") val borderWidth: Int? = null,
     @SerialName("corner_radius") val cornerRadius: Int? = null,
-    @SerialName("accent_color") val accentColor: String? = null
+    @SerialName("accent_color") val accentColor: String? = null,
+    @SerialName("state_scope") override val stateScope: String? = null,
 ) : HeimComponentDto
 
 @Serializable
@@ -511,7 +531,8 @@ public data class SwitchComponentDto(
     @SerialName("on_check_actions") val onCheckActions: List<HeimActionDto> = emptyList(),
     @SerialName("text_color") val textColor: String? = null,
     @SerialName("background_color") val backgroundColor: String? = null,
-    @SerialName("accent_color") val accentColor: String? = null
+    @SerialName("accent_color") val accentColor: String? = null,
+    @SerialName("state_scope") override val stateScope: String? = null,
 ) : HeimComponentDto
 
 @Serializable
@@ -524,7 +545,8 @@ public data class IconComponentDto(
     override val frame: SizeSpec = HeimSize.None,
     val name: String = "",
     val tint: String? = null,
-    @Serializable(with = LenientIntSerializer::class) val size: Int = 24
+    @Serializable(with = LenientIntSerializer::class) val size: Int = 24,
+    @SerialName("state_scope") override val stateScope: String? = null,
 ) : HeimComponentDto
 
 @Serializable
@@ -536,7 +558,8 @@ public data class SpacerComponentDto(
     override val weight: Float? = null,
     override val frame: SizeSpec = HeimSize.None,
     @Serializable(with = LenientIntSerializer::class) val size: Int = 0,
-    @SerialName("is_flexible") @Serializable(with = LenientBooleanSerializer::class) val isFlexible: Boolean = false
+    @SerialName("is_flexible") @Serializable(with = LenientBooleanSerializer::class) val isFlexible: Boolean = false,
+    @SerialName("state_scope") override val stateScope: String? = null,
 ) : HeimComponentDto
 
 @Serializable
@@ -548,7 +571,8 @@ public data class DividerComponentDto(
     override val weight: Float? = null,
     override val frame: SizeSpec = HeimSize.None,
     @Serializable(with = LenientIntSerializer::class) val thickness: Int = 1,
-    val color: String = "outlineVariant"
+    val color: String = "outlineVariant",
+    @SerialName("state_scope") override val stateScope: String? = null,
 ) : HeimComponentDto
 
 @Serializable
@@ -560,7 +584,8 @@ public data class CustomComponentDto(
     override val weight: Float? = null,
     override val frame: SizeSpec = HeimSize.None,
     val name: String = "",
-    val data: JsonObject? = null
+    val data: JsonObject? = null,
+    @SerialName("state_scope") override val stateScope: String? = null,
 ) : HeimComponentDto
 
 @Serializable
@@ -571,5 +596,6 @@ public data class UnknownComponentDto(
     override val a11y: HeimAccessibilityDto? = null,
     override val weight: Float? = null,
     override val frame: SizeSpec = HeimSize.None,
-    @SerialName("original_type") val originalType: String? = null
+    @SerialName("original_type") val originalType: String? = null,
+    @SerialName("state_scope") override val stateScope: String? = null,
 ) : HeimComponentDto

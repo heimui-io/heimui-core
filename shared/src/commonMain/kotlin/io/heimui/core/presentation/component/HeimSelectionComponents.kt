@@ -102,13 +102,14 @@ internal fun HeimCheckboxRenderer(
     stateManager: HeimStateManager,
     modifier: Modifier = Modifier,
 ) {
+    val stateKey = rememberScopedStateKey(component.stateKey)
     val actionRunner = LocalHeimActionRunner.current
     val formState by stateManager.formState.collectAsState()
-    val isChecked = formState[component.stateKey]?.toBooleanStrictOrNull() ?: component.initialChecked
+    val isChecked = formState[stateKey]?.toBooleanStrictOrNull() ?: component.initialChecked
 
     rememberFieldRegistration(
         stateManager = stateManager,
-        stateKey = component.stateKey,
+        stateKey = stateKey,
         rules = component.validationRules,
         initialValue = component.initialChecked.toString(),
     )
@@ -123,7 +124,7 @@ internal fun HeimCheckboxRenderer(
                 value = isChecked,
                 role = Role.Checkbox,
                 onValueChange = { checked ->
-                    stateManager.updateValue(component.stateKey, checked.toString())
+                    stateManager.updateValue(stateKey, checked.toString())
                     actionRunner.run(component.onCheckActions)
                 },
             )
@@ -162,13 +163,14 @@ internal fun HeimRadioGroupRenderer(
     stateManager: HeimStateManager,
     modifier: Modifier = Modifier,
 ) {
+    val stateKey = rememberScopedStateKey(component.stateKey)
     val actionRunner = LocalHeimActionRunner.current
     val formState by stateManager.formState.collectAsState()
-    val selected = formState[component.stateKey] ?: component.initialValue
+    val selected = formState[stateKey] ?: component.initialValue
 
     rememberFieldRegistration(
         stateManager = stateManager,
-        stateKey = component.stateKey,
+        stateKey = stateKey,
         rules = component.validationRules,
         initialValue = component.initialValue,
     )
@@ -197,7 +199,7 @@ internal fun HeimRadioGroupRenderer(
                         selected = option.value == selected,
                         role = Role.RadioButton,
                         onClick = {
-                            stateManager.updateValue(component.stateKey, option.value)
+                            stateManager.updateValue(stateKey, option.value)
                             actionRunner.run(component.onSelectActions)
                         },
                     )
@@ -231,18 +233,19 @@ internal fun HeimRadioRenderer(
     stateManager: HeimStateManager,
     modifier: Modifier = Modifier,
 ) {
+    val stateKey = rememberScopedStateKey(component.stateKey)
     val actionRunner = LocalHeimActionRunner.current
     val formState by stateManager.formState.collectAsState()
 
     val initialVal = if (component.initialSelected) component.value else ""
     rememberFieldRegistration(
         stateManager = stateManager,
-        stateKey = component.stateKey,
+        stateKey = stateKey,
         rules = emptyList(),
         initialValue = initialVal,
     )
 
-    val currentVal = formState[component.stateKey] ?: initialVal
+    val currentVal = formState[stateKey] ?: initialVal
     val isSelected = currentVal == component.value
 
     val radioColors = RadioButtonDefaults.colors(
@@ -253,7 +256,7 @@ internal fun HeimRadioRenderer(
     )
 
     val onSelect = {
-        stateManager.updateValue(component.stateKey, component.value)
+        stateManager.updateValue(stateKey, component.value)
         actionRunner.run(component.onSelectActions)
     }
 
@@ -297,14 +300,15 @@ internal fun HeimSelectRenderer(
     stateManager: HeimStateManager,
     modifier: Modifier = Modifier,
 ) {
+    val stateKey = rememberScopedStateKey(component.stateKey)
     val actionRunner = LocalHeimActionRunner.current
     val formState by stateManager.formState.collectAsState()
-    val selectedValue = formState[component.stateKey] ?: component.initialValue
+    val selectedValue = formState[stateKey] ?: component.initialValue
     var expanded by remember { mutableStateOf(false) }
 
     rememberFieldRegistration(
         stateManager = stateManager,
-        stateKey = component.stateKey,
+        stateKey = stateKey,
         rules = component.validationRules,
         initialValue = component.initialValue,
     )
@@ -326,8 +330,8 @@ internal fun HeimSelectRenderer(
             readOnly = true,
             label = component.label?.let { { Text(it) } },
             placeholder = component.placeholder?.let { { Text(it) } },
-            isError = submitErrors[component.stateKey] != null,
-            supportingText = submitErrors[component.stateKey]?.let { { Text(it) } },
+            isError = submitErrors[stateKey] != null,
+            supportingText = submitErrors[stateKey]?.let { { Text(it) } },
             trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
             shape = component.cornerRadius?.let { RoundedCornerShape(it.dp) }
                 ?: OutlinedTextFieldDefaults.shape,
@@ -346,7 +350,7 @@ internal fun HeimSelectRenderer(
                 DropdownMenuItem(
                     text = { Text(option.label) },
                     onClick = {
-                        stateManager.updateValue(component.stateKey, option.value)
+                        stateManager.updateValue(stateKey, option.value)
                         expanded = false
                         actionRunner.run(component.onSelectActions)
                     },
@@ -363,14 +367,15 @@ internal fun HeimDatePickerRenderer(
     stateManager: HeimStateManager,
     modifier: Modifier = Modifier,
 ) {
+    val stateKey = rememberScopedStateKey(component.stateKey)
     val actionRunner = LocalHeimActionRunner.current
     val formState by stateManager.formState.collectAsState()
-    val storedIso = formState[component.stateKey] ?: component.initialValue
+    val storedIso = formState[stateKey] ?: component.initialValue
     var showDialog by remember { mutableStateOf(false) }
 
     rememberFieldRegistration(
         stateManager = stateManager,
-        stateKey = component.stateKey,
+        stateKey = stateKey,
         rules = component.validationRules,
         initialValue = component.initialValue,
     )
@@ -397,8 +402,8 @@ internal fun HeimDatePickerRenderer(
         readOnly = true,
         label = component.label?.let { { Text(it) } },
         placeholder = component.placeholder?.let { { Text(it) } },
-        isError = submitErrors[component.stateKey] != null,
-        supportingText = submitErrors[component.stateKey]?.let { { Text(it) } },
+        isError = submitErrors[stateKey] != null,
+        supportingText = submitErrors[stateKey]?.let { { Text(it) } },
         // No trailing icon: the SDK ships no icon dependency, which is the reason
         // HeimIconProvider exists. A calendar glyph here would be the app's to supply.
         interactionSource = interactionSource,
@@ -454,7 +459,7 @@ internal fun HeimDatePickerRenderer(
                             // Stored as ISO, never as the localised text the user saw: the value
                             // travels to a backend, and "15/03/2024" is ambiguous across locales.
                             stateManager.updateValue(
-                                component.stateKey,
+                                stateKey,
                                 millis.toUtcLocalDate().toString(),
                             )
                         }
@@ -491,13 +496,14 @@ internal fun HeimChipRenderer(
     stateManager: HeimStateManager,
     modifier: Modifier = Modifier,
 ) {
+    val stateKey = component.stateKey?.let { rememberScopedStateKey(it) }
     val actionRunner = LocalHeimActionRunner.current
     val iconProvider = LocalHeimIconProvider.current
     val formState by stateManager.formState.collectAsState()
 
-    val stored = component.stateKey?.let { formState[it] }
+    val stored = stateKey?.let { formState[it] }
     val isSelected = when {
-        component.stateKey == null -> false
+        stateKey == null -> false
         // With a value, the chips sharing a key are one choice: this one is on when the stored
         // value is its own.
         component.value != null -> stored == component.value
@@ -506,7 +512,7 @@ internal fun HeimChipRenderer(
     }
 
     val onClick = {
-        component.stateKey?.let { key ->
+        stateKey?.let { key ->
             val next = when {
                 // Tapping the selected chip clears the group. A single-choice row with no way to
                 // undo traps the user on their first tap.

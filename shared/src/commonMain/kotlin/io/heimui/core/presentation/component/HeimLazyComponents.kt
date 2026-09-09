@@ -2,7 +2,7 @@ package io.heimui.core.presentation.component
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
@@ -15,6 +15,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import io.heimui.core.domain.model.action.HeimAction
+import io.heimui.core.domain.model.component.HeimArrangement
 import io.heimui.core.domain.model.component.LazyColumnComponent
 import io.heimui.core.domain.model.component.LazyRowComponent
 import io.heimui.core.presentation.HeimRenderer
@@ -61,7 +62,17 @@ internal fun HeimLazyColumnRenderer(
     LazyColumn(
         state = listState,
         modifier = modifier
-            .fillMaxWidth()
+            .heimFillWidth(component)
+            // A distributing arrangement needs a height to distribute within, and a lazy list
+            // wraps its content just as a column does. Harmless where there is none to take:
+            // `fillMaxHeight` is a no-op against an unbounded constraint.
+            .then(
+                if (component.arrangement == HeimArrangement.PACKED) {
+                    Modifier
+                } else {
+                    Modifier.fillMaxHeight()
+                }
+            )
             .heimAccessibility(component.a11y, componentId = component.id),
         contentPadding = component.padding.toPaddingValues(),
         verticalArrangement = heimVerticalArrangement(component.arrangement, component.spacing),
@@ -71,7 +82,12 @@ internal fun HeimLazyColumnRenderer(
             items = component.items,
             key = { _, item -> item.id }
         ) { _, child ->
-            CompositionLocalProvider(LocalInsideVerticalScroller provides true) {
+            CompositionLocalProvider(
+                LocalInsideVerticalScroller provides true,
+                // Cleared, not merely left alone: an item of a lazy column offers its child the
+                // full width, whatever the list itself happens to be nested in.
+                LocalInsideHorizontalContainer provides false,
+            ) {
                 HeimRenderer(
                     component = child,
                     stateManager = stateManager,
@@ -116,7 +132,7 @@ internal fun HeimLazyRowRenderer(
     LazyRow(
         state = listState,
         modifier = modifier
-            .fillMaxWidth()
+            .heimFillWidth(component)
             .heimAccessibility(component.a11y, componentId = component.id),
         contentPadding = component.padding.toPaddingValues(),
         horizontalArrangement = heimHorizontalArrangement(component.arrangement, component.spacing),
@@ -126,7 +142,10 @@ internal fun HeimLazyRowRenderer(
             items = component.items,
             key = { _, item -> item.id }
         ) { _, child ->
-            CompositionLocalProvider(LocalInsideVerticalScroller provides true) {
+            CompositionLocalProvider(
+                LocalInsideVerticalScroller provides true,
+                LocalInsideHorizontalContainer provides true,
+            ) {
                 HeimRenderer(
                     component = child,
                     stateManager = stateManager,

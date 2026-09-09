@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -61,7 +62,11 @@ import io.heimui.core.presentation.component.HeimSwitchRenderer
 import io.heimui.core.presentation.component.HeimTextFieldRenderer
 import io.heimui.core.presentation.component.HeimTextRenderer
 import io.heimui.core.presentation.component.HeimUnknownRenderer
+import io.heimui.core.presentation.action.HeimActionRunner
+import io.heimui.core.presentation.action.LocalHeimActionRunner
 import io.heimui.core.presentation.state.HeimStateManager
+import io.heimui.core.presentation.state.HeimStateScope
+import io.heimui.core.presentation.state.LocalHeimStateScope
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 
@@ -79,6 +84,9 @@ public fun HeimScreenRenderer(
         modifier
     }
 
+    // No contentAlignment here: a root container that asks to centre now takes the height it
+    // needs to do so itself (see HeimVerticalContainer), which works at every depth rather than
+    // only for the root, and for END and the SPACE_* arrangements rather than only for CENTER.
     Box(modifier = contentModifier.fillMaxSize()) {
         HeimRenderer(
             component = response.root,
@@ -100,16 +108,20 @@ public fun HeimScreenRenderer(
 internal fun rememberVisibility(visibleIf: String?, stateManager: HeimStateManager): Boolean {
     if (visibleIf == null) return true
     val keys = remember(visibleIf) { HeimConditionEvaluator.referencedKeys(visibleIf) }
+    // Inside a repeated row, `visible_if` on `is_expanded` means this row's -- and a key the row
+    // does not have falls back to the screen's, so a condition on something screen-wide keeps
+    // working without the author knowing rows have namespaces at all.
+    val scope = LocalHeimStateScope.current
 
     // Seeded from the current state rather than emptyMap(): with a fail-closed evaluator an empty
     // initial slice makes every conditional node invisible for one frame, which reads as a flicker
     // on every screen load.
-    val initialSlice = remember(visibleIf, stateManager) {
-        stateManager.formState.value.let { state -> keys.associateWith { state[it].orEmpty() } }
+    val initialSlice = remember(visibleIf, stateManager, scope) {
+        keys.associateWith { stateManager.resolveValue(scope, it).orEmpty() }
     }
-    val slice by remember(visibleIf, stateManager) {
+    val slice by remember(visibleIf, stateManager, scope) {
         stateManager.formState
-            .map { state -> keys.associateWith { state[it].orEmpty() } }
+            .map { _ -> keys.associateWith { stateManager.resolveValue(scope, it).orEmpty() } }
             .distinctUntilChanged()
     }.collectAsState(initial = initialSlice)
 
@@ -123,6 +135,41 @@ public fun HeimRenderer(
     onAction: (HeimAction) -> Unit,
     modifier: Modifier = Modifier,
     customRenderer: (@Composable (CustomComponent) -> Unit)? = null
+) {
+    val scope = component.stateScope
+    if (scope == null) {
+        HeimComponentBody(component, stateManager, onAction, modifier, customRenderer)
+        return
+    }
+
+    /*
+     * A repeated row opens its own namespace, and everything beneath it inherits.
+     *
+     * The action runner is re-provided rather than left alone because it is built once, at the
+     * screen: without this, a button in row three submits `{{state.full_name}}` and gets row
+     * one's. Wrapping it here means no renderer below has to know that rows exist.
+     */
+    val stateScope = remember(scope) { HeimStateScope(scope) }
+    val parentRunner = LocalHeimActionRunner.current
+    val scopedRunner = remember(parentRunner, stateScope) {
+        HeimActionRunner { actions -> parentRunner.run(actions, stateScope) }
+    }
+
+    CompositionLocalProvider(
+        LocalHeimStateScope provides stateScope,
+        LocalHeimActionRunner provides scopedRunner
+    ) {
+        HeimComponentBody(component, stateManager, onAction, modifier, customRenderer)
+    }
+}
+
+@Composable
+private fun HeimComponentBody(
+    component: HeimComponent,
+    stateManager: HeimStateManager,
+    onAction: (HeimAction) -> Unit,
+    modifier: Modifier,
+    customRenderer: (@Composable (CustomComponent) -> Unit)?
 ) {
     val isVisible = rememberVisibility(component.visibleIf, stateManager)
 

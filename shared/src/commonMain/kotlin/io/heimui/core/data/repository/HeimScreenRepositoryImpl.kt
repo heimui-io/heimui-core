@@ -12,9 +12,11 @@ import io.heimui.core.domain.model.HeimValue
 import io.heimui.core.domain.repository.HeimScreenRepository
 import io.heimui.core.domain.repository.HeimScreenResult
 import io.heimui.core.domain.repository.HeimSubmitResult
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 
@@ -89,7 +91,15 @@ internal class HeimScreenRepositoryImpl(
             is RemoteScreenResponse.CircuitOpen -> emitDegraded(screenId, trustedCache, remote.message)
             is RemoteScreenResponse.Error -> emitDegraded(screenId, trustedCache, remote.message)
         }
-    }.flowOn(workDispatcher)
+    }
+        // The collector in HeimScreenController has no catch of its own, so anything escaping
+        // this flow takes the host app's process down with it. A screen that cannot be loaded is
+        // an error state the UI already knows how to render -- never a crash.
+        .catch { cause ->
+            if (cause is CancellationException) throw cause
+            emit(HeimScreenResult.Error(cause.message ?: "Failed to load screen"))
+        }
+        .flowOn(workDispatcher)
 
     /**
      * Terminal emission when the network could not deliver fresh content.

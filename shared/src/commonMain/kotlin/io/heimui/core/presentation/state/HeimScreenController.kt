@@ -43,6 +43,16 @@ import kotlin.time.TimeSource
  * particularly awkward on iOS. Hosts that want ViewModel semantics can hold one of these inside
  * their own.
  */
+/**
+ * The state key the SDK writes while a `submit_form` is in flight.
+ *
+ * Part of the wire contract rather than an implementation detail: a screen that shows a spinner
+ * while it submits does so with `visible_if: "is_submitting"`, and that only means anything if
+ * every app rendering the screen agrees on the name. Reads as `"true"` or `"false"`, like every
+ * other value in form state.
+ */
+public const val SUBMITTING_STATE_KEY: String = "is_submitting"
+
 public class HeimScreenController(
     private val screenId: String,
     private val repository: HeimScreenRepository,
@@ -175,7 +185,9 @@ public class HeimScreenController(
         action: SubmitFormAction,
         stateManager: HeimStateManager,
         validatorRegistry: HeimValidatorRegistry = HeimValidatorRegistry.default,
-        onHostAction: (HeimAction) -> Unit = {}
+        onHostAction: (HeimAction) -> Unit = {},
+        /** The row this submission came from, so its `{{state.*}}` reads its own values. */
+        scope: HeimStateScope = HeimStateScope.Root
     ): Boolean {
         // Per-field validation only runs on typing, so a required field the user never touched
         // has never evaluated its rules. Gate on the whole form before touching the network.
@@ -193,7 +205,7 @@ public class HeimScreenController(
         }
 
         val unresolved = mutableListOf<String>()
-        val payload = stateManager.interpolatePayload(action.payload) { unresolved += it }
+        val payload = stateManager.interpolatePayload(action.payload, scope) { unresolved += it }
         if (unresolved.isNotEmpty()) {
             telemetryObserver.onEvent(
                 HeimTelemetryEvent.PayloadViolation(
@@ -204,6 +216,14 @@ public class HeimScreenController(
         }
 
         _isSubmitting.value = true
+        // Told to the screen as well, not just to the host app.
+        //
+        // A screen that wants to swap its button while a submission is in flight writes
+        // `visible_if: "is_submitting"`, which reads form state -- and this flag lived only on the
+        // controller, where Kotlin can see it and a payload cannot. So the behaviour worked only
+        // when the host app happened to mirror it by hand, and the same JSON rendered differently
+        // in an app that did not. Publishing it here is what makes the screen say the whole thing.
+        stateManager.updateValue(SUBMITTING_STATE_KEY, "true")
         val started = timeSource.markNow()
         try {
             val result = repository.submitForm(action.endpoint, action.method, payload)
@@ -239,6 +259,7 @@ public class HeimScreenController(
             return true
         } finally {
             _isSubmitting.value = false
+            stateManager.updateValue(SUBMITTING_STATE_KEY, "false")
         }
     }
 }
