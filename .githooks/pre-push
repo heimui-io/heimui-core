@@ -1,0 +1,63 @@
+#!/usr/bin/env bash
+#
+# Refuses a push that leaves a consumer's copy of the contract behind.
+#
+# The drift starts here -- the schema changes in this repository -- and shows up somewhere else,
+# which is why it goes unnoticed: the person who caused it sees nothing wrong. Checking on the way
+# out catches it while the change is still in front of them.
+#
+# Opt-in, because a repository cannot install its own hooks:
+#
+#   git config core.hooksPath .githooks
+#
+# Skip a single push with `git push --no-verify` when the consumers are meant to lag, which happens
+# when a schema change lands before the editor that uses it.
+set -euo pipefail
+
+root="$(git rev-parse --show-toplevel)"
+siblings="$(cd "$root/.." && pwd)"
+
+if [[ ! -x "$root/scripts/sync-schema.sh" ]]; then
+  exit 0
+fi
+
+if ! "$root/scripts/sync-schema.sh" --check; then
+  echo
+  echo "Push refused: a consumer is holding an older copy of the contract."
+  echo "Run ./scripts/sync-schema.sh, commit the result in that repository, then push again."
+  echo "If the consumer is meant to lag behind, push with --no-verify."
+  exit 1
+fi
+
+# Matching on disk is not the same as published.
+#
+# Running the sync satisfies the check above while leaving the copy uncommitted in the consumer's
+# working tree, so this repository could be pushed with the change and the consumer left behind on
+# its remote -- the same drift, now invisible to the person who caused it because their own disk
+# looks correct. Only the synced paths are inspected: unrelated work in progress over there is none
+# of this hook's business.
+uncommitted=()
+check_committed() {
+  local name=$1
+  shift
+  local repo="$siblings/$name"
+  [[ -d "$repo/.git" ]] || return 0
+  local dirty
+  dirty="$(git -C "$repo" status --porcelain -- "$@" 2>/dev/null || true)"
+  [[ -n "$dirty" ]] && uncommitted+=("$name")
+  return 0
+}
+
+check_committed "heimui-studio" \
+  "server/src/main/resources/heimui-screen.schema.json" \
+  "ui/src/__tests__/fixtures/hydration"
+check_committed "prototype-heimui-backend" \
+  "src/test/resources/hydration"
+
+if [[ ${#uncommitted[@]} -gt 0 ]]; then
+  echo
+  echo "Push refused: the contract is copied but not committed in ${uncommitted[*]}."
+  echo "Pushing this repository now would publish a schema change whose consumer is still local."
+  echo "Commit the copy over there first, or push with --no-verify."
+  exit 1
+fi
