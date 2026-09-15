@@ -18,7 +18,7 @@ Each file is one case:
 | `screen` | The authored document, before hydration. |
 | `data` | The payload. |
 | `expected` | The document a device receives. `repeat`, `scope` and `data` are gone; `metadata` is not. |
-| `expectedUnresolved` | Every expression that resolved to nothing, in document order. |
+| `expectedUnresolved` | Every expression that resolved to nothing: nodes in document order, and within one object in the order of its keys sorted. |
 
 This directory is canonical. Consumers hold a copy:
 
