@@ -98,6 +98,8 @@ on the suffixed version that the task prints when it finishes.
 
 Run `./gradlew verify` before pushing: it runs everything CI runs.
 
+Publishing a release is manual and documented in **[RELEASING.md](RELEASING.md)**.
+
 ## 🚀 Running the Apps & Tests
 
 ### Running Unit Tests (Android & iOS)
