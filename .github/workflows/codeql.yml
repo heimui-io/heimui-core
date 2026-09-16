@@ -37,7 +37,7 @@ jobs:
       # a build that Gradle short-circuits as UP-TO-DATE produces an empty database and fails with
       # "didn't build any of it". Dependencies are still downloaded; only task outputs are not
       # reused.
-      - uses: gradle/actions/setup-gradle@v4
+      - uses: gradle/actions/setup-gradle@v6
         with:
           cache-disabled: true
 
