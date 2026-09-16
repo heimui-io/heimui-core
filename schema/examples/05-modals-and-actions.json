@@ -51,8 +51,8 @@
           {
             "type": "show_dialog",
             "title": "¿Seguro?",
-            "message": "Esta acción no se puede deshacer.",
-            "confirm_text": "Sí",
+            "message": "This cannot be undone.",
+            "confirm_text": "Yes",
             "dismiss_text": "No",
             "confirm_actions": [
               {
@@ -67,7 +67,7 @@
       {
         "type": "button",
         "id": "b_url",
-        "title": "Términos",
+        "title": "Terms",
         "variant": "TEXT",
         "actions": [
           {

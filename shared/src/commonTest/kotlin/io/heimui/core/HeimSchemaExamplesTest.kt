@@ -30,7 +30,7 @@ class HeimSchemaExamplesTest {
   }
 }
 """,
-        "02-container-y-box" to """{
+        "02-container-and-box" to """{
   "id": "layout",
   "title": "Layout",
   "root": {
@@ -75,7 +75,7 @@ class HeimSchemaExamplesTest {
   }
 }
 """,
-        "03-formulario" to """{
+        "03-form" to """{
   "id": "registro",
   "title": "Registro",
   "root": {
@@ -96,13 +96,13 @@ class HeimSchemaExamplesTest {
       },
       {
         "type": "text_field",
-        "id": "f_nombre",
-        "state_key": "nombre",
-        "label": "Nombre completo",
+        "id": "f_name",
+        "state_key": "name",
+        "label": "Full name",
         "validation_rules": [
           {
             "type": "REQUIRED",
-            "error_message": "El nombre es obligatorio"
+            "error_message": "Name is required"
           }
         ]
       },
@@ -112,15 +112,15 @@ class HeimSchemaExamplesTest {
         "state_key": "email",
         "label": "Email",
         "input_type": "EMAIL",
-        "helper_text": "Te enviaremos un código",
+        "helper_text": "We will send you a code",
         "validation_rules": [
           {
             "type": "REQUIRED",
-            "error_message": "El email es obligatorio"
+            "error_message": "Email is required"
           },
           {
             "type": "EMAIL",
-            "error_message": "Email inválido"
+            "error_message": "Not a valid email"
           }
         ]
       },
@@ -128,13 +128,13 @@ class HeimSchemaExamplesTest {
         "type": "text_field",
         "id": "f_pass",
         "state_key": "password",
-        "label": "Contraseña",
+        "label": "Password",
         "input_type": "PASSWORD",
         "validation_rules": [
           {
             "type": "MIN_LENGTH",
             "value": "8",
-            "error_message": "Mínimo 8 caracteres"
+            "error_message": "At least 8 characters"
           }
         ]
       },
@@ -154,13 +154,13 @@ class HeimSchemaExamplesTest {
           {
             "type": "CUSTOM",
             "value": "COLOMBIAN_NIT",
-            "error_message": "NIT inválido"
+            "error_message": "Not a valid tax id"
           }
         ]
       },
       {
         "type": "button",
-        "id": "btn_enviar",
+        "id": "btn_submit",
         "title": "Crear cuenta",
         "is_full_width": true,
         "actions": [
@@ -169,7 +169,7 @@ class HeimSchemaExamplesTest {
             "endpoint": "/ms-cuentas/registro",
             "method": "POST",
             "payload": {
-              "nombre": "{{state.nombre}}",
+              "name": "{{state.nombre}}",
               "email": "{{state.email}}",
               "empresarial": "{{state.es_empresa}}",
               "origen": "mobile"
@@ -181,7 +181,7 @@ class HeimSchemaExamplesTest {
   }
 }
 """,
-        "04-lista-paginada" to """{
+        "04-paginated-list" to """{
   "id": "feed",
   "title": "Feed",
   "root": {
@@ -255,7 +255,7 @@ class HeimSchemaExamplesTest {
   }
 }
 """,
-        "05-modales-y-acciones" to """{
+        "05-modals-and-actions" to """{
   "id": "acciones",
   "root": {
     "type": "container",
@@ -308,8 +308,8 @@ class HeimSchemaExamplesTest {
           {
             "type": "show_dialog",
             "title": "¿Seguro?",
-            "message": "Esta acción no se puede deshacer.",
-            "confirm_text": "Sí",
+            "message": "This cannot be undone.",
+            "confirm_text": "Yes",
             "dismiss_text": "No",
             "confirm_actions": [
               {
@@ -324,7 +324,7 @@ class HeimSchemaExamplesTest {
       {
         "type": "button",
         "id": "b_url",
-        "title": "Términos",
+        "title": "Terms",
         "variant": "TEXT",
         "actions": [
           {
@@ -344,7 +344,7 @@ class HeimSchemaExamplesTest {
   }
 }
 """,
-        "06-desconocido-y-custom" to """{
+        "06-unknown-and-custom" to """{
   "id": "futuro",
   "root": {
     "type": "container",
@@ -371,7 +371,7 @@ class HeimSchemaExamplesTest {
       {
         "type": "text",
         "id": "despues",
-        "text": "Después: el árbol sigue vivo"
+        "text": "After: the tree is still alive"
       }
     ]
   }
