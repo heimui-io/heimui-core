@@ -2,17 +2,73 @@ HeimUI Core
 Copyright (c) 2026 Julian Velandia. All rights reserved.
 
 This product includes third-party software, licensed by its own authors under its own terms. The
-components below are linked into applications that embed this SDK.
+groups below are what an application embedding this SDK links in, on Android and on iOS. Each is
+used unmodified; those terms govern those components, and the licence of this product does not
+restrict the rights they grant you in them.
+
+This list is derived from the runtime classpath rather than written by hand — see
+scripts/check-notice.sh, which fails the build when something ships without appearing here.
 
 Apache License 2.0 — https://www.apache.org/licenses/LICENSE-2.0
-  Kotlin and the Kotlin standard library      JetBrains s.r.o.
-  kotlinx.serialization, kotlinx.coroutines,
-  kotlinx-datetime                            JetBrains s.r.o.
-  Ktor client                                 JetBrains s.r.o.
-  Koin                                        Kotzilla / insert-koin
-  Coil 3                                      Coil Contributors
-  AndroidX and Jetpack Compose                The Android Open Source Project
-  Compose Multiplatform                       JetBrains s.r.o.
+  androidx.activity
+  androidx.annotation
+  androidx.appcompat
+  androidx.arch.core
+  androidx.autofill
+  androidx.collection
+  androidx.compose.animation
+  androidx.compose.foundation
+  androidx.compose.material
+  androidx.compose.material3
+  androidx.compose.runtime
+  androidx.compose.ui
+  androidx.concurrent
+  androidx.core
+  androidx.cursoradapter
+  androidx.customview
+  androidx.drawerlayout
+  androidx.emoji2
+  androidx.exifinterface
+  androidx.fragment
+  androidx.graphics
+  androidx.interpolator
+  androidx.lifecycle
+  androidx.loader
+  androidx.navigationevent
+  androidx.profileinstaller
+  androidx.resourceinspection
+  androidx.savedstate
+  androidx.startup
+  androidx.tracing
+  androidx.vectordrawable
+  androidx.versionedparcelable
+  androidx.viewpager
+  androidx.window
+  co.touchlab
+  com.google.accompanist
+  com.google.guava
+  com.squareup.okhttp3
+  com.squareup.okio
+  io.coil-kt.coil3
+  io.insert-koin
+  io.ktor
+  org.jetbrains
+  org.jetbrains.androidx.lifecycle
+  org.jetbrains.androidx.navigationevent
+  org.jetbrains.androidx.savedstate
+  org.jetbrains.compose.animation
+  org.jetbrains.compose.annotation-internal
+  org.jetbrains.compose.collection-internal
+  org.jetbrains.compose.components
+  org.jetbrains.compose.foundation
+  org.jetbrains.compose.material
+  org.jetbrains.compose.material3
+  org.jetbrains.compose.runtime
+  org.jetbrains.compose.ui
+  org.jetbrains.kotlin
+  org.jetbrains.kotlinx
+  org.jetbrains.skiko
+  org.jspecify
 
-Each is used unmodified, under the terms of its own licence. Those terms govern those components;
-the licence of this product does not restrict the rights they grant you in them.
+MIT License — https://opensource.org/licenses/MIT
+  org.slf4j

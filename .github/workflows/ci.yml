@@ -40,6 +40,12 @@ jobs:
       - name: Binary compatibility
         run: ./gradlew apiCheck --stacktrace
 
+      # Every library inside the SDK travels into a customer's app under its own licence, and each of
+      # those licences asks to be named. NOTICE is derived from the runtime classpath rather than
+      # trusted, so a dependency added without an attribution fails here instead of in a legal review.
+      - name: Third-party attributions are complete
+        run: ./scripts/check-notice.sh
+
       - name: Schema is valid JSON
         run: python3 -c "import json; json.load(open('schema/heimui-screen.schema.json'))"
 
