@@ -179,8 +179,11 @@ mavenPublishing {
         inceptionYear.set("2026")
         licenses {
             license {
-                name.set("Apache-2.0")
-                url.set("https://www.apache.org/licenses/LICENSE-2.0.txt")
+                // Published metadata travels with every artifact, so an open-source name here would
+                // keep claiming a grant the LICENSE file no longer makes.
+                name.set("Proprietary")
+                url.set("https://github.com/heimui-io/heimui-core/blob/main/LICENSE")
+                comments.set("Commercial licence. Use requires a written agreement with the copyright holder.")
             }
         }
         developers {

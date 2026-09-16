@@ -1,0 +1,18 @@
+HeimUI Core
+Copyright (c) 2026 Julian Velandia. All rights reserved.
+
+This product includes third-party software, licensed by its own authors under its own terms. The
+components below are linked into applications that embed this SDK.
+
+Apache License 2.0 — https://www.apache.org/licenses/LICENSE-2.0
+  Kotlin and the Kotlin standard library      JetBrains s.r.o.
+  kotlinx.serialization, kotlinx.coroutines,
+  kotlinx-datetime                            JetBrains s.r.o.
+  Ktor client                                 JetBrains s.r.o.
+  Koin                                        Kotzilla / insert-koin
+  Coil 3                                      Coil Contributors
+  AndroidX and Jetpack Compose                The Android Open Source Project
+  Compose Multiplatform                       JetBrains s.r.o.
+
+Each is used unmodified, under the terms of its own licence. Those terms govern those components;
+the licence of this product does not restrict the rights they grant you in them.
