@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="https://heimui.io/art/heimui-banner.jpg" alt="HeimUI" width="100%" />
+</p>
+
 # HeimUI Core: Server-Driven UI Framework for Kotlin Multiplatform
 
 [![Kotlin](https://img.shields.io/badge/Kotlin-2.4.10-blue.svg?logo=kotlin)](https://kotlinlang.org)
