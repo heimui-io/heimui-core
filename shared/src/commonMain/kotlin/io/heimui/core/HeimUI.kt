@@ -2,6 +2,7 @@ package io.heimui.core
 
 import io.heimui.core.di.HeimConfig
 import io.heimui.core.di.createHeimCoreModule
+import io.heimui.core.di.requireCoherentSignatureSettings
 import io.heimui.core.domain.repository.HeimScreenRepository
 import io.ktor.client.HttpClient
 import kotlin.concurrent.Volatile
@@ -86,8 +87,12 @@ public object HeimUI {
      * [HeimConfig.customHttpClient] belongs to the host and is never closed by the SDK.
      *
      * @param config connection, security and storage settings. See [HeimConfig].
+     * @throws IllegalArgumentException if the signature settings cannot work — verification with
+     *   nothing to verify against, or a trusted key that is not a P-256 public key. Thrown before
+     *   anything is torn down, so a previous working instance is left as it was.
      */
     public fun initialize(config: HeimConfig) {
+        config.requireCoherentSignatureSettings()
         closeOwnedResources()
         val app = koinApplication { modules(createHeimCoreModule(config)) }
         // Only a client the SDK created is ours to close; a host-supplied one is not.

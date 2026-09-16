@@ -31,7 +31,12 @@ public fun constantTimeEquals(a: String, b: String): Boolean {
 }
 
 /**
- * Production signature verifier using HMAC-SHA256 computation in pure Kotlin Multiplatform.
+ * Legacy verifier: HMAC-SHA256 over the payload bytes, compared with a hex digest.
+ *
+ * Kept so an app already configured with `HeimConfig.publicKey` goes on working. Do not start with
+ * it. The secret it checks against is the same secret that signs, and it has to be on the device to
+ * be checked there, so extracting it from one installation is enough to sign screens every
+ * installation accepts. [Es256SignatureVerifier] closes that: the app holds only public keys.
  */
 public class HmacSha256SignatureVerifier : HeimSignatureVerifier {
     override fun verify(payloadBytes: ByteArray, signature: String?, publicKey: String?): Boolean {
@@ -196,6 +201,10 @@ public object Sha256 {
 }
 
 /**
- * Default signature verifier implementing HMAC-SHA256.
+ * The verifier used when a configuration names neither trusted signing keys nor a verifier of its
+ * own: the legacy HMAC-SHA256 check, kept for apps configured with `HeimConfig.publicKey`.
+ *
+ * Setting `HeimConfig.trustedSigningKeys` selects [Es256SignatureVerifier] instead, which is the
+ * one to use. See [HmacSha256SignatureVerifier] for why this one is not.
  */
 public class DefaultHeimSignatureVerifier : HeimSignatureVerifier by HmacSha256SignatureVerifier()

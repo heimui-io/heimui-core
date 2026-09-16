@@ -23,16 +23,18 @@ check_only=false
 
 schema="$here/schema/heimui-screen.schema.json"
 corpus="$here/schema/hydration"
+# What a signed screen is, as cases: every signer and verifier is held to the same ones.
+vectors="$here/schema/signing/es256-vectors.json"
 drift=0
 
-# Consumer definitions: where the schema goes, and where the corpus goes. A consumer that wants
-# only one of them leaves the other empty.
+# Consumer definitions: where the schema goes, where the corpus goes, and where the signing vectors
+# go. A consumer that wants only some of them leaves the others empty.
 consumers=(
-  "heimui-studio|server/src/main/resources/heimui-screen.schema.json|ui/src/__tests__/fixtures/hydration"
-  "prototype-heimui-backend||src/test/resources/hydration"
+  "heimui-studio|server/src/main/resources/heimui-screen.schema.json|ui/src/__tests__/fixtures/hydration|server/src/test/resources/signing"
+  "prototype-heimui-backend||src/test/resources/hydration|src/test/resources/signing"
   # The public guide at heimui.io/backend ships the corpus for integrators to run against their own
   # implementation. The schema is deliberately not copied there: hydration never reads it.
-  "heimui-docs||backend/corpus"
+  "heimui-docs||backend/corpus|backend/signing"
 )
 
 copy_file() {
@@ -51,7 +53,7 @@ copy_file() {
 }
 
 for entry in "${consumers[@]}"; do
-  IFS='|' read -r name schema_path corpus_path <<< "$entry"
+  IFS='|' read -r name schema_path corpus_path signing_path <<< "$entry"
   root="$siblings/$name"
 
   if [[ ! -d "$root" ]]; then
@@ -82,6 +84,12 @@ for entry in "${consumers[@]}"; do
         fi
       fi
     done
+  fi
+
+  if [[ -n "$signing_path" ]]; then
+    # A stale copy is a signer passing cases the SDK has stopped accepting, which is exactly the
+    # disagreement nobody sees until a device refuses every screen.
+    copy_file "$vectors" "$root/$signing_path/$(basename "$vectors")" "signing/$(basename "$vectors")"
   fi
 done
 

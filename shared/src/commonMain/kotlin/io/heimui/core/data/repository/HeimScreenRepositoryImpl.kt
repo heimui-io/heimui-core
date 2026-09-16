@@ -7,6 +7,7 @@ import io.heimui.core.data.datasource.remote.RemoteScreenResponse
 import io.heimui.core.data.datasource.remote.RemoteSubmitResponse
 import io.heimui.core.data.mapper.toDomain
 import io.heimui.core.data.security.DefaultHeimSignatureVerifier
+import io.heimui.core.data.security.Es256SignatureVerifier
 import io.heimui.core.data.security.HeimSignatureVerifier
 import io.heimui.core.domain.model.HeimValue
 import io.heimui.core.domain.repository.HeimScreenRepository
@@ -62,11 +63,12 @@ internal class HeimScreenRepositoryImpl(
 
         when (val remote = remoteDataSource.fetchScreen(screenId, queryParams, trustedCache?.etag)) {
             is RemoteScreenResponse.Success -> {
-                if (verifySignatures &&
-                    !signatureVerifier.verify(remote.rawBytes, remote.signature, publicKey)
-                ) {
-                    emit(HeimScreenResult.Error("Security verification failed: payload signature invalid"))
-                    return@flow
+                if (verifySignatures) {
+                    val failure = verificationFailure(remote.rawBytes, remote.signature)
+                    if (failure != null) {
+                        emit(HeimScreenResult.Error("Security verification failed: $failure"))
+                        return@flow
+                    }
                 }
                 cacheDataSource.saveScreen(
                     screenId = cacheKey,
@@ -131,7 +133,21 @@ internal class HeimScreenRepositoryImpl(
 
     private fun isCachedEntryTrusted(signature: String?, rawBytes: ByteArray?): Boolean {
         if (signature == null || rawBytes == null) return false
-        return signatureVerifier.verify(rawBytes, signature, publicKey)
+        return verificationFailure(rawBytes, signature) == null
+    }
+
+    /**
+     * Why a screen fails verification, or null when it passes.
+     *
+     * The ES256 verifier can say which of its checks failed — an unsigned screen, a key this app
+     * does not trust, content that changed after signing — and that sentence is the difference
+     * between fixing a key in a minute and reading this source. Any other verifier only answers
+     * yes or no, and keeps the message it always had.
+     */
+    private fun verificationFailure(bytes: ByteArray, signature: String?): String? {
+        val verifier = signatureVerifier
+        if (verifier is Es256SignatureVerifier) return verifier.failureReason(bytes, signature)
+        return if (verifier.verify(bytes, signature, publicKey)) null else "payload signature invalid"
     }
 
     override suspend fun submitForm(
@@ -140,10 +156,27 @@ internal class HeimScreenRepositoryImpl(
         payload: Map<String, HeimValue>?
     ): HeimSubmitResult {
         return when (val response = remoteDataSource.submitForm(endpoint, method, payload)) {
-            is RemoteSubmitResponse.Success -> HeimSubmitResult.Success(
-                responseScreen = response.responseScreen?.toDomain(),
-                message = "Form submitted successfully"
-            )
+            is RemoteSubmitResponse.Success -> {
+                val screen = response.responseScreen
+                // A screen returned by a submission is rendered exactly like a fetched one, so it is
+                // held to the same signature. Unchecked, it would be the way around verification:
+                // any endpoint a form can post to could answer with a screen of its own choosing.
+                val failure = if (screen != null && verifySignatures) {
+                    verificationFailure(response.rawBytes ?: ByteArray(0), response.signature)
+                } else {
+                    null
+                }
+                if (failure != null) {
+                    HeimSubmitResult.Error(
+                        "Security verification failed for the screen the submission returned: $failure"
+                    )
+                } else {
+                    HeimSubmitResult.Success(
+                        responseScreen = screen?.toDomain(),
+                        message = "Form submitted successfully"
+                    )
+                }
+            }
             is RemoteSubmitResponse.Error -> HeimSubmitResult.Error(response.message)
             is RemoteSubmitResponse.SecurityViolation -> HeimSubmitResult.Blocked(response.message)
         }

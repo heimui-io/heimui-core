@@ -21,6 +21,7 @@
 * **Form Validation Engine:** Built-in validator for required fields, regex, email, min/max length, and numeric inputs.
 * **Reactive State & Crash Recovery:** Reactive state management (`HeimStateManager`) with persistent recovery across app restarts.
 * **Native Accessibility (A11y):** Declarative TalkBack (Android) and VoiceOver (iOS) semantic bindings.
+* **Signed Screens (opt-in):** ES256 verification through each platform's own cryptography, in the JWS profile — a detached `X-Heim-Signature` from a server, or a sealed object from a bucket that cannot send one. The app carries public keys only, so extracting them from an APK gains nothing. Off until `trustedSigningKeys` names a key.
 
 ---
 

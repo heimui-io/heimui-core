@@ -8,6 +8,8 @@ HeimUI app. There is no required server library — the schema is the contract.
 ```
 heimui-screen.schema.json   the contract
 examples/                   one runnable payload per component family
+hydration/                  the cases every hydration implementation must agree on
+signing/                    the cases every screen signer and verifier must agree on
 ```
 
 ## Use it while you build
@@ -97,6 +99,25 @@ Never use it to hide data the user must not see.
 **Form endpoints are origin-locked.** The session token travels with a submission, so an absolute
 URL must be HTTPS and match the `baseUrl` origin, or a host listed in
 `HeimConfig.allowedSubmitHosts`. Relative paths always work.
+
+## Signed screens
+
+A screen can carry an ES256 signature, and an app with `HeimConfig.trustedSigningKeys` renders only
+the screens that verify. The format is JWS (RFC 7515), in two forms:
+
+- **From a server**, a detached JWS over the exact response bytes, in `X-Heim-Signature`:
+  `<protected>..<signature>`.
+- **From a bucket or CDN**, which cannot send a header, the flattened JSON form with the screen
+  base64url-encoded inside: `{"protected": "…", "payload": "…", "signature": "…"}`.
+
+The protected header is exactly `{"alg":"ES256","kid":"…"}`, where `kid` is the RFC 7638 thumbprint
+of the signing key's public half. The signature is raw `r || s`, never DER, and every part is
+unpadded base64url. Whoever produces the final bytes signs them: the Studio for what it serves and
+writes to a bucket, a backend for what it hydrates.
+
+`signing/es256-vectors.json` holds the cases the SDK accepts and refuses, signed by one
+implementation and checked by another. Its keys exist only for those tests. Reference signers in
+Kotlin, Node, Python and Go run against it at [heimui.io/backend](https://heimui.io/backend/#signing).
 
 ## Keeping this file honest
 

@@ -2,7 +2,9 @@ package io.heimui.core.data.datasource.remote
 
 import io.heimui.core.data.dto.HeimScreenResponseDto
 import io.heimui.core.data.resilience.HeimCircuitBreaker
+import io.heimui.core.data.security.HeimMalformedEnvelopeException
 import io.heimui.core.data.security.HeimPayloadGuard
+import io.heimui.core.data.security.HeimSignedEnvelope
 import io.heimui.core.data.serialization.HeimJson
 import io.heimui.core.domain.model.HeimValue
 import io.heimui.core.domain.model.toJsonElement
@@ -83,6 +85,9 @@ internal sealed interface RemoteSubmitResponse {
   data class Success(
       val responseScreen: HeimScreenResponseDto? = null,
       val rawJson: String? = null,
+      /** The bytes [responseScreen] was decoded from, which is what a signature covers. */
+      val rawBytes: ByteArray? = null,
+      val signature: String? = null,
   ) : RemoteSubmitResponse
 
   data class Error(val statusCode: Int, val message: String) : RemoteSubmitResponse
@@ -106,6 +111,8 @@ internal class HeimRemoteDataSource(
     private val allowedSubmitHosts: Set<String> = emptySet(),
     /** Hosts reachable over cleartext `http://`, beyond loopback. See `HeimConfig`. */
     private val allowCleartextHosts: Set<String> = emptySet(),
+    /** Hosts screens are read from without credentials: a public bucket or CDN. See `HeimConfig`. */
+    private val publicScreenHosts: Set<String> = emptySet(),
 ) {
 
   suspend fun fetchScreen(
@@ -143,18 +150,30 @@ internal class HeimRemoteDataSource(
     }
   }
 
+  /** Whether [url] is on one of [publicScreenHosts]. */
+  private fun isPublicScreenHost(url: String): Boolean {
+    if (publicScreenHosts.isEmpty()) return false
+    val host = runCatching { Url(url).host }.getOrNull() ?: return false
+    return publicScreenHosts.any { it.equals(host, ignoreCase = true) }
+  }
+
   private suspend fun performFetch(
       screenUrl: String,
       queryParams: Map<String, String>,
       ifNoneMatchEtag: String?,
   ): RemoteScreenResponse {
+    // A public host is never asked about credentials, let alone given them: a bucket has no use
+    // for a session token, and a provider that returns one unconditionally would hand it over.
+    val isPublicHost = isPublicScreenHost(screenUrl)
     val response =
         httpClient.get(screenUrl) {
           headers {
-            authTokenProvider
-                ?.authHeaderFor(HeimAuthContext.ScreenFetch(screenUrl))
-                ?.takeIf { it.isNotBlank() }
-                ?.let { append(HttpHeaders.Authorization, it) }
+            if (!isPublicHost) {
+              authTokenProvider
+                  ?.authHeaderFor(HeimAuthContext.ScreenFetch(screenUrl))
+                  ?.takeIf { it.isNotBlank() }
+                  ?.let { append(HttpHeaders.Authorization, it) }
+            }
 
           // Tells the backend who it is answering, so it can localise the payload. Localising on
           // the server beats shipping every translation to every device.
@@ -177,14 +196,29 @@ internal class HeimRemoteDataSource(
                       "${HeimPayloadGuard.MAX_PAYLOAD_BYTES} bytes",
           )
         }
+        // A screen from a bucket arrives sealed, its signature inside it, because a bucket cannot
+        // send a header. Opened here so that everything after -- verification, the cache and the
+        // cache's re-verification -- sees one shape: the screen's own bytes and a detached signature.
+        val envelope =
+            try {
+              HeimSignedEnvelope.unwrapOrNull(rawBytes)
+            } catch (e: HeimMalformedEnvelopeException) {
+              return RemoteScreenResponse.Error(
+                  statusCode = -1,
+                  message = e.message ?: "The signed screen could not be opened.",
+              )
+            }
+        val screenBytes = envelope?.payload ?: rawBytes
         // decodeScreen enforces the structural guard BEFORE the parser recurses.
-        val screenDto = HeimJson.decodeScreen(rawBytes.decodeToString())
+        val screenDto = HeimJson.decodeScreen(screenBytes.decodeToString())
         RemoteScreenResponse.Success(
             screen = screenDto,
-            rawBytes = rawBytes,
+            rawBytes = screenBytes,
             etag = response.headers[HttpHeaders.ETag],
             signature =
-                response.headers[SIGNATURE_HEADER] ?: response.headers[LEGACY_SIGNATURE_HEADER],
+                envelope?.detachedSignature
+                    ?: response.headers[SIGNATURE_HEADER]
+                    ?: response.headers[LEGACY_SIGNATURE_HEADER],
         )
       }
 
@@ -245,10 +279,19 @@ internal class HeimRemoteDataSource(
           }
 
       if (response.status.isSuccess()) {
-        val bodyText = response.bodyAsText()
+        val rawBytes = response.bodyAsBytes()
+        // Opened the same way as a fetched screen, so a submission may answer with a sealed one.
+        val envelope = runCatching { HeimSignedEnvelope.unwrapOrNull(rawBytes) }.getOrNull()
+        val screenBytes = envelope?.payload ?: rawBytes
+        val bodyText = screenBytes.decodeToString()
         RemoteSubmitResponse.Success(
             responseScreen = HeimJson.decodeScreenOrNull(bodyText),
             rawJson = bodyText,
+            rawBytes = screenBytes,
+            signature =
+                envelope?.detachedSignature
+                    ?: response.headers[SIGNATURE_HEADER]
+                    ?: response.headers[LEGACY_SIGNATURE_HEADER],
         )
       } else {
         RemoteSubmitResponse.Error(
@@ -381,7 +424,11 @@ internal class HeimRemoteDataSource(
       )
     }
 
-    val isAllowlistedHost = allowedSubmitHosts.any { it.equals(target.host, ignoreCase = true) }
+    // A public screen host is as reachable as an allow-listed one. What makes reaching it safe is
+    // that the request never carries a credential -- see performFetch.
+    val isAllowlistedHost =
+        allowedSubmitHosts.any { it.equals(target.host, ignoreCase = true) } ||
+            publicScreenHosts.any { it.equals(target.host, ignoreCase = true) }
     if (!isAllowlistedHost && !target.host.equals(base.host, ignoreCase = true)) {
       throw HeimSecurityException(
           "Cross-domain screen fetch from '${target.host}' is prohibited."

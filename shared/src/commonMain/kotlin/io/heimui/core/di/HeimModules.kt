@@ -7,6 +7,7 @@ import io.heimui.core.data.datasource.remote.HeimAuthTokenProvider
 import io.heimui.core.data.datasource.remote.HeimRemoteDataSource
 import io.heimui.core.data.repository.HeimScreenRepositoryImpl
 import io.heimui.core.data.security.DefaultHeimSignatureVerifier
+import io.heimui.core.data.security.Es256SignatureVerifier
 import io.heimui.core.data.security.HeimSignatureVerifier
 import io.heimui.core.domain.repository.HeimScreenRepository
 import io.ktor.client.HttpClient
@@ -69,14 +70,17 @@ import org.koin.dsl.module
  * @property customHttpClient Replaces the SDK's Ktor client entirely. Use it for certificate
  *   pinning or a shared client. Note that doing so **discards** the default timeouts, retry
  *   policy and connection settings; you are responsible for configuring equivalents.
- * @property verifySignatures Enables cryptographic verification of screen payloads. Requires
- *   `publicKey` and a server that signs responses with the `X-Heim-Signature` header. Off by
- *   default because verification against an unsigned backend would reject every screen.
- * @property publicKey Key material handed to the verifier. Its meaning depends on the
- *   implementation: a shared secret for the default HMAC verifier, a public key for an asymmetric
- *   one.
- * @property customSignatureVerifier Plugs in your own verification, typically to use a hardware-
- *   backed key store or an asymmetric algorithm.
+ * @property verifySignatures Refuses any screen whose signature does not verify — fetched, read
+ *   back from the cache, or returned by a form submission. Setting [trustedSigningKeys] turns this
+ *   on by itself, so a key list can never ship with verification quietly off; set it explicitly
+ *   only for the legacy [publicKey] or a [customSignatureVerifier]. Off otherwise, because
+ *   verifying against a server that does not sign would reject every screen.
+ * @property publicKey **Legacy.** A shared HMAC-SHA256 secret, compared with a hex digest in
+ *   `X-Heim-Signature`. The name is historical — it is not a public key. It has to be on the
+ *   device to be checked there, so anyone who extracts it from the app can sign screens every
+ *   installation accepts. Use [trustedSigningKeys]; the two cannot be combined.
+ * @property customSignatureVerifier Replaces verification entirely — a hardware-backed key store,
+ *   or a scheme of your own. Takes precedence over [trustedSigningKeys] and [publicKey].
  * @property emergencyBundleProvider Screens bundled with the app, served when the network fails
  *   and no cache exists. The last line of defence before the user sees an error.
  * @property customCacheDataSource Replaces the default in-memory cache.
@@ -88,6 +92,25 @@ import org.koin.dsl.module
  *     must never be shown a moment out of date.
  *
  *   Left null, screens are cached in memory for the life of the process.
+ * @property trustedSigningKeys P-256 public keys, as PEM, whose ES256 signatures this app accepts:
+ *   the Studio's for what it serves and writes to a bucket, your backend's for what it hydrates,
+ *   and both halves of a key rotation while one is under way. Public by design — extracting one
+ *   from the app gains nothing, because it cannot sign. A malformed entry fails
+ *   [io.heimui.core.HeimUI.initialize] instead of every screen. See [Es256SignatureVerifier].
+ *
+ *   ```kotlin
+ *   trustedSigningKeys = setOf(BuildConfig.HEIMUI_STUDIO_KEY, BuildConfig.HEIMUI_BACKEND_KEY)
+ *   ```
+ * @property publicScreenHosts Hosts screens may be read from with no credentials at all: a public
+ *   bucket or a CDN holding screens that need no data, such as a login or a terms page. A screen
+ *   URL on one of them is allowed although it is not `baseUrl`'s origin, and its request never
+ *   carries an `Authorization` header — [authTokenProvider] is not even asked. Still `https` only
+ *   unless the host is in [allowCleartextHosts], and still verified when signatures are on.
+ *
+ *   ```kotlin
+ *   publicScreenHosts = setOf("screens.example-cdn.com")
+ *   // then: HeimScreen(screenId = "https://screens.example-cdn.com/public/@release/login.json")
+ *   ```
  *
  * @see io.heimui.core.HeimUI.initialize
  */
@@ -101,7 +124,9 @@ public data class HeimConfig(
     val publicKey: String? = null,
     val customSignatureVerifier: HeimSignatureVerifier? = null,
     val emergencyBundleProvider: HeimEmergencyBundleProvider? = null,
-    val customCacheDataSource: HeimCacheDataSource? = null
+    val customCacheDataSource: HeimCacheDataSource? = null,
+    val trustedSigningKeys: Set<String> = emptySet(),
+    val publicScreenHosts: Set<String> = emptySet(),
 )
 
 /**
@@ -121,6 +146,43 @@ internal fun HeimConfig.cleartextHosts(): Set<String> {
     return allowCleartextHosts + baseHost
 }
 
+/** Whether screens are verified: asked for explicitly, or implied by trusting a signing key. */
+internal fun HeimConfig.verifiesSignatures(): Boolean =
+    verifySignatures || trustedSigningKeys.isNotEmpty()
+
+/** The verifier this configuration asks for, most specific first. */
+internal fun HeimConfig.signatureVerifier(): HeimSignatureVerifier =
+    customSignatureVerifier
+        ?: trustedSigningKeys.takeIf { it.isNotEmpty() }?.let { Es256SignatureVerifier(it) }
+        ?: DefaultHeimSignatureVerifier()
+
+/**
+ * Refuses a signature configuration that cannot do what it appears to.
+ *
+ * Checked when the SDK starts rather than when the first screen arrives: a verifier with nothing
+ * to verify against rejects every screen, and the first person to find out would be a user looking
+ * at an error.
+ *
+ * @throws IllegalArgumentException naming what is wrong.
+ */
+internal fun HeimConfig.requireCoherentSignatureSettings() {
+    require(trustedSigningKeys.isEmpty() || publicKey.isNullOrBlank()) {
+        "Set trustedSigningKeys or the legacy publicKey, not both. publicKey is an HMAC secret and " +
+            "would be silently ignored next to them."
+    }
+    require(
+        !verifySignatures || customSignatureVerifier != null || trustedSigningKeys.isNotEmpty() ||
+            !publicKey.isNullOrBlank()
+    ) {
+        "verifySignatures is on but there is nothing to verify against, so every screen would be " +
+            "rejected. Add the signers' public keys to trustedSigningKeys."
+    }
+    if (customSignatureVerifier == null && trustedSigningKeys.isNotEmpty()) {
+        // Parsing is the validation: a key that is not a P-256 public key throws, naming its position.
+        Es256SignatureVerifier(trustedSigningKeys)
+    }
+}
+
 /**
  * Builds the Koin module wiring HeimUI's data layer from [config].
  *
@@ -129,40 +191,43 @@ internal fun HeimConfig.cleartextHosts(): Set<String> {
  * isolated container instead, so the SDK cannot collide with the host's DI setup.
  *
  * @return a Koin [Module] providing [HeimScreenRepository] and its collaborators.
+ * @throws IllegalArgumentException if the signature settings in [config] cannot work.
  */
-public fun createHeimCoreModule(config: HeimConfig): Module = module {
-    single<HeimConfig> { config }
+public fun createHeimCoreModule(config: HeimConfig): Module {
+    config.requireCoherentSignatureSettings()
+    return module {
+        single<HeimConfig> { config }
 
-    single<HttpClient> {
-        config.customHttpClient ?: HeimRemoteDataSource.createDefaultHttpClient()
-    }
+        single<HttpClient> {
+            config.customHttpClient ?: HeimRemoteDataSource.createDefaultHttpClient()
+        }
 
-    single<HeimSignatureVerifier> {
-        config.customSignatureVerifier ?: DefaultHeimSignatureVerifier()
-    }
+        single<HeimSignatureVerifier> { config.signatureVerifier() }
 
-    single<HeimRemoteDataSource> {
-        HeimRemoteDataSource(
-            httpClient = get(),
-            baseUrl = config.baseUrl,
-            authTokenProvider = config.authTokenProvider,
-            allowedSubmitHosts = config.allowedSubmitHosts,
-            allowCleartextHosts = config.cleartextHosts()
-        )
-    }
+        single<HeimRemoteDataSource> {
+            HeimRemoteDataSource(
+                httpClient = get(),
+                baseUrl = config.baseUrl,
+                authTokenProvider = config.authTokenProvider,
+                allowedSubmitHosts = config.allowedSubmitHosts,
+                allowCleartextHosts = config.cleartextHosts(),
+                publicScreenHosts = config.publicScreenHosts,
+            )
+        }
 
-    single<HeimCacheDataSource> {
-        config.customCacheDataSource ?: InMemoryHeimCacheDataSource()
-    }
+        single<HeimCacheDataSource> {
+            config.customCacheDataSource ?: InMemoryHeimCacheDataSource()
+        }
 
-    single<HeimScreenRepository> {
-        HeimScreenRepositoryImpl(
-            remoteDataSource = get(),
-            cacheDataSource = get(),
-            signatureVerifier = get(),
-            emergencyBundleProvider = config.emergencyBundleProvider,
-            verifySignatures = config.verifySignatures,
-            publicKey = config.publicKey
-        )
+        single<HeimScreenRepository> {
+            HeimScreenRepositoryImpl(
+                remoteDataSource = get(),
+                cacheDataSource = get(),
+                signatureVerifier = get(),
+                emergencyBundleProvider = config.emergencyBundleProvider,
+                verifySignatures = config.verifiesSignatures(),
+                publicKey = config.publicKey
+            )
+        }
     }
 }
