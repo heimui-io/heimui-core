@@ -97,6 +97,16 @@ import kotlinx.coroutines.launch
  *   death when a draft storage is installed on the theme.
  * @param customRenderer fallback for `CustomComponent`s with no entry in the component registry.
  *   The registry takes precedence, since it matches by component name.
+ * @param errorContent replaces the built-in failure card. The default is deliberately plain and
+ *   written in English, which is wrong in any app that is not: pass your own to say it in your
+ *   product's voice and language. `onRetry` refetches.
+ * @param loadingContent replaces the built-in skeleton, for an app with its own loading style.
+ * @param overlayScreenId a second screen drawn on top of this one, or `null` for none. This is how
+ *   an in-app notification works: it is an ordinary screen, authored and published like the rest,
+ *   and the host decides when it appears. It never shows a skeleton or an error of its own -- it
+ *   arrives when it is ready or not at all, because neither belongs over a screen that is working.
+ * @param onOverlayDismiss called when the overlay dispatches `dismiss_modal`, the same action that
+ *   closes a dialog or a bottom sheet. Set your state to `null` here.
  *
  * @see HeimTheme
  * @see io.heimui.core.presentation.registry.HeimCustomComponentRegistry
@@ -111,7 +121,11 @@ public fun HeimScreen(
     queryParams: Map<String, String> = emptyMap(),
     enablePullToRefresh: Boolean = true,
     stateManager: HeimStateManager = rememberHeimStateManager(screenId = screenId),
-    customRenderer: (@Composable (CustomComponent) -> Unit)? = null
+    customRenderer: (@Composable (CustomComponent) -> Unit)? = null,
+    errorContent: (@Composable (message: String, onRetry: () -> Unit) -> Unit)? = null,
+    loadingContent: (@Composable () -> Unit)? = null,
+    overlayScreenId: String? = null,
+    onOverlayDismiss: (() -> Unit)? = null
 ) {
     val activeRepository = repository ?: remember { runCatching { HeimUI.repository }.getOrNull() }
 
@@ -253,7 +267,7 @@ public fun HeimScreen(
         CompositionLocalProvider(LocalHeimActionRunner provides actionRunner) {
         Box(modifier = Modifier.fillMaxSize()) {
             when (val state = screenState) {
-                is HeimScreenState.Loading -> HeimSkeletonRenderer()
+                is HeimScreenState.Loading -> loadingContent?.invoke() ?: HeimSkeletonRenderer()
 
                 is HeimScreenState.Content -> HeimScreenRenderer(
                     response = state.screen,
@@ -263,11 +277,12 @@ public fun HeimScreen(
                     modifier = Modifier.fillMaxSize()
                 )
 
-                is HeimScreenState.Error -> HeimErrorView(
-                    message = state.message,
-                    onRetry = { controller.retry() },
-                    modifier = Modifier.align(Alignment.Center)
-                )
+                is HeimScreenState.Error -> errorContent?.invoke(state.message) { controller.retry() }
+                    ?: HeimErrorView(
+                        message = state.message,
+                        onRetry = { controller.retry() },
+                        modifier = Modifier.align(Alignment.Center)
+                    )
 
                 // Reachable now: a payload whose root renders nothing resolves to Empty instead
                 // of showing a blank screen. This branch used to be dead code.
@@ -320,6 +335,31 @@ public fun HeimScreen(
                 action = dialogAction,
                 onDismiss = { controller.dismissDialog() },
                 onAction = handleAction
+            )
+        }
+
+        // An in-app notification is another screen drawn over this one: authored, published,
+        // signed and cached like any other, because to the SDK it is not a special kind of thing.
+        //
+        // What the host keeps is *when* it appears -- that comes from a push, a socket or a rule
+        // only the app knows. What the SDK takes over is the part every app would otherwise write
+        // the same way and get subtly wrong.
+        overlayScreenId?.let { id ->
+            HeimScreen(
+                screenId = id,
+                onAction = { action ->
+                    if (action is DismissModalAction) onOverlayDismiss?.invoke()
+                    onAction(action)
+                },
+                repository = repository,
+                enablePullToRefresh = false,
+                // Silent on both. A notification that is still loading must not cover the screen
+                // underneath with a full-size skeleton, and one that failed to load is not an
+                // error the user should be shown over work they were doing -- the screen they
+                // are on is fine. It appears when it is ready, or it does not appear.
+                errorContent = { _, _ -> },
+                loadingContent = { },
+                modifier = Modifier.fillMaxWidth()
             )
         }
     }
