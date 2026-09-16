@@ -29,9 +29,13 @@ jobs:
           distribution: temurin
           java-version: '17'
 
+      # No cache restore here on purpose. CodeQL builds its database by watching a compiler run, so
+      # a build that Gradle short-circuits as UP-TO-DATE produces an empty database and fails with
+      # "didn't build any of it". Dependencies are still downloaded; only task outputs are not
+      # reused.
       - uses: gradle/actions/setup-gradle@v4
         with:
-          cache-read-only: ${{ github.ref != 'refs/heads/main' }}
+          cache-disabled: true
 
       - uses: github/codeql-action/init@v3
         with:
@@ -42,7 +46,15 @@ jobs:
       # also link the iOS frameworks -- tens of minutes of Kotlin/Native work that produces nothing
       # CodeQL can read, since its extractor understands JVM bytecode.
       - name: Compile
-        run: ./gradlew :shared:compileAndroidMain --stacktrace
+        # Every flag here exists because CodeQL has to see the compilation happen:
+        #   --no-daemon, in-process        Kotlin normally compiles in a separate daemon process
+        #                                  that the tracer never observes.
+        #   --rerun-tasks, --no-build-cache  nothing may be skipped as already done.
+        #   --no-configuration-cache       it is incompatible with --rerun-tasks.
+        # Only the Android compilation: `build` would also link the iOS frameworks, tens of minutes
+        # of Kotlin/Native work producing nothing CodeQL's JVM extractor can read.
+        run: |
+          ./gradlew :shared:compileAndroidMain             --no-daemon --rerun-tasks --no-build-cache --no-configuration-cache             -Dkotlin.compiler.execution.strategy=in-process             --stacktrace
 
       - uses: github/codeql-action/analyze@v3
         with:
