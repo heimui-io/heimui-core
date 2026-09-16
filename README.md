@@ -2,12 +2,24 @@
 
 [![Kotlin](https://img.shields.io/badge/Kotlin-2.4.10-blue.svg?logo=kotlin)](https://kotlinlang.org)
 [![Compose Multiplatform](https://img.shields.io/badge/Compose%20Multiplatform-1.11.1-purple.svg)](https://www.jetbrains.com/lp/compose-multiplatform/)
-[![License](https://img.shields.io/badge/License-Proprietary-red.svg)](LICENSE)
+[![License](https://img.shields.io/badge/License-Apache%202.0-green.svg)](https://opensource.org/licenses/Apache-2.0)
 [![Platforms](https://img.shields.io/badge/Platforms-Android%20%7C%20iOS-orange.svg)]()
 
 > **The extensible Server-Driven UI framework for Kotlin Multiplatform & Compose.**
 
 **HeimUI Core** is an enterprise-grade Server-Driven UI (SDUI) SDK designed for Android and iOS using **Kotlin Multiplatform (KMP)** and **Compose Multiplatform**. It renders remote UI layouts natively at 60/120 FPS without WebViews or JavaScript bridges.
+
+## The ecosystem
+
+| | | |
+| --- | --- | --- |
+| **Core SDK** | This repository — renders the screens on Android and iOS | **Apache 2.0** |
+| **[Documentation](https://heimui.io)** | Guides, the screen schema, hydration and signing references | [heimui-docs](https://github.com/heimui-io/heimui-docs) |
+| **[Demo app](https://github.com/heimui-io/heimui-demo)** | A full integration you can run | Apache 2.0 |
+| **HeimUI Studio** | The visual editor that authors and publishes screens | Commercial — [heimui.io/studio](https://heimui.io/studio/) |
+
+The SDK is free and always will be: it lives inside your application, and nobody should have to take
+an SDK on trust. The Studio is the product.
 
 ---
 
@@ -70,6 +82,8 @@ Open the `iosApp` directory in Xcode and run the target.
 
 ## 📄 License
 
-HeimUI Core is proprietary software. Using it requires a licence agreement with the copyright
-holder — see [LICENSE](LICENSE). Third-party components it links in keep their own licences,
-listed in [NOTICE](NOTICE).
+HeimUI Core is open source under the [Apache License 2.0](LICENSE) — free to use in commercial
+applications, with an explicit patent grant. It ships inside your app, so you should be able to read
+every line of it.
+
+Third-party components it links in keep their own licences, listed in [NOTICE](NOTICE).
