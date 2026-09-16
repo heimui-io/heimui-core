@@ -40,6 +40,13 @@ jobs:
       - name: Binary compatibility
         run: ./gradlew apiCheck --stacktrace
 
+      # The keep rules only protect anybody if they are actually inside the AAR, and AGP drops them
+      # silently when `consumerKeepRules.publish` is off -- which is how the SDK shipped for weeks
+      # telling consumers it covered them while the artifact carried no `proguard.txt` at all. So
+      # the build file is not trusted here; the artifact is opened and read.
+      - name: R8 keep rules reach consumers
+        run: ./scripts/check-consumer-rules.sh
+
       # Every library inside the SDK travels into a customer's app under its own licence, and each of
       # those licences asks to be named. NOTICE is derived from the runtime classpath rather than
       # trusted, so a dependency added without an attribution fails here instead of in a legal review.

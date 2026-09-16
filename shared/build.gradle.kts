@@ -61,6 +61,11 @@ kotlin {
        }
        optimization {
            consumerKeepRules.files.add(file("consumer-rules.pro"))
+           // Without this the rules above are collected and then thrown away: `publish` defaults
+           // to false, so the AAR ships no `proguard.txt` and every consumer runs R8 against the
+           // SDK with no rules at all. That is exactly the silent, release-only parsing failure
+           // the rules exist to prevent, and unzipping the AAR is the only way to see it.
+           consumerKeepRules.publish = true
        }
        withHostTest {
            isIncludeAndroidResources = true
