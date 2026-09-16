@@ -4,6 +4,8 @@
 [![Compose Multiplatform](https://img.shields.io/badge/Compose%20Multiplatform-1.11.1-purple.svg)](https://www.jetbrains.com/lp/compose-multiplatform/)
 [![License](https://img.shields.io/badge/License-Apache%202.0-green.svg)](https://opensource.org/licenses/Apache-2.0)
 [![Platforms](https://img.shields.io/badge/Platforms-Android%20%7C%20iOS-orange.svg)]()
+[![CodeQL](https://github.com/heimui-io/heimui-core/actions/workflows/codeql.yml/badge.svg)](https://github.com/heimui-io/heimui-core/actions/workflows/codeql.yml)
+[![OpenSSF Scorecard](https://api.securityscorecards.dev/projects/github.com/heimui-io/heimui-core/badge)](https://scorecard.dev/viewer/?uri=github.com/heimui-io/heimui-core)
 
 > **The extensible Server-Driven UI framework for Kotlin Multiplatform & Compose.**
 
@@ -62,6 +64,35 @@ io.heimui.core/
 ```
 
 ---
+
+## 📦 Using it in your app
+
+```kotlin
+dependencies {
+    implementation("io.heimui:heimui-core:0.0.1-alpha-1")
+}
+```
+
+Android and iOS, from a Kotlin Multiplatform module. The iOS artifacts are published as klibs, so
+the consumer is a KMP module that exports its own framework -- the `demo` module and `iosApp` in
+this repository are a working example of exactly that.
+
+Full integration guide, including the signing and caching options: **[heimui.io/sdk](https://heimui.io/sdk/)**
+
+### Trying an unreleased build
+
+To test a change from this repository against your own app without waiting for a release:
+
+```bash
+./gradlew publishLocal
+```
+
+That publishes to your local Maven repository under a `-LOCAL` suffix, so it sits alongside the
+released coordinate instead of overwriting it -- and a failure always names which build it came
+from. Then, in the consuming project, make sure `mavenLocal()` is among its repositories and depend
+on the suffixed version that the task prints when it finishes.
+
+Run `./gradlew verify` before pushing: it runs everything CI runs.
 
 ## 🚀 Running the Apps & Tests
 

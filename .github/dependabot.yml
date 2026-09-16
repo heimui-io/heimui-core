@@ -1,0 +1,22 @@
+# Dependency updates arrive as pull requests rather than as a surprise in a vulnerability report.
+# Weekly rather than daily on purpose: this is a one-person project, and a queue nobody can read is
+# the same as no queue at all.
+version: 2
+updates:
+  - package-ecosystem: gradle
+    directory: /
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 5
+    groups:
+      # One pull request for the routine bumps. Kotlin, AGP and Compose move together often enough
+      # that separate PRs would each fail until the others merged.
+      all-minor-and-patch:
+        update-types: [minor, patch]
+
+  # The actions in these workflows run with write access to the repository's security events, so a
+  # compromised or abandoned action is a supply-chain problem, not a convenience one.
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly

@@ -1,0 +1,49 @@
+name: CodeQL
+
+# Static analysis of the SDK's own source. This repository is public and the artifact it produces
+# runs inside other people's applications, so a flaw here is a flaw shipped to every consumer --
+# which is a different risk from a flaw in a service you can patch and redeploy yourself.
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  schedule:
+    # Findings arrive when a query is added, not only when code changes, so a repository that is
+    # quiet for a month still needs to be looked at.
+    - cron: '0 6 * * 1'
+
+permissions:
+  contents: read
+  security-events: write
+
+jobs:
+  analyze:
+    name: Analyse Kotlin
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          cache-read-only: ${{ github.ref != 'refs/heads/main' }}
+
+      - uses: github/codeql-action/init@v3
+        with:
+          languages: java-kotlin
+          build-mode: manual
+
+      # Only the Android compilation. CodeQL needs a real compile to see Kotlin, but `build` would
+      # also link the iOS frameworks -- tens of minutes of Kotlin/Native work that produces nothing
+      # CodeQL can read, since its extractor understands JVM bytecode.
+      - name: Compile
+        run: ./gradlew :shared:compileAndroidMain --stacktrace
+
+      - uses: github/codeql-action/analyze@v3
+        with:
+          category: /language:java-kotlin
