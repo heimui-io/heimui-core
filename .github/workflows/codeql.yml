@@ -13,14 +13,18 @@ on:
     # quiet for a month still needs to be looked at.
     - cron: '0 6 * * 1'
 
+# Narrow by default; the write that uploading results needs is granted on the one job that needs
+# it, so a step added later does not silently inherit it.
 permissions:
   contents: read
-  security-events: write
 
 jobs:
   analyze:
     name: Analyse Kotlin
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      security-events: write
     steps:
       - uses: actions/checkout@v4
 

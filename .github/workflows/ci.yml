@@ -13,6 +13,11 @@ concurrency:
   group: ci-${{ github.ref }}
   cancel-in-progress: true
 
+# The default token is far broader than this build needs. Nothing here writes to the repository:
+# it compiles, tests and uploads a report artifact.
+permissions:
+  contents: read
+
 jobs:
   verify:
     runs-on: ubuntu-latest
@@ -27,6 +32,11 @@ jobs:
         with:
           distribution: temurin
           java-version: '17'
+
+      # `gradle-wrapper.jar` is a binary committed to the repository that every build executes
+      # before any other check runs, which makes it the most valuable thing in here to tamper with.
+      # This compares it against the checksums Gradle publishes.
+      - uses: gradle/actions/wrapper-validation@v4
 
       - uses: gradle/actions/setup-gradle@v4
         with:
