@@ -531,7 +531,7 @@
             "SPACE_EVENLY"
           ],
           "default": "PACKED",
-          "description": "How children are distributed along the container's own axis. Distinct from `alignment`, which positions them across the other axis: in a VERTICAL container `alignment` decides left/centre/right and `arrangement` decides top/centre/spread. PACKED is the default and separates children by `spacing`. The distributing values (SPACE_*) treat `spacing` as a minimum gap rather than replacing it."
+          "description": "How children are distributed along the container's own axis. Distinct from `alignment`, which positions them across the other axis: in a VERTICAL container `alignment` decides left/centre/right and `arrangement` decides top/centre/spread. PACKED is the default and separates children by `spacing`. The distributing values (SPACE_*) treat `spacing` as a minimum gap rather than replacing it. Anything other than PACKED makes the container take the height of the viewport, so short content is distributed across the screen rather than sitting at the top -- which is what makes CENTER and END mean anything on a screen with little in it."
         },
         "weight": {
           "type": "number",
@@ -605,7 +605,8 @@
             "TOP",
             "BOTTOM"
           ],
-          "default": "CENTER"
+          "default": "CENTER",
+          "description": "Where the stacked children sit inside the box. A box fills the width but NOT the height, so START/CENTER/END move things horizontally while TOP/BOTTOM only move anything when something else has given the box height -- a list filling it, for instance. To place a short screen vertically, use a container's `arrangement` instead."
         },
         "children": {
           "type": "array",
@@ -715,7 +716,7 @@
             "SPACE_EVENLY"
           ],
           "default": "PACKED",
-          "description": "How children are distributed along the container's own axis. Distinct from `alignment`, which positions them across the other axis: in a VERTICAL container `alignment` decides left/centre/right and `arrangement` decides top/centre/spread. PACKED is the default and separates children by `spacing`. The distributing values (SPACE_*) treat `spacing` as a minimum gap rather than replacing it."
+          "description": "How children are distributed along the container's own axis. Distinct from `alignment`, which positions them across the other axis: in a VERTICAL container `alignment` decides left/centre/right and `arrangement` decides top/centre/spread. PACKED is the default and separates children by `spacing`. The distributing values (SPACE_*) treat `spacing` as a minimum gap rather than replacing it. Anything other than PACKED makes the container take the height of the viewport, so short content is distributed across the screen rather than sitting at the top -- which is what makes CENTER and END mean anything on a screen with little in it."
         },
         "alignment": {
           "type": "string",
@@ -807,7 +808,7 @@
             "SPACE_EVENLY"
           ],
           "default": "PACKED",
-          "description": "How children are distributed along the container's own axis. Distinct from `alignment`, which positions them across the other axis: in a VERTICAL container `alignment` decides left/centre/right and `arrangement` decides top/centre/spread. PACKED is the default and separates children by `spacing`. The distributing values (SPACE_*) treat `spacing` as a minimum gap rather than replacing it."
+          "description": "How children are distributed along the container's own axis. Distinct from `alignment`, which positions them across the other axis: in a VERTICAL container `alignment` decides left/centre/right and `arrangement` decides top/centre/spread. PACKED is the default and separates children by `spacing`. The distributing values (SPACE_*) treat `spacing` as a minimum gap rather than replacing it. Anything other than PACKED makes the container take the height of the viewport, so short content is distributed across the screen rather than sitting at the top -- which is what makes CENTER and END mean anything on a screen with little in it."
         },
         "alignment": {
           "type": "string",
