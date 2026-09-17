@@ -2,6 +2,7 @@ package io.heimui.core.presentation
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -99,7 +100,9 @@ import kotlinx.coroutines.launch
  *   The registry takes precedence, since it matches by component name.
  * @param errorContent replaces the built-in failure card. The default is deliberately plain and
  *   written in English, which is wrong in any app that is not: pass your own to say it in your
- *   product's voice and language. `onRetry` refetches.
+ *   product's voice and language. `onRetry` refetches. Receives a [BoxScope], so
+ *   `Modifier.align(Alignment.Center)` works -- without it a replacement lands in the top-left
+ *   corner while the card it replaced was centred.
  * @param loadingContent replaces the built-in skeleton, for an app with its own loading style.
  * @param overlayScreenId a second screen drawn on top of this one, or `null` for none. This is how
  *   an in-app notification works: it is an ordinary screen, authored and published like the rest,
@@ -122,8 +125,8 @@ public fun HeimScreen(
     enablePullToRefresh: Boolean = true,
     stateManager: HeimStateManager = rememberHeimStateManager(screenId = screenId),
     customRenderer: (@Composable (CustomComponent) -> Unit)? = null,
-    errorContent: (@Composable (message: String, onRetry: () -> Unit) -> Unit)? = null,
-    loadingContent: (@Composable () -> Unit)? = null,
+    errorContent: (@Composable BoxScope.(message: String, onRetry: () -> Unit) -> Unit)? = null,
+    loadingContent: (@Composable BoxScope.() -> Unit)? = null,
     overlayScreenId: String? = null,
     onOverlayDismiss: (() -> Unit)? = null
 ) {
@@ -267,7 +270,7 @@ public fun HeimScreen(
         CompositionLocalProvider(LocalHeimActionRunner provides actionRunner) {
         Box(modifier = Modifier.fillMaxSize()) {
             when (val state = screenState) {
-                is HeimScreenState.Loading -> loadingContent?.invoke() ?: HeimSkeletonRenderer()
+                is HeimScreenState.Loading -> loadingContent?.invoke(this) ?: HeimSkeletonRenderer()
 
                 is HeimScreenState.Content -> HeimScreenRenderer(
                     response = state.screen,
@@ -277,7 +280,7 @@ public fun HeimScreen(
                     modifier = Modifier.fillMaxSize()
                 )
 
-                is HeimScreenState.Error -> errorContent?.invoke(state.message) { controller.retry() }
+                is HeimScreenState.Error -> errorContent?.invoke(this, state.message) { controller.retry() }
                     ?: HeimErrorView(
                         message = state.message,
                         onRetry = { controller.retry() },

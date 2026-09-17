@@ -61,6 +61,12 @@ internal class HeimScreenRepositoryImpl(
             emit(HeimScreenResult.Success(screen = trustedCache.screen.toDomain(), isStale = true))
         }
 
+        // Inside the flow, not in the `catch` below, because only here is the cache still in scope.
+        // A payload that will not parse is the server failing -- the same event as a 500, and it
+        // gets the same answer: whatever the device can already read stays on screen. Handled out
+        // there instead, a bad deploy replaced a working screen with an error card for everyone
+        // holding a perfectly good copy of it.
+        try {
         when (val remote = remoteDataSource.fetchScreen(screenId, queryParams, trustedCache?.etag)) {
             is RemoteScreenResponse.Success -> {
                 if (verifySignatures) {
@@ -92,6 +98,11 @@ internal class HeimScreenRepositoryImpl(
 
             is RemoteScreenResponse.CircuitOpen -> emitDegraded(screenId, trustedCache, remote.message)
             is RemoteScreenResponse.Error -> emitDegraded(screenId, trustedCache, remote.message)
+        }
+        } catch (cause: CancellationException) {
+            throw cause
+        } catch (cause: Throwable) {
+            emitDegraded(screenId, trustedCache, cause.message ?: "Failed to load screen")
         }
     }
         // The collector in HeimScreenController has no catch of its own, so anything escaping

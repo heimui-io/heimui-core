@@ -188,4 +188,63 @@ class HeimScreenRepositoryTest {
         assertTrue(error.message.contains("Cross-domain"), error.message)
     }
 
+    @Test
+    fun `a payload that will not parse leaves the cached screen on screen`() = runTest {
+        val cache = InMemoryHeimCacheDataSource()
+        cache.saveScreen(
+            "https://api.heimui.io/dashboard",
+            HeimScreenResponseDto(
+                id = "dashboard",
+                title = "Cached Dashboard",
+                root = ContainerComponentDto(
+                    id = "c1",
+                    children = listOf(TextComponentDto(id = "t1", text = "Old Cached Data"))
+                )
+            ),
+            etag = null,
+        )
+
+        // A bad deploy: 200, and a body the parser cannot read. The failure is the server's, and it
+        // is no different from a 500 -- which the user survives with the cached screen still up.
+        val client = HttpClient(MockEngine { respond(
+            content = "{ this is not a screen",
+            status = HttpStatusCode.OK,
+            headers = headersOf(HttpHeaders.ContentType, ContentType.Application.Json.toString())
+        ) }) {
+            install(ContentNegotiation) { json(HeimRemoteDataSource.defaultJson) }
+        }
+
+        val results = HeimScreenRepositoryImpl(
+            remoteDataSource = HeimRemoteDataSource(client, baseUrl = "https://api.heimui.io"),
+            cacheDataSource = cache
+        ).getScreen("dashboard").toList()
+
+        // The cached screen first, then the degraded emission -- never an Error, because content
+        // the device can read exists. Replacing it would leave the reader worse off than before
+        // they opened the app.
+        assertTrue(results.none { it is HeimScreenResult.Error }, "an error replaced readable content")
+        assertIs<HeimScreenResult.Stale>(results.last())
+        assertEquals("Cached Dashboard", (results.last() as HeimScreenResult.Stale).screen.title)
+    }
+
+    @Test
+    fun `a payload that will not parse still errors when there is nothing cached`() = runTest {
+        val client = HttpClient(MockEngine { respond(
+            content = "{ this is not a screen",
+            status = HttpStatusCode.OK,
+            headers = headersOf(HttpHeaders.ContentType, ContentType.Application.Json.toString())
+        ) }) {
+            install(ContentNegotiation) { json(HeimRemoteDataSource.defaultJson) }
+        }
+
+        val results = HeimScreenRepositoryImpl(
+            remoteDataSource = HeimRemoteDataSource(client, baseUrl = "https://api.heimui.io"),
+            cacheDataSource = InMemoryHeimCacheDataSource()
+        ).getScreen("dashboard").toList()
+
+        // Nothing to fall back to, so the error is the honest answer. The fix must not turn a real
+        // failure into silence.
+        assertIs<HeimScreenResult.Error>(results.last())
+    }
+
 }
