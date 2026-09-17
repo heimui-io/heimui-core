@@ -247,4 +247,78 @@ class HeimScreenRepositoryTest {
         assertIs<HeimScreenResult.Error>(results.last())
     }
 
+    private fun screenJson(title: String) = """
+        {"id":"dashboard","title":"$title","root":
+          {"type":"text","id":"t1","text":"$title"}}
+    """.trimIndent()
+
+    private fun repositoryServing(status: HttpStatusCode, body: String, cache: InMemoryHeimCacheDataSource) =
+        HeimScreenRepositoryImpl(
+            remoteDataSource = HeimRemoteDataSource(
+                HttpClient(MockEngine { respond(
+                    content = body,
+                    status = status,
+                    headers = headersOf(HttpHeaders.ContentType, ContentType.Application.Json.toString())
+                ) }) { install(ContentNegotiation) { json(HeimRemoteDataSource.defaultJson) } },
+                baseUrl = "https://api.heimui.io"
+            ),
+            cacheDataSource = cache
+        )
+
+    @Test
+    fun `a screen sent with a 403 is shown and carries the status`() = runTest {
+        val results = repositoryServing(
+            HttpStatusCode.Forbidden, screenJson("Account suspended"), InMemoryHeimCacheDataSource()
+        ).getScreen("dashboard").toList()
+
+        val refused = results.last()
+        assertIs<HeimScreenResult.Refused>(refused)
+        assertEquals("Account suspended", refused.screen.title)
+        // Carried through, because a host cannot read "the session is gone" out of a payload.
+        assertEquals(403, refused.statusCode)
+    }
+
+    @Test
+    fun `a screen sent with a 403 is never cached and never replaces the cached copy`() = runTest {
+        val cache = InMemoryHeimCacheDataSource()
+        cache.saveScreen(
+            "https://api.heimui.io/dashboard",
+            HeimScreenResponseDto(
+                id = "dashboard",
+                title = "The real dashboard",
+                root = TextComponentDto(id = "t1", text = "real")
+            ),
+            etag = null,
+        )
+
+        repositoryServing(HttpStatusCode.Forbidden, screenJson("Account suspended"), cache)
+            .getScreen("dashboard").toList()
+
+        // The whole point. Storing it would leave a reinstated account reading "suspended" until a
+        // TTL expired -- the SDK's fault, not the server's.
+        val stored = cache.getScreen("https://api.heimui.io/dashboard")
+        assertEquals("The real dashboard", stored?.screen?.title)
+    }
+
+    @Test
+    fun `a screen sent with a 500 is ignored`() = runTest {
+        val results = repositoryServing(
+            HttpStatusCode.InternalServerError, screenJson("Oops"), InMemoryHeimCacheDataSource()
+        ).getScreen("dashboard").toList()
+
+        // A server admitting it does not know its own state is not a description of anything, and
+        // a 5xx body is as often a proxy's HTML as it is the application's.
+        assertTrue(results.none { it is HeimScreenResult.Refused }, "a 5xx body was rendered")
+        assertIs<HeimScreenResult.Error>(results.last())
+    }
+
+    @Test
+    fun `a 4xx whose body is not a screen behaves exactly as it did before`() = runTest {
+        val results = repositoryServing(
+            HttpStatusCode.NotFound, """{"error":"not_found"}""", InMemoryHeimCacheDataSource()
+        ).getScreen("dashboard").toList()
+
+        assertIs<HeimScreenResult.Error>(results.last())
+    }
+
 }

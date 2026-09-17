@@ -12,7 +12,17 @@ import io.heimui.core.domain.model.HeimScreenResponse
  */
 public sealed interface HeimScreenState {
     public data object Loading : HeimScreenState
-    public data class Content(val screen: HeimScreenResponse, val isStale: Boolean = false) : HeimScreenState
+    /**
+     * A screen is on display. [statusCode] is what the server answered with -- 200 for the screen
+     * that was asked for, or the 4xx of a screen it sent instead. It is here because a host cannot
+     * infer "the session expired" by reading a payload, and a 401 usually means it should navigate
+     * somewhere the payload knows nothing about.
+     */
+    public data class Content(
+        val screen: HeimScreenResponse,
+        val isStale: Boolean = false,
+        val statusCode: Int = 200
+    ) : HeimScreenState
     public data class Error(val message: String, val throwable: Throwable? = null) : HeimScreenState
     public data class Empty(val message: String = "No content available") : HeimScreenState
 }

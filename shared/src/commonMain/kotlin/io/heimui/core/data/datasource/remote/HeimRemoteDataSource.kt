@@ -75,6 +75,25 @@ internal sealed interface RemoteScreenResponse {
 
   data object NotModified : RemoteScreenResponse
 
+  /**
+   * A screen the server sent alongside a 4xx.
+   *
+   * Only 4xx: a 4xx is the server stating something true about the request -- not permitted, gone,
+   * expired -- and it knows exactly what the reader should see. A 5xx is the server admitting it
+   * does not know what state it is in, and a body from something that broken is not a description
+   * of anything; more often it is HTML from a proxy that never reached the application at all.
+   *
+   * Deliberately carries no etag. This is not the screen, it is what happened when the screen was
+   * asked for, and it must never be stored under the screen's key: a reinstated account would keep
+   * reading "suspended" until a TTL expired.
+   */
+  data class ErrorScreen(
+      val statusCode: Int,
+      val screen: HeimScreenResponseDto,
+      val rawBytes: ByteArray,
+      val signature: String?,
+  ) : RemoteScreenResponse
+
   data class Error(val statusCode: Int, val message: String) : RemoteScreenResponse
 
   /** The circuit breaker is open; no request was issued. */
@@ -226,6 +245,39 @@ internal class HeimRemoteDataSource(
 
       else -> {
         if (response.status.value >= 500) circuitBreaker.recordFailure()
+
+        // A 4xx may carry the screen the server wants shown instead: "not permitted", "gone",
+        // "your session expired". Tried, never required -- a body that is JSON describing an error,
+        // or HTML from a WAF, is simply not a screen and falls through to the failure below, which
+        // is what every 4xx did before this. Nothing about the attempt can make things worse: the
+        // payload guard runs first, and the signature is verified upstream exactly as it is for a
+        // 200. The error path is the last place to start making exceptions about that.
+        if (response.status.value in 400..499) {
+          val screenFromError = runCatching {
+            val bytes = response.bodyAsBytes()
+            if (bytes.size > HeimPayloadGuard.MAX_PAYLOAD_BYTES) return@runCatching null
+            val envelope = HeimSignedEnvelope.unwrapOrNull(bytes)
+            val payload = envelope?.payload ?: bytes
+            Triple(
+                HeimJson.decodeScreen(payload.decodeToString()),
+                payload,
+                envelope?.detachedSignature
+                    ?: response.headers[SIGNATURE_HEADER]
+                    ?: response.headers[LEGACY_SIGNATURE_HEADER],
+            )
+          }.getOrNull()
+
+          if (screenFromError != null) {
+            val (screen, bytes, signature) = screenFromError
+            return RemoteScreenResponse.ErrorScreen(
+                statusCode = response.status.value,
+                screen = screen,
+                rawBytes = bytes,
+                signature = signature,
+            )
+          }
+        }
+
         RemoteScreenResponse.Error(
             statusCode = response.status.value,
             message =

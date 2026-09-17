@@ -133,6 +133,16 @@ public class HeimScreenController(
                 )
             }
 
+            is HeimScreenResult.Refused -> {
+                // Content, so the SDK's error view stays out of it. The status rides along for a
+                // host that needs to act -- signing out on a 401 is not something a payload can do.
+                _screenState.value = contentOrEmpty(result.screen, isStale = false)
+                    .let { if (it is HeimScreenState.Content) it.copy(statusCode = result.statusCode) else it }
+                telemetryObserver.onEvent(
+                    HeimTelemetryEvent.ScreenRefused(screenId, result.statusCode)
+                )
+            }
+
             is HeimScreenResult.Error -> {
                 _screenState.value = HeimScreenState.Error(result.message, result.throwable)
                 telemetryObserver.onEvent(

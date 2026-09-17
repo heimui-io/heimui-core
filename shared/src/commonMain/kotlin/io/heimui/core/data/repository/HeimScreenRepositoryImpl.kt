@@ -96,6 +96,22 @@ internal class HeimScreenRepositoryImpl(
                 )
             }
 
+            is RemoteScreenResponse.ErrorScreen -> {
+                // Verified exactly like a 200. A 4xx is the one response an intermediary can most
+                // easily put in front of an app -- a captive portal, a proxy, a WAF -- so relaxing
+                // this here would undo the point of signing at all.
+                if (verifySignatures) {
+                    val failure = verificationFailure(remote.rawBytes, remote.signature)
+                    if (failure != null) {
+                        emitDegraded(screenId, trustedCache, "Security verification failed: $failure")
+                        return@flow
+                    }
+                }
+                // Not written to the cache, and the entry already there is left untouched. What the
+                // server refused today says nothing about what that screen contains tomorrow.
+                emit(HeimScreenResult.Refused(remote.screen.toDomain(), remote.statusCode))
+            }
+
             is RemoteScreenResponse.CircuitOpen -> emitDegraded(screenId, trustedCache, remote.message)
             is RemoteScreenResponse.Error -> emitDegraded(screenId, trustedCache, remote.message)
         }

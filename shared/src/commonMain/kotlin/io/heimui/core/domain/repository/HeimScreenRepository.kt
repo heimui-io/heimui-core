@@ -21,6 +21,24 @@ public sealed interface HeimScreenResult {
         val throwable: Throwable? = null
     ) : HeimScreenResult
 
+    /**
+     * A screen the server sent with a 4xx, to be shown instead of the one that was asked for.
+     *
+     * Content, not a failure: the reader sees what the server meant them to see, and the SDK's own
+     * error view never appears. What separates it from [Success] is that it is **never cached and
+     * never replaces a cached copy** -- it describes the state of the world at this moment, not the
+     * contents of that screen, and a reinstated account that kept reading "suspended" from a cache
+     * would be the SDK's fault rather than the server's.
+     *
+     * [statusCode] is carried through so the host can act on it. A 401 usually means the session
+     * is gone and the app should say so in its own navigation, which it cannot decide by reading
+     * the screen.
+     */
+    public data class Refused(
+        val screen: HeimScreenResponse,
+        val statusCode: Int
+    ) : HeimScreenResult
+
     /** No content is available at all. */
     public data class Error(val message: String, val throwable: Throwable? = null) : HeimScreenResult
 }

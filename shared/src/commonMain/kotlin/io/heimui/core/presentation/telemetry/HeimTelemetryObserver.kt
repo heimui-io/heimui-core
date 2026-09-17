@@ -40,6 +40,14 @@ public sealed interface HeimTelemetryEvent {
      */
     public data class PayloadViolation(val screenId: String, val violations: List<String>) : HeimTelemetryEvent
 
+    /**
+     * The server answered a screen request with a 4xx and a screen of its own, which is now on
+     * display. Not an error for the reader -- they are looking at what the server meant them to
+     * see -- but it is the signal a host acts on: a 401 is a dead session, a 403 a permission that
+     * changed underneath someone.
+     */
+    public data class ScreenRefused(val screenId: String, val statusCode: Int) : HeimTelemetryEvent
+
     /** A CUSTOM validation rule referenced a validator the host never registered. */
     public data class ValidatorMissing(val validatorName: String) : HeimTelemetryEvent
 
