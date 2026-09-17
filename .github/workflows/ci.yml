@@ -57,6 +57,12 @@ jobs:
       - name: R8 keep rules reach consumers
         run: ./scripts/check-consumer-rules.sh
 
+      # A badge is a claim read by someone deciding whether this fits their project, and it is
+      # hand-written, so it drifts the first time a dependency moves. The Compose badge said 1.11.1
+      # while the build had been on 1.12.0 from the start.
+      - name: README badges match the build
+        run: ./scripts/check-readme-versions.sh
+
       # Every library inside the SDK travels into a customer's app under its own licence, and each of
       # those licences asks to be named. NOTICE is derived from the runtime classpath rather than
       # trusted, so a dependency added without an attribution fails here instead of in a legal review.
