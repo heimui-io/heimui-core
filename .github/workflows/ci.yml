@@ -36,7 +36,7 @@ jobs:
       # `gradle-wrapper.jar` is a binary committed to the repository that every build executes
       # before any other check runs, which makes it the most valuable thing in here to tamper with.
       # This compares it against the checksums Gradle publishes.
-      - uses: gradle/actions/wrapper-validation@48b5f213c81028ace310571dc5ec0fbbca0b2947 # v4.4.4
+      - uses: gradle/actions/wrapper-validation@ed408507eac070d1f99cc633dbcf757c94c7933a # v4.4.4
 
       - uses: gradle/actions/setup-gradle@48b5f213c81028ace310571dc5ec0fbbca0b2947 # v4.4.4
         with:
